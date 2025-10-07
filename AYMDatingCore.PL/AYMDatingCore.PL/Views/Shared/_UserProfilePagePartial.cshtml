@@ -152,10 +152,13 @@
     .profile-actions {
         display: flex;
         justify-content: center;
-        gap: 20px;
-        width:100%;
+        flex-wrap: wrap; /* ✅ allows wrapping on small screens */
+        gap: 15px;
+        width: 100%;
+        margin-top: 20px;
     }
 
+    /* Buttons will now adapt to smaller screens */
     .action-btn {
         background: white;
         border: 2px solid #ff69b4;
@@ -167,8 +170,22 @@
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
+        justify-content: center; /* ✅ centers icon and text */
         gap: 8px;
         box-shadow: 0 5px 10px rgba(255, 105, 180, 0.2);
+        min-width: 120px; /* ✅ makes buttons evenly sized */
+    }
+
+    /* ✅ Optional: smaller padding and font-size for phones */
+    @@media (max-width: 600px) {
+        .action-btn
+
+    {
+        font-size: 0.9rem;
+        padding: 8px 18px;
+        min-width: 100px;
+    }
+
     }
 
         .action-btn:hover {
