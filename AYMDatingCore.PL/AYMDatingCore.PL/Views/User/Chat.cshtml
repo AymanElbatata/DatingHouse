@@ -1,0 +1,257 @@
+﻿@model AYMDatingCore.PL.Models.Chat_VM
+@* @inject ChatManagement _ChatManagement;
+ *@
+@{
+    ViewData["Title"] = "Chat";
+
+         bool IsThereBlocking = false;
+         string GroupName = Model.GroupName;
+         List<UserMessage_VM> PreviousMessage = Model.UserMessage_VM;
+}
+
+<style>
+    .profile-chat-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 30px;
+        background: linear-gradient(135deg, #ffe0f0, #ffd1dc);
+        min-height: 100vh;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 25px;
+        max-width: 800px;
+        width: 100%;
+        padding: 25px 35px;
+        box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+    }
+
+    .profile-img {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 5px solid #ff69b4;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+        .profile-img:hover {
+            transform: scale(1.15);
+        }
+
+    .text-rose {
+        color: #ff1493;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .action-btn {
+        background: #fff;
+        border: 2px solid #ff69b4;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        color: #ff69b4;
+        transition: all 0.3s ease;
+    }
+
+        .action-btn:hover {
+            background: #ff69b4;
+            color: white;
+            transform: scale(1.1);
+        }
+
+    .chat-section {
+        background: #fff8fa;
+        border-radius: 15px;
+        padding: 15px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .message-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .message-item {
+        background: #ffeaf2;
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin: 8px 0;
+    }
+
+        .message-item.sent {
+            background: #ffd1dc;
+            text-align: left;
+        }
+
+    .message-meta {
+        font-size: 0.8rem;
+        color: #888;
+        margin-bottom: 5px;
+    }
+
+    .message-text {
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .chat-input {
+        margin-top: 20px;
+    }
+
+    .chat-btn {
+        background-color: #ff69b4;
+        color: white !important;
+        border-radius: 25px;
+        padding: 8px 16px;
+        text-decoration: none;
+    }
+</style>
+
+<div class="profile-chat-container">
+    <div class="profile-card shadow-lg text-center">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            @if (!string.IsNullOrEmpty(Model.UserHistoryTBL_VM.MainImageUrl))
+            {
+                <a asp-controller="Home" asp-action="UserProfile" asp-route-UserName="@Model.UserHistoryTBL_VM.AppUser.UserName">
+                    <img src="@Model.UserHistoryTBL_VM.MainImageUrl" alt="Profile Image" class="profile-img" />
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Home" asp-action="UserProfile" asp-route-UserName="@Model.UserHistoryTBL_VM.AppUser.UserName">
+                    <img src="~/images/default-avatar.png" alt="Profile Image" class="profile-img" />
+                </a>
+            }
+
+            <h2 class="mt-3 text-rose">@Model.UserHistoryTBL_VM.AppUser?.UserName</h2>
+            <p class="small text-muted">
+                @Model.UserHistoryTBL_VM.Gender?.Name • @Model.UserHistoryTBL_VM.Country?.Name • @Model.UserHistoryTBL_VM.City
+            </p>
+            <p class="small text-muted">
+                🎯 Looking for someone between: <strong>@Model.UserHistoryTBL_VM.SearchAgeFrom</strong> - <strong>@Model.UserHistoryTBL_VM.SearchAgeTo</strong>
+            </p>
+
+        </div>
+
+        <!-- Chat Section -->
+        <div class="chat-section mt-4 text-start">
+            <ul class="message-list" id="MessageListArea">
+                @if (PreviousMessage != null && PreviousMessage.Any())
+                {
+                    foreach (var msg in PreviousMessage)
+                    {
+                        <li class="message-item @(msg.SenderAppUser.UserName == User.Identity.Name ? "sent" : "received")">
+                            <p class="message-meta">@msg.CreationDate?.ToString("dd-MM-yyyy, hh:mm tt") • <strong>@msg.SenderAppUser.UserName</strong></p>
+                            <p class="message-text">@msg.Message</p>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="text-center text-muted">No messages yet 💬</li>
+                }
+            </ul>
+        </div>
+
+        <!-- Message Input -->
+        <div class="chat-input mt-3">
+            @if (!IsThereBlocking)
+            {
+                <input id="sendButtonMsg" placeholder="Write your message and press Enter..." onkeyup="CheckEnter()" class="form-control" />
+            }
+            else
+            {
+                <p class="text-center text-danger mt-3">🚫 Sorry, you can’t send messages — this user blocked you.</p>
+            }
+        </div>
+    </div>
+</div>
+
+
+ <script>
+     let CurrentUserChatMessage = document.getElementById("sendButtonMsg").value;
+         const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chathub")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+     connection.start().then(function () {
+        connection.invoke("JoinGroup", "@Model.GroupName");
+    });
+
+    connection.onclose(err => {
+        console.error("🚨 Connection closed:", err);
+    });
+
+    function CheckEnter(){
+        CurrentUserChatMessage = document.getElementById("sendButtonMsg").value;
+        if (event.key === "Enter" && CurrentUserChatMessage.trim() !== "") {
+            // TODO: Call SignalR sendMessage function here
+            SaveinDB("@Model.ReceiverAppUser.UserName",CurrentUserChatMessage);
+            connection.invoke("SendMessageToGroup", "@Model.GroupName", CurrentUserChatMessage);
+
+            // input.value = "";      
+        }}
+
+      connection.on("ReceiveGroupMessage", function (data) {
+            PrintNewMessage(data);
+      });
+
+    function SaveinDB(RecieverUserName,CurrentMessage){
+        $.ajax({
+            url: '@Url.Action("SaveMessageinChat", "User")', // ✅ uses Razor directly
+            type: 'POST',
+            data: {
+                receiverUserName: RecieverUserName,
+                message: CurrentMessage
+            },
+            success: function (response) {
+                if (response.success) {
+                    // PrintNewMessage();
+                    document.getElementById("sendButtonMsg").value = "";
+                }
+            },
+            error: function (xhr) {
+                console.error("❌ Error sending message:", xhr.responseText);
+            }
+        });
+    }
+
+    function PrintNewMessage(data){
+                let list = document.getElementById("MessageListArea");
+                // Create new <li>
+                let li = document.createElement("li");
+                li.classList.add("message-item");
+
+                // Check if message is from current user
+                const currentUser = '@User.Identity.Name';
+                if ("@Model.SenderAppUser.UserName" === currentUser) {
+                    li.classList.add("sent");
+                } else {
+                    li.classList.add("received");
+                }
+
+                // Message content
+                li.innerHTML = `
+                    <p class="message-meta">${"@DateTime.Now.ToString("dd-MM-yyyy, hh:mm tt")"} • <strong>${"@Model.SenderAppUser.UserName"}</strong></p>
+                    <p class="message-text">${data}</p>
+                `;
+
+                list.appendChild(li);
+
+                // Optional: scroll to bottom
+                list.scrollTop = list.scrollHeight;
+    }
+      
+</script>

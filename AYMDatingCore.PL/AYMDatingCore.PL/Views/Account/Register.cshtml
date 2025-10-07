@@ -1,0 +1,481 @@
+﻿@model AYMDatingCore.PL.DTO.RegisterDTO
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .registration-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 40px 15px;
+    }
+
+    .registration-box {
+        background: #fff;
+        border-radius: 20px;
+        padding: 40px 35px;
+        width: 420px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        animation: fadeInUp 0.6s ease;
+    }
+
+    .registration-title {
+        text-align: center;
+        font-size: 30px;
+        font-weight: 700;
+        color: #b83280;
+        margin-bottom: 25px;
+    }
+
+    @@keyframes fadeInUp {
+        0%
+
+    {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 6px;
+        display: block;
+        color: #444;
+    }
+
+    .form-input, .form-select {
+        width: 100%;
+        height: 38px;
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: 0.3s;
+        background-color: #fefefe;
+    }
+
+        .form-input:focus, .form-select:focus {
+            border-color: #b83280;
+            box-shadow: 0 0 4px rgba(184, 50, 128, 0.3);
+            outline: none;
+        }
+
+    .text-danger {
+        color: #d61a46;
+        font-size: 12px;
+        margin-top: 3px;
+        display: block;
+    }
+
+    .registration-btn {
+        width: 100%;
+        background: linear-gradient(to right, #b83280, #ff6f91);
+        border: none;
+        border-radius: 25px;
+        padding: 10px 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 15px;
+    }
+
+        .registration-btn:hover {
+            background: linear-gradient(to right, #ff6f91, #b83280);
+            transform: scale(1.02);
+        }
+
+    .registration-agreement {
+        font-size: 13px;
+        margin: 18px 0;
+        text-align: center;
+        color: #555;
+    }
+
+        .registration-agreement a {
+            color: #b83280;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+    .registration-divider {
+        text-align: center;
+        position: relative;
+        margin: 25px 0;
+        font-size: 13px;
+        color: #888;
+    }
+
+        .registration-divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #eee;
+            z-index: 1;
+        }
+
+        .registration-divider span {
+            background-color: white;
+            padding: 0 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+    .login-redirect {
+        text-align: center;
+        font-size: 14px;
+    }
+
+        .login-redirect a {
+            color: #b83280;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .login-redirect a:hover {
+                text-decoration: underline;
+            }
+
+    .name-fields {
+        display: flex;
+        gap: 10px;
+    }
+
+    .validation-summary {
+        color: #b30000;
+        background-color: #ffeaea;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        font-size: 13px;
+    }
+
+        .validation-summary ul {
+            margin-left: 15px;
+        }
+</style>
+
+<div class="registration-container">
+    <div class="registration-box">
+        <h1 class="registration-title">💖 Join Dating House</h1>
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <form id="registrationForm" method="post" asp-controller="Account" asp-action="Register">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="text" asp-for="Email" value="Ayman_elbatata@mail.ru" class="form-input" placeholder="Enter your email" required />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" asp-for="Password" value="Aym@8513" class="form-input" placeholder="Create a password" required />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" asp-for="ConfirmPassword" value="Aym@8513" class="form-input" placeholder="Confirm your password" required />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="name-fields">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" asp-for="FirstName" value="Kamel" class="form-input" placeholder="First name" required />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" asp-for="LastName" value="Aly" class="form-input" placeholder="Last name" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="dateOfBirth">Date of Birth</label>
+                <input type="date" id="dateOfBirth" asp-for="DateOFBirth" class="form-input"
+                       value="@DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd")" required />
+                <span asp-validation-for="DateOFBirth" class="text-danger"></span>
+                <span id="dobError" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GenderTBLId" class="form-label">Gender</label>
+                <select asp-for="GenderTBLId" asp-items="Model.GenderOptions" class="form-select select2" required>
+                    <option value="">Select Gender</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ProfessionTBLId" class="form-label">Profession</label>
+                <select asp-for="ProfessionTBLId" id="professionTBLId" asp-items="Model.ProfessionOptions" class="form-select select2" required>
+                    <option value="">Select Profession</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CountryTBLId" class="form-label">Country</label>
+                <select asp-for="CountryTBLId" id="countryTBLId" asp-items="Model.CountryOptions" class="form-select select2" required>
+                    <option value="">Select Country</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <input type="text" asp-for="Address" value="Tanta3" class="form-input" placeholder="Your city or address" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input type="text" asp-for="Phone" value="0125498798" class="form-input" placeholder="Your phone number" required />
+            </div>
+
+            <button type="submit" class="registration-btn">💌 Create My Account</button>
+        </form>
+
+        <p class="registration-agreement">
+            By creating an account, you agree to <a asp-controller="Home" asp-action="ConditionsofUse">Terms</a> and
+            <a asp-controller="Home" asp-action="PrivacyNotice">Privacy Policy</a>.
+        </p>
+
+        <div class="registration-divider"><span>Already a member?</span></div>
+
+        <div class="login-redirect">
+            <a asp-controller="Account" asp-action="Login">💞 Sign in to find your match</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+ <script>
+        $(document).ready(function() {
+            // Form validation
+            $('#registrationForm').on('submit', function(e) {
+                let isValid = true;
+                
+                // Reset error messages
+                $('.text-danger').text('');
+                
+                // Validate email
+                const email = $('#email').val().trim();
+                if (!email) {
+                    $('#emailError').text('Please enter your email address');
+                    isValid = false;
+                } else if (!isValidEmail(email)) {
+                    $('#emailError').text('Please enter a valid email address');
+                    isValid = false;
+                }
+                
+                // Validate password
+                const password = $('#password').val();
+                if (!password) {
+                    $('#passwordError').text('Please enter your password');
+                    isValid = false;
+                } else if (password.length < 6) {
+                    $('#passwordError').text('Password must be at least 6 characters long');
+                    isValid = false;
+                }
+                
+                // Validate confirm password
+                const confirmPassword = $('#confirmPassword').val();
+                if (!confirmPassword) {
+                    $('#confirmPasswordError').text('Please confirm your password');
+                    isValid = false;
+                } else if (password !== confirmPassword) {
+                    $('#confirmPasswordError').text('Passwords do not match');
+                    isValid = false;
+                }
+                
+                // Validate first name
+                const firstName = $('#firstName').val().trim();
+                if (!firstName) {
+                    $('#firstNameError').text('Please enter your first name');
+                    isValid = false;
+                }
+                
+                // Validate last name
+                const lastName = $('#lastName').val().trim();
+                if (!lastName) {
+                    $('#lastNameError').text('Please enter your last name');
+                    isValid = false;
+                }
+                
+                // Validate address
+                const address = $('#address').val().trim();
+                if (!address) {
+                    $('#addressError').text('Please enter your address');
+                    isValid = false;
+                }
+
+                // Validate phone
+                const phone = $('#phone').val().trim();
+                if (!phone) {
+                $('#phoneError').text('Please enter your phone');
+                        isValid = false;
+                }
+                
+                // Validate country
+                const country = $('#countryTBLId').val();
+                if (!country) {
+                    $('#countryError').text('Please select your country');
+                    isValid = false;
+                }
+
+                // Validate profession
+                const profession = $('#professionTBLId').val();
+                if (!profession) {
+                $('#professionError').text('Please select your Type');
+                    isValid = false;
+                }
+                // Validate gender
+                const gender = $('#genderTBLId').val();
+                if (!gender) {
+                    $('#genderError').text('Please select your gender');
+                    isValid = false;
+                }
+                
+                // Prevent form submission if validation fails
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+
+        // Email validation function
+            function isValidEmail(email) {
+                const re = /^(([^<>()\[\]\\.,;:\s@@"]+(\.[^<>()\[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}))$/;
+                return re.test(String(email).toLowerCase());
+            }
+            
+            // Real-time validation
+            $('#email').on('blur', function() {
+                const email = $(this).val().trim();
+                if (!email) {
+                    $('#emailError').text('Please enter your email address');
+                } else if (!isValidEmail(email)) {
+                    $('#emailError').text('Please enter a valid email address');
+                } else {
+                    $('#emailError').text('');
+                }
+            });
+            
+            $('#password').on('blur', function() {
+                const password = $(this).val();
+                if (!password) {
+                    $('#passwordError').text('Please enter your password');
+                } else if (password.length < 6) {
+                    $('#passwordError').text('Password must be at least 6 characters long');
+                } else {
+                    $('#passwordError').text('');
+                }
+            });
+            
+            $('#confirmPassword').on('blur', function() {
+                const confirmPassword = $(this).val();
+                const password = $('#password').val();
+                if (!confirmPassword) {
+                    $('#confirmPasswordError').text('Please confirm your password');
+                } else if (password !== confirmPassword) {
+                    $('#confirmPasswordError').text('Passwords do not match');
+                } else {
+                    $('#confirmPasswordError').text('');
+                }
+            });
+            
+            $('#firstName').on('blur', function() {
+                const firstName = $(this).val().trim();
+                if (!firstName) {
+                    $('#firstNameError').text('Please enter your first name');
+                } else {
+                    $('#firstNameError').text('');
+                }
+            });
+            
+            $('#lastName').on('blur', function() {
+                const lastName = $(this).val().trim();
+                if (!lastName) {
+                    $('#lastNameError').text('Please enter your last name');
+                } else {
+                    $('#lastNameError').text('');
+                }
+            });
+            
+            $('#address').on('blur', function() {
+                const address = $(this).val().trim();
+                if (!address) {
+                    $('#addressError').text('Please enter your address');
+                } else {
+                    $('#addressError').text('');
+                }
+            });
+
+           $('#phone').on('blur', function() {
+               const phone = $(this).val().trim();
+               if (!phone) {
+                 $('#phoneError').text('Please enter your phone');
+               } else {
+                  $('#phoneError').text('');
+            }
+           });
+            
+            $('#countryTBLId').on('change', function() {
+                const country = $(this).val();
+                if (!country) {
+                    $('#countryError').text('Please select your country');
+                } else {
+                    $('#countryError').text('');
+                }
+            });
+            
+            $('#genderTBLId').on('change', function() {
+                const gender = $(this).val();
+                if (!gender) {
+                    $('#genderError').text('Please select your gender');
+                } else {
+                    $('#genderError').text('');
+                }
+            });
+        });
+    </script>
+
+<script>
+    $(document).ready(function () {
+        $('#countryTBLId').select2({
+            placeholder: "Select Country",
+            allowClear: true
+        });
+        $('#professionTBLId').select2({
+            placeholder: "Select Profession",
+            allowClear: true
+        });
+    });
+</script>
