@@ -14,7 +14,7 @@ Dating House is a modern dating and relationship platform built with .NET Core 9
 
 The goal of this project is to connect people around the world looking for love, friendship, or meaningful relationships — all within a secure, responsive, and easy-to-use environment.
 
-Whether you are seeking a romantic partner, a lifelong connection, or simply exploring, Dating House provides all the essential tools — smart matching, chat messaging, user profiles, subscriptions, and more.
+Whether you are seeking a romantic partner, a lifelong connection, or simply exploring, Dating House provides all the essential tools — smart matching, chat messaging, user profiles, and more.
 
 🌟 Key Highlights
 
