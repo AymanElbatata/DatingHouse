@@ -64,7 +64,7 @@
                     <hr />
                     <a class="text-white text-decoration-none" asp-controller="User" asp-action="Chat" asp-route-RecieverUserName="@user.AppUser.UserName">
                         <span class="card-title text-pink">Messages (@Model.MessageCounterDTO.Where(a => a.AppUserId == user.AppUserId).FirstOrDefault().Counter)
-                            <br /> @Model.MessageCounterDTO.Where(a => a.AppUserId == user.AppUserId).FirstOrDefault().LatestMessageDate
+                            <br /> @Model.MessageCounterDTO.Where(a => a.AppUserId == user.AppUserId).FirstOrDefault().LatestMessageDate?.ToString("dd MMMM yyyy, hh:mm tt")
                         </span>
                     </a>
                 </div>

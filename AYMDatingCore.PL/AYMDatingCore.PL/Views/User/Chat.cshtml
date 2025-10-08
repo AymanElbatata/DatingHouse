@@ -152,7 +152,7 @@
                     foreach (var msg in PreviousMessage)
                     {
                         <li class="message-item @(msg.SenderAppUser.UserName == User.Identity.Name ? "sent" : "received")">
-                            <p class="message-meta">@msg.CreationDate?.ToString("dd-MM-yyyy, hh:mm tt") • <strong>@msg.SenderAppUser.UserName</strong></p>
+                            <p class="message-meta">@msg.CreationDate?.ToString("dd MMMM yyyy, hh:mm tt") • <strong>@msg.SenderAppUser.UserName</strong></p>
                             <p class="message-text">@msg.Message</p>
                         </li>
                     }
@@ -244,7 +244,7 @@
 
                 // Message content
                 li.innerHTML = `
-                    <p class="message-meta">${"@DateTime.Now.ToString("dd-MM-yyyy, hh:mm tt")"} • <strong>${"@Model.SenderAppUser.UserName"}</strong></p>
+                    <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${"@Model.SenderAppUser.UserName"}</strong></p>
                     <p class="message-text">${data}</p>
                 `;
 
