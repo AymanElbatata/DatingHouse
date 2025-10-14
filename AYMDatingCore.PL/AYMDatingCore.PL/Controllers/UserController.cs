@@ -39,24 +39,25 @@ namespace AYMDatingCore.PL.Controllers
             var Messages_VM = new Messages_VM();
 
             var currentUser = await GetUserByUserName(User.Identity.Name);
-            var allNewMessages = unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromReceiver == false && a.ReceiverAppUserId == currentUser.Id).OrderBy(a=>a.CreationDate).ToList();
+            var allNewMessages = unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromReceiver == false && a.ReceiverAppUserId == currentUser.Id).OrderByDescending(a=>a.CreationDate).ToList();
             foreach (var item in allNewMessages)
             {
                 if (!Messages_VM.UserHistoryTBL_VM.Where(a => a.AppUserId == item.SenderAppUserId).Any())
                 {
                     Messages_VM.UserHistoryTBL_VM.Add(GetUserHistoryByUserId(item.SenderAppUserId));
+                    Messages_VM.MessageCounterDTO.Add(new DTO.MessageCounterDTO { AppUserId = item.SenderAppUserId, Counter = allNewMessages.Where(a=>a.IsSeen == false && a.SenderAppUserId == item.SenderAppUserId).Count(), LatestMessageDate = item.CreationDate });
                 }
 
-                if (!Messages_VM.MessageCounterDTO.Where(a=>a.AppUserId == item.SenderAppUserId).Any())
-                {
-                    Messages_VM.MessageCounterDTO.Add(new DTO.MessageCounterDTO { AppUserId = item.SenderAppUserId, Counter =1 });
-                    Messages_VM.MessageCounterDTO.Where(a => a.AppUserId == item.SenderAppUserId).FirstOrDefault().LatestMessageDate = item.CreationDate;
-                }
-                else
-                {
-                    Messages_VM.MessageCounterDTO.Where(a => a.AppUserId == item.SenderAppUserId).FirstOrDefault().Counter++;
-                    Messages_VM.MessageCounterDTO.Where(a => a.AppUserId == item.SenderAppUserId).FirstOrDefault().LatestMessageDate = item.CreationDate;
-                }
+                //if (!Messages_VM.MessageCounterDTO.Where(a=>a.AppUserId == item.SenderAppUserId).Any())
+                //{
+                //    Messages_VM.MessageCounterDTO.Add(new DTO.MessageCounterDTO { AppUserId = item.SenderAppUserId, Counter =1 });
+                //    Messages_VM.MessageCounterDTO.Where(a => a.AppUserId == item.SenderAppUserId).FirstOrDefault().LatestMessageDate = item.CreationDate;
+                //}
+                //else
+                //{
+                //    Messages_VM.MessageCounterDTO.Where(a => a.AppUserId == item.SenderAppUserId).FirstOrDefault().Counter++;
+                //    Messages_VM.MessageCounterDTO.Where(a => a.AppUserId == item.SenderAppUserId).FirstOrDefault().LatestMessageDate = item.CreationDate;
+                //}
             }
             Messages_VM.UserHistoryTBL_VM.OrderByDescending(a => a.CreationDate);
             return View(Messages_VM);
