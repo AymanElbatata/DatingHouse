@@ -189,6 +189,9 @@
      connection.start().then(function () {
         connection.invoke("JoinGroup", "@Model.GroupName");
         GoToLastMessage();
+        GototheBottomoFPage2();
+        // GotoTheBottomoFPage();
+
     });
 
     connection.onclose(err => {
@@ -266,5 +269,18 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
     }, 100);
+    }
+    // function GotoTheBottomoFPage(){
+    // window.addEventListener("load", function () {
+    //     window.scrollTo({
+    //         top: document.body.scrollHeight,
+    //         behavior: 'smooth'
+    //     });
+    // });
+    // }
+    function GototheBottomoFPage2(){
+              setTimeout(function () {
+        $(window).scrollTop($(document).height());
+      }, 50);
     }
 </script>

@@ -209,7 +209,7 @@ namespace AYMDatingCore.PL.Controllers
 
             if (!UserMessageGroupExisting)
                 unitOfWork.UserMessageGroupRepository.Add(new UserMessageGroupTBL { SenderAppUserId = SenderUser.Id, ReceiverAppUserId = ReceiverUser.Id, NameGuid = Guid.NewGuid().ToString() });
-            var UserMessageGroup = unitOfWork.UserMessageGroupRepository.GetAllCustomized(filter: a => a.IsDeleted == false && (a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).FirstOrDefault();
+            var UserMessageGroup = unitOfWork.UserMessageGroupRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.IsDeleted == false && a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).FirstOrDefault();
 
             var data = new Chat_VM();
             data.SenderAppUser = SenderUser;
@@ -232,7 +232,7 @@ namespace AYMDatingCore.PL.Controllers
             }).Where(u => unitOfWork.UserManager.IsInRoleAsync(u.AppUser, "User").Result)
             .FirstOrDefault();
             data.UserHistoryTBL_VM = Mapper.Map<UserHistoryTBL_VM>(RecieverUserProfile);
-            data.IsThereBlocking = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => a.IsDeleted == false && (a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.SenderAppUserId == ReceiverUser.Id || a.ReceiverAppUserId == SenderUser.Id)).Any();
+            data.IsThereBlocking = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.IsDeleted == false && a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).Any();
 
             // Seen Old Messages
             var allNewMessages = unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromSender == false && a.IsSeen == false && a.ReceiverAppUserId == SenderUser.Id && a.SenderAppUserId == ReceiverUser.Id).ToList();
