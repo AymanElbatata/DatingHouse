@@ -288,16 +288,25 @@
             if (User.Identity.Name != Model.AppUser.UserName && User.IsInRole("User"))
             {
                 <div class="profile-actions text-center mt-4">
-                    <button id="likeBtn" class="action-btn like-btn" title="Like">
-                        <i class="fas fa-heart"></i> Like
+                    <button id="likeBtn"
+                            class="action-btn like-btn @(Model.IsLiked ? "liked" : "")"
+                            title="Like">
+                        <i class="@(Model.IsLiked ? "fas fa-heart" : "far fa-heart")"></i>
+                        @(Model.IsLiked ? "Is Liked" : "Add Like")
                     </button>
 
-                    <button id="favoriteBtn" class="action-btn favorite-btn" title="Add to Favorites">
-                        <i class="fas fa-star"></i> Favorite
+                    <button id="favoriteBtn"
+                            class="action-btn favorite-btn @(Model.IsFavorite ? "added" : "")"
+                            title="Add to Favorites">
+                        <i class="@(Model.IsFavorite ? "fas fa-star" : "far fa-star")"></i>
+                        @(Model.IsFavorite ? "Is Favorited" : "Add to Favorite")
                     </button>
 
-                    <button id="blockBtn" class="action-btn block-btn" title="Block User">
-                        <i class="fas fa-ban"></i> Block
+                    <button id="blockBtn"
+                            class="action-btn block-btn @(Model.Isblocked ? "blocked" : "")"
+                            title="Block User">
+                        <i class="@(Model.Isblocked ? "fas fa-ban" : "far fa-ban")"></i>
+                        @(Model.Isblocked ? "Is Blocked" : "Add block")
                     </button>
 
                     <button id="chatBtn" class="action-btn chat-btn"
@@ -336,40 +345,67 @@
     });
 </script>
 
-@section Scripts {
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
     <script>
         // Like button toggle
         document.getElementById("likeBtn").addEventListener("click", function () {
+            AddLikeFavoriteBlock("@Model.AppUser?.UserName",1);
             this.classList.toggle("liked");
             const liked = this.classList.contains("liked");
-            this.querySelector("i").className = liked ? "fas fa-heart" : "far fa-heart";
-            this.textContent = liked ? " Liked" : " Like";
-            this.prepend(this.querySelector("i"));
+            const icon = this.querySelector("i");
+            icon.className = liked ? "fas fa-heart" : "far fa-heart";
+            this.textContent = liked ? "Is Liked" : " Add Like";
+            this.prepend(icon);
         });
 
         // Favorite button toggle
         document.getElementById("favoriteBtn").addEventListener("click", function () {
+            AddLikeFavoriteBlock("@Model.AppUser?.UserName",2);
             this.classList.toggle("added");
             const added = this.classList.contains("added");
-            this.querySelector("i").className = added ? "fas fa-star" : "far fa-star";
-            this.textContent = added ? " Favorited" : " Favorite";
-            this.prepend(this.querySelector("i"));
+            const icon = this.querySelector("i");
+            icon.className = added ? "fas fa-star" : "far fa-star";
+            this.textContent = added ? "Is Favorited" : " Add to Favorite";
+            this.prepend(icon);
         });
 
         // Block button toggle
         document.getElementById("blockBtn").addEventListener("click", function () {
+            AddLikeFavoriteBlock("@Model.AppUser?.UserName",3);
             this.classList.toggle("blocked");
             const blocked = this.classList.contains("blocked");
-            this.querySelector("i").className = blocked ? "fas fa-ban" : "far fa-ban";
-            this.textContent = blocked ? " Blocked" : " Block";
-            this.prepend(this.querySelector("i"));
+            const icon = this.querySelector("i");
+            icon.className = blocked ? "fas fa-ban" : "far fa-ban";
+            this.textContent = blocked ? "Is blocked" : " Add Block";
+            this.prepend(icon);
         });
 
+        function AddLikeFavoriteBlock(RecieverUserName,operation){
+            $.ajax({
+            url: '@Url.Action("AddRemoveNewLikeFavoriteBlock", "User")', // ✅ uses Razor directly
+            type: 'POST',
+            data: {
+                receiverUserName: RecieverUserName,
+                operation: operation
+            },
+            success: function (response) {
+                if (response.success) {
+                    // PrintNewMessage();
+                    Alert("Done")
+                }
+            },
+            error: function (xhr) {
+                console.error("❌ Error sending message:", xhr.responseText);
+            }
+        });
+        }
         // Chat button (redirect or open modal)
         document.getElementById("chatBtn").addEventListener("click", function () {
             // Replace with your chat URL or modal logic
-            window.location.href = '/Chat/WithUser?id=@Model.AppUser?.Id';
+             const username = '@Model.AppUser?.UserName';
+             const url = '@Url.Action("Chat", "User")' + '?RecieverUserName=' + encodeURIComponent(username);
+            window.location.href = url;
+
         });
     </script>
-}
