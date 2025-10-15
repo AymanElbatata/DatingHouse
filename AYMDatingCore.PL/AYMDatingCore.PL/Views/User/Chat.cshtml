@@ -166,13 +166,13 @@
 
         <!-- Message Input -->
         <div class="chat-input mt-3">
-            @if (!IsThereBlocking)
+            @if (!Model.IsThereBlocking)
             {
                 <input id="sendButtonMsg" placeholder="Write your message and press Enter..." onkeyup="CheckEnter()" class="form-control" />
             }
             else
             {
-                <p class="text-center text-danger mt-3">🚫 Sorry, you can’t send messages — this user blocked you.</p>
+                <p class="text-center text-danger mt-3">🚫 Sorry, you can’t send messages — there is blocking!.</p>
             }
         </div>
     </div>

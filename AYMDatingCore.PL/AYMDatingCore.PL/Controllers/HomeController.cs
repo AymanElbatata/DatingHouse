@@ -81,6 +81,14 @@ namespace AYMDatingCore.PL.Controllers
                 var data = Mapper.Map<UserHistoryTBL_VM>(currentUser);
                 data.UserImageTBL_VM = Mapper.Map<List<UserImageTBL_VM>>(unitOfWork.UserImageRepository.GetAllCustomized(
                             filter: a => a.IsDeleted == false && a.AppUserId == user.Id).OrderByDescending(a => a.CreationDate));
+
+                if (!string.IsNullOrEmpty(User.Identity.Name) && User.Identity.Name != UserName)
+                {
+                    var SenderUser = await GetUserByUserName(User.Identity.Name);
+                    data.IsLiked = unitOfWork.UserLikeRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == user.Id).Any();
+                    data.Isblocked = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == user.Id).Any();
+                    data.IsFavorite = unitOfWork.UserFavoriteRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == user.Id).Any();
+                }
                 return View(data);
             }
             return View(new UserHistoryTBL_VM());

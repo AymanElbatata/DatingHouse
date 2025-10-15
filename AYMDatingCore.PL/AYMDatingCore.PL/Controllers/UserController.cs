@@ -127,6 +127,76 @@ namespace AYMDatingCore.PL.Controllers
             return View(Views_VM);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddRemoveNewLikeFavoriteBlock(string receiverUserName, int operation)
+        {
+            var SenderUser = await GetUserByUserName(User.Identity.Name);
+            var RecieverUser = await GetUserByUserName(receiverUserName);
+
+            switch (operation)
+            {
+                case 1:
+                    var ExistingRecord1 = unitOfWork.UserLikeRepository.GetAllCustomized(filter: a => a.IsDeleted == false &&
+                    a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == RecieverUser.Id).FirstOrDefault();
+                    if (ExistingRecord1 != null)
+                    {
+                        ExistingRecord1.IsDeleted = true;
+                        unitOfWork.UserLikeRepository.Update(ExistingRecord1);
+                    }
+                    else
+                    {
+                        unitOfWork.UserLikeRepository.Add(new DAL.Entities.UserLikeTBL
+                        {
+                            SenderAppUserId = SenderUser.Id,
+                            ReceiverAppUserId = RecieverUser.Id
+                        });
+                    }
+
+                    break;
+
+                case 2:
+                    var ExistingRecord2 = unitOfWork.UserFavoriteRepository.GetAllCustomized(filter: a => a.IsDeleted == false &&
+                    a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == RecieverUser.Id).FirstOrDefault();
+                    if (ExistingRecord2 != null)
+                    {
+                        ExistingRecord2.IsDeleted = true;
+                        unitOfWork.UserFavoriteRepository.Update(ExistingRecord2);
+                    }
+                    else
+                    {
+                        unitOfWork.UserFavoriteRepository.Add(new DAL.Entities.UserFavoriteTBL
+                        {
+                            SenderAppUserId = SenderUser.Id,
+                            ReceiverAppUserId = RecieverUser.Id
+                        });
+                    }
+                    break;
+
+                case 3:
+                    var ExistingRecord3 = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => a.IsDeleted == false &&
+                    a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == RecieverUser.Id).FirstOrDefault();
+                    if (ExistingRecord3 != null)
+                    {
+                        ExistingRecord3.IsDeleted = true;
+                        unitOfWork.UserBlockRepository.Update(ExistingRecord3);
+                    }
+                    else
+                    {
+                        unitOfWork.UserBlockRepository.Add(new DAL.Entities.UserBlockTBL
+                        {
+                            SenderAppUserId = SenderUser.Id,
+                            ReceiverAppUserId = RecieverUser.Id
+                        });
+                    }
+                    break;
+
+                default:
+                    // Optional: handle unexpected operation values
+                    break;
+            }
+
+            return Json(new { success = true });
+        }
         #endregion
 
         #region Chat

@@ -37,6 +37,10 @@ namespace AYMDatingCore.PL.Models
         public virtual EducationTBL? Education { get; set; }
 
         public List<UserImageTBL_VM> UserImageTBL_VM { get; set; } = new List<UserImageTBL_VM>();
+        public bool IsLiked { get; set; } = false;
+        public bool Isblocked { get; set; } = false;
+        public bool IsFavorite { get; set; } = false;
+
 
     }
 }
