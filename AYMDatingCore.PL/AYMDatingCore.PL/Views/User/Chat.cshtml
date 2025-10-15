@@ -159,7 +159,7 @@
                 }
                 else
                 {
-                    <li class="text-center text-muted">No messages yet 💬</li>
+                    <li id="ThereISNoMessagesyet" class="text-center text-muted">No messages yet 💬</li>
                 }
             </ul>
         </div>
@@ -188,6 +188,7 @@
 
      connection.start().then(function () {
         connection.invoke("JoinGroup", "@Model.GroupName");
+        GoToLastMessage();
     });
 
     connection.onclose(err => {
@@ -205,6 +206,10 @@
         }}
 
       connection.on("ReceiveGroupMessage", function (data) {
+              if ($('#ThereISNoMessagesyet').length) 
+                {
+                  $('#ThereISNoMessagesyet').hide();
+                }
             PrintNewMessage(data);
       });
 
@@ -249,9 +254,17 @@
                 `;
 
                 list.appendChild(li);
-
+                GoToLastMessage();
                 // Optional: scroll to bottom
-                list.scrollTop = list.scrollHeight;
+                // list.scrollTop = list.scrollHeight;
     }
       
+    function GoToLastMessage(){
+            setTimeout(() => {
+        let chatBox = document.querySelector('.chat-section');
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    }, 100);
+    }
 </script>

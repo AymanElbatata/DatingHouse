@@ -145,7 +145,7 @@ namespace AYMDatingCore.PL.Controllers
             data.SenderAppUser = SenderUser;
             data.ReceiverAppUser = ReceiverUser;
             data.GroupName = UserMessageGroup.NameGuid;
-            data.UserMessage_VM = Mapper.Map<List<UserMessage_VM>>(unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromSender == false && (a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).OrderByDescending(a => a.CreationDate).ToList());
+            data.UserMessage_VM = Mapper.Map<List<UserMessage_VM>>(unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromSender == false && (a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).OrderBy(a => a.CreationDate).ToList());
 
             var RecieverUserProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == ReceiverUser.Id, includes: new Expression<Func<UserHistoryTBL, object>>[]
 {
