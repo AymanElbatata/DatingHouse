@@ -268,6 +268,34 @@ namespace AYMDatingCore.PL.Controllers
 
             return Json(new { success = false });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveAudioMessageInChat(string receiverUserName, string base64Audio)
+        {
+            var SenderUser = await GetUserByUserName(User.Identity.Name);
+            var RecieverUser = await GetUserByUserName(receiverUserName);
+            bool IsThereBlocking = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == RecieverUser.Id) || (a.IsDeleted == false && a.SenderAppUserId == RecieverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).Any();
+            if (!IsThereBlocking)
+            {
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "AudioUsers");
+
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                // 🎵 Generate unique filename
+                string fileName = SenderUser.UserName+"_"+ RecieverUser.UserName+"-"+ $"{Guid.NewGuid()}.webm";
+                string filePath = Path.Combine(folderPath, fileName);
+
+                // 🎧 Convert base64 string to bytes and save file
+                byte[] audioBytes = Convert.FromBase64String(base64Audio);
+                System.IO.File.WriteAllBytes(filePath, audioBytes);
+                unitOfWork.UserMessageRepository.Add(new DAL.Entities.UserMessageTBL() { SenderAppUserId = SenderUser.Id, ReceiverAppUserId = RecieverUser.Id, AudioDataUrl = fileName });
+                await _hubContext.Clients.User(RecieverUser.Id).SendAsync("ReceiveMessageNotification", unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == RecieverUser.Id).Count());
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false });
+        }
         #endregion
 
         private async Task<AppUser> GetUserByUserName(string UserName)

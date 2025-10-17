@@ -15,7 +15,11 @@ namespace AYMDatingCore.Helpers
         {
             await Clients.Group(groupName).SendAsync("ReceiveGroupMessage", message , SenderUserName );
         }
-
+        public async Task SendAudioToGroup(string groupName, string senderUserName, string base64Audio)
+        {
+            // Send to all clients in the group
+            await Clients.Group(groupName).SendAsync("ReceiveAudioFromGroup", senderUserName, base64Audio);
+        }
         //public async Task GetLikeNotification(string userRecieverId)
         //{
         //    await Clients.User(userRecieverId).SendAsync("ReceiveLikeNotification");
