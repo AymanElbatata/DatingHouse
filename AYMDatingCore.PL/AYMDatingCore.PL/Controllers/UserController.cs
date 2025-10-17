@@ -260,6 +260,7 @@ namespace AYMDatingCore.PL.Controllers
             var RecieverUser = await GetUserByUserName(receiverUserName);
 
             unitOfWork.UserMessageRepository.Add(new DAL.Entities.UserMessageTBL() { SenderAppUserId = SenderUser.Id, ReceiverAppUserId = RecieverUser.Id, Message = message });
+            await _hubContext.Clients.User(RecieverUser.Id).SendAsync("ReceiveMessageNotification", unitOfWork.UserLikeRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == RecieverUser.Id).Count());
 
             return Json(new { success = true });
         }
