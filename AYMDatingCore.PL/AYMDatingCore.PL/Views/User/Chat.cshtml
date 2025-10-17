@@ -206,17 +206,17 @@
         if (event.key === "Enter" && CurrentUserChatMessage.trim() !== "") {
             // TODO: Call SignalR sendMessage function here
             SaveinDB("@Model.ReceiverAppUser.UserName",CurrentUserChatMessage);
-            connection.invoke("SendMessageToGroup", "@Model.GroupName", CurrentUserChatMessage);
+            connection.invoke("SendMessageToGroup", "@Model.GroupName", CurrentUserChatMessage,"@Model.SenderAppUser.UserName");
 
             // input.value = "";      
         }}
 
-      connection.on("ReceiveGroupMessage", function (data) {
+      connection.on("ReceiveGroupMessage", function (message,SenderUserName) {
               if ($('#ThereISNoMessagesyet').length) 
                 {
                   $('#ThereISNoMessagesyet').hide();
                 }
-            PrintNewMessage(data);
+            PrintNewMessage(message,SenderUserName);
       });
 
     function SaveinDB(RecieverUserName,CurrentMessage){
@@ -245,7 +245,7 @@
         });
     }
 
-    function PrintNewMessage(data){
+    function PrintNewMessage(message,SenderUserName){
                 let list = document.getElementById("MessageListArea");
                 // Create new <li>
                 let li = document.createElement("li");
@@ -253,7 +253,7 @@
 
                 // Check if message is from current user
                 const currentUser = '@User.Identity.Name';
-                if ("@Model.SenderAppUser.UserName" === currentUser) {
+                if (SenderUserName === currentUser) {
                     li.classList.add("sent");
                 } else {
                     li.classList.add("received");
@@ -261,8 +261,8 @@
 
                 // Message content
                 li.innerHTML = `
-                    <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${"@Model.SenderAppUser.UserName"}</strong></p>
-                    <p class="message-text">${data}</p>
+                    <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${SenderUserName}</strong></p>
+                    <p class="message-text">${message}</p>
                 `;
 
                 list.appendChild(li);

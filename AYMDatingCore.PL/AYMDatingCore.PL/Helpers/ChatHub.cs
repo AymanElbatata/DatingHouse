@@ -11,9 +11,9 @@ namespace AYMDatingCore.Helpers
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
-        public async Task SendMessageToGroup(string groupName, string message)
+        public async Task SendMessageToGroup(string groupName, string message, string SenderUserName)
         {
-            await Clients.Group(groupName).SendAsync("ReceiveGroupMessage", message);
+            await Clients.Group(groupName).SendAsync("ReceiveGroupMessage", message , SenderUserName );
         }
 
         //public async Task GetLikeNotification(string userRecieverId)
