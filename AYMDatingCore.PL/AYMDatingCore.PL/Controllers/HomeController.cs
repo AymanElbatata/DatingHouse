@@ -3,10 +3,12 @@ using AYMDatingCore.BLL.Interfaces;
 using AYMDatingCore.BLL.Repositories;
 using AYMDatingCore.DAL.BaseEntity;
 using AYMDatingCore.DAL.Entities;
+using AYMDatingCore.Helpers;
 using AYMDatingCore.PL.DTO;
 using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq.Expressions;
@@ -20,12 +22,14 @@ namespace AYMDatingCore.PL.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper Mapper;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IMapper Mapper)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IMapper Mapper, IHubContext<NotificationHub> hubContext)
         {
             _logger = logger;
             this.unitOfWork = unitOfWork;
             this.Mapper = Mapper;
+            _hubContext = hubContext;
         }
 
         public IActionResult Index()
@@ -59,6 +63,8 @@ namespace AYMDatingCore.PL.Controllers
                 if (!unitOfWork.UserViewRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == user.Id).Any())
                 {
                     unitOfWork.UserViewRepository.Add(new UserViewTBL() { SenderAppUserId = SenderUser.Id, ReceiverAppUserId = user.Id });
+                    await _hubContext.Clients.User(user.Id).SendAsync("ReceiveViewNotification", unitOfWork.UserViewRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == user.Id).Count());
+
                 }
             }
 

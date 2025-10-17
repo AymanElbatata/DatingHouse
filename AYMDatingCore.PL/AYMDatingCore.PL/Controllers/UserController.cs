@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using AYMDatingCore.BLL.Interfaces;
+using AYMDatingCore.BLL.Repositories;
 using AYMDatingCore.DAL.BaseEntity;
 using AYMDatingCore.DAL.Entities;
+using AYMDatingCore.Helpers;
 using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Security.Claims;
@@ -20,12 +23,15 @@ namespace AYMDatingCore.PL.Controllers
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper Mapper;
         private readonly IConfiguration configuration;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public UserController(ILogger<UserController> logger, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration)
+
+        public UserController(ILogger<UserController> logger, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IHubContext<NotificationHub> hubContext)
         {
             this.unitOfWork = unitOfWork;
             this.configuration = configuration;
             Mapper = mapper;
+            _hubContext = hubContext;
         }
 
         public IActionResult Index(string? UserName)
@@ -151,7 +157,7 @@ namespace AYMDatingCore.PL.Controllers
                             ReceiverAppUserId = RecieverUser.Id
                         });
                     }
-
+                    await _hubContext.Clients.User(RecieverUser.Id).SendAsync("ReceiveLikeNotification", unitOfWork.UserLikeRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == RecieverUser.Id).Count());
                     break;
 
                 case 2:
@@ -170,6 +176,7 @@ namespace AYMDatingCore.PL.Controllers
                             ReceiverAppUserId = RecieverUser.Id
                         });
                     }
+                    await _hubContext.Clients.User(RecieverUser.Id).SendAsync("ReceiveFavoriteNotification", unitOfWork.UserFavoriteRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == RecieverUser.Id).Count());
                     break;
 
                 case 3:
@@ -188,6 +195,7 @@ namespace AYMDatingCore.PL.Controllers
                             ReceiverAppUserId = RecieverUser.Id
                         });
                     }
+                    await _hubContext.Clients.User(RecieverUser.Id).SendAsync("ReceiveBlockNotification", unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == RecieverUser.Id).Count());
                     break;
 
                 default:

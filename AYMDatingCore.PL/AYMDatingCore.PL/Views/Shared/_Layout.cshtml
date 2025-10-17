@@ -53,12 +53,11 @@
 
     <!-- Favicon  & Manifest -->
     <link rel="icon" type="image/x-icon" href="~/favicon_io/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon_io/favicon-16x16.png">
     <link rel="manifest" href="~/favicon_io/site.webmanifest">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#ff6b8b">
-    <link rel="manifest" href="~/favicon_io/site.webmanifest">
+    <link rel="mask-icon" href="~/favicon_io/safari-pinned-tab.svg" color="#ff6b8b">
     <meta name="theme-color" content="#ffffff">
 
 
@@ -94,11 +93,11 @@
                         {
                             @if (User.IsInRole("User"))
                             {
-                                <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="UserMessages">Messages <span id="currentUserCounter_Messages">(@currentUserCounter.CounterOfNewMessages)</span></a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="UserViews">Views <span id="currentUserCounter_Views">(@currentUserCounter.CounterOfNewViews)</span></a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="UserLikes">Likes <span id="currentUserCounter_Likes">(@currentUserCounter.CounterOfNewLikes)</span></a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="UserFavorites">Favorites <span id="currentUserCounter_Favorites">(@currentUserCounter.CounterOfNewFavorites)</span></a></li>
-                                <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="UserBlocks">Blocks <span id="currentUserCounter_Blocks">(@currentUserCounter.CounterOfNewBlocks)</span></a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="UserMessages">Messages (<span id="currentUserCounter_Messages">@currentUserCounter.CounterOfNewMessages</span>)</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="UserViews">Views (<span id="currentUserCounter_Views">@currentUserCounter.CounterOfNewViews</span>)</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="UserLikes">Likes (<span id="currentUserCounter_Likes">@currentUserCounter.CounterOfNewLikes</span>)</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="UserFavorites">Favorites (<span id="currentUserCounter_Favorites">@currentUserCounter.CounterOfNewFavorites</span>)</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="UserBlocks">Blocks (<span id="currentUserCounter_Blocks">@currentUserCounter.CounterOfNewBlocks</span>)</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="Index" asp-route-UserName="@User.Identity?.Name">Profile</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Logout" asp-route-UserName="@User.Identity?.Name">Sign Out</a></li>
                             }

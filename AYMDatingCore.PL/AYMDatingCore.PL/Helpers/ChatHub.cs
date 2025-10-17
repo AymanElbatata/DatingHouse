@@ -16,25 +16,25 @@ namespace AYMDatingCore.Helpers
             await Clients.Group(groupName).SendAsync("ReceiveGroupMessage", message);
         }
 
-        public async Task GetLikeNotification(string userRecieverId)
-        {
-            await Clients.User(userRecieverId).SendAsync("ReceiveLikeNotification");
-        }
-        public async Task GetViewNotification(string userRecieverId)
-        {
-            await Clients.User(userRecieverId).SendAsync("ReceiveViewNotification");
-        }
-        public async Task GetMessageNotification(string userRecieverId)
-        {
-            await Clients.User(userRecieverId).SendAsync("ReceiveMessageNotification");
-        }
-        public async Task GetFavoriteNotification(string userRecieverId)
-        {
-            await Clients.User(userRecieverId).SendAsync("ReceiveFavoriteNotification");
-        }
-        public async Task GetBlockNotification(string userRecieverId)
-        {
-            await Clients.User(userRecieverId).SendAsync("ReceiveBlockNotification");
-        }
+        //public async Task GetLikeNotification(string userRecieverId)
+        //{
+        //    await Clients.User(userRecieverId).SendAsync("ReceiveLikeNotification");
+        //}
+        //public async Task GetViewNotification(string userRecieverId)
+        //{
+        //    await Clients.User(userRecieverId).SendAsync("ReceiveViewNotification");
+        //}
+        //public async Task GetMessageNotification(string userRecieverId)
+        //{
+        //    await Clients.User(userRecieverId).SendAsync("ReceiveMessageNotification");
+        //}
+        //public async Task GetFavoriteNotification(string userRecieverId)
+        //{
+        //    await Clients.User(userRecieverId).SendAsync("ReceiveFavoriteNotification");
+        //}
+        //public async Task GetBlockNotification(string userRecieverId)
+        //{
+        //    await Clients.User(userRecieverId).SendAsync("ReceiveBlockNotification");
+        //}
     }
 }

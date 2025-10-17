@@ -9,6 +9,7 @@ using AYMDatingCore.PL.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -47,7 +48,7 @@ namespace AYMDatingCore.PL
 
 
             //services.AddSingleton 
-
+            builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IMySPECIALGUID, MySPECIALGUID>();
@@ -154,6 +155,7 @@ namespace AYMDatingCore.PL
                 });
             });
             app.MapHub<ChatHub>("/chatHub");
+            app.MapHub<NotificationHub>("/notificationHub");
 
             app.MapControllerRoute(
                 name: "default",
