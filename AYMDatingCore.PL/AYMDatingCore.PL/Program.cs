@@ -1,4 +1,4 @@
-using AYMDatingCore.BLL.Interfaces;
+﻿using AYMDatingCore.BLL.Interfaces;
 using AYMDatingCore.BLL.Repositories;
 using AYMDatingCore.DAL.BaseEntity;
 using AYMDatingCore.DAL.Contexts;
@@ -23,6 +23,7 @@ namespace AYMDatingCore.PL
             builder.Services.AddSignalR(options =>
             {
                 options.EnableDetailedErrors = true;
+                options.MaximumReceiveMessageSize = 1024 * 1024 * 10; // ✅ 10 MB
             });
             builder.Services.AddControllersWithViews()
                 .AddViewOptions(options =>
