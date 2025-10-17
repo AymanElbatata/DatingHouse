@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AYMDatingCore.BLL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2fbedc6f3781d4c4842064dbc812b58cc35446f9")]
 [assembly: System.Reflection.AssemblyProductAttribute("AYMDatingCore.BLL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AYMDatingCore.BLL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
