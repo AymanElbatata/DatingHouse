@@ -8,6 +8,7 @@ using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Security.Claims;
@@ -38,6 +39,119 @@ namespace AYMDatingCore.PL.Controllers
         {
             return RedirectToAction("UserProfile", "Home", new { UserName =  UserName});
         }
+
+        #region Edit Profile and Upload Images
+        [HttpGet]
+        public async Task<IActionResult> EditProfile(string? UserName)
+        {
+            var CurrentUser = await GetUserByUserName(User.Identity.Name);
+            var CurrentProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false &&
+                                a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+
+            var currentUserProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id, includes: new Expression<Func<UserHistoryTBL, object>>[]
+{
+                                         p => p.AppUser,
+                                         p => p.Country,
+                                         p => p.Language,
+                                         p => p.Gender,
+                                         p => p.MaritalStatus,
+                                         p => p.Job,
+                                         p => p.Purpose,
+                                         p => p.FinancialMode,
+                                         p => p.Education,
+
+            }).Where(u => unitOfWork.UserManager.IsInRoleAsync(u.AppUser, "User").Result)
+            .FirstOrDefault();
+            if (currentUserProfile != null)
+            {
+                var data = Mapper.Map<UserHistoryTBL_VM>(currentUserProfile);
+                data.UserImageTBL_VM = Mapper.Map<List<UserImageTBL_VM>>(unitOfWork.UserImageRepository.GetAllCustomized(
+                            filter: a => a.IsDeleted == false && a.AppUserId == CurrentUser.Id).OrderByDescending(a => a.CreationDate));
+                return View(data);
+            }
+            return View(new UserHistoryTBL_VM());           
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(UserHistoryTBL_VM model)
+        {
+            var CurrentUser = await GetUserByUserName(User.Identity.Name);
+            var currentUserProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+            currentUserProfile.City = model.City;
+            currentUserProfile.SearchAgeFrom = model.SearchAgeFrom;
+            currentUserProfile.SearchAgeTo = model.SearchAgeTo;
+            currentUserProfile.AboutYou = model.AboutYou;
+            currentUserProfile.AboutPartner = model.AboutPartner;
+            unitOfWork.UserHistoryRepository.Update(currentUserProfile);
+            return RedirectToAction("UserProfile", "Home", new { UserName = CurrentUser.UserName });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile file, int number, string? oldImage)
+        {
+            if (file == null || file.Length == 0 || number == 0)
+                return Json(new { success = false, message = "No file uploaded." });
+
+            var CurrentUser = await GetUserByUserName(User.Identity.Name);
+
+            if (!string.IsNullOrEmpty(oldImage))
+            {
+                DeleteUserImage(oldImage);
+                if (number > 1 && number <= 6)
+                {
+                    var OldImageRow = unitOfWork.UserImageRepository.GetAllCustomized(filter: a => a.ImageUrl == oldImage && a.IsDeleted == false && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+                    if (OldImageRow != null)
+                    {
+                        OldImageRow.IsDeleted = true;
+                        unitOfWork.UserImageRepository.Update(OldImageRow);
+                    }
+                }
+            }
+
+            var ImageName = await AddUserImage(file, CurrentUser.UserName);
+
+            if (number == 1)
+            {
+                var CurrentProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false &&
+                    a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+                CurrentProfile.MainImageUrl = ImageName;
+                unitOfWork.UserHistoryRepository.Update(CurrentProfile);
+            }
+            else if (number > 1 && number <= 6)
+            {
+                unitOfWork.UserImageRepository.Add(new UserImageTBL() { AppUserId = CurrentUser.Id, ImageUrl = ImageName });
+            }
+
+            return Json(new { success = true, imageUrl = ImageName });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteImage(string imageUrl, int number)
+        {
+            if (string.IsNullOrEmpty(imageUrl) || number == 0)
+                return Json(new { success = false, message = "No file uploaded." });
+
+
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                DeleteUserImage(imageUrl);
+                if (number > 1 && number <= 6)
+                {
+                    var CurrentUser = await GetUserByUserName(User.Identity.Name);
+
+                    var OldImageRow = unitOfWork.UserImageRepository.GetAllCustomized(filter: a => a.ImageUrl == imageUrl && a.IsDeleted == false && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+                    if (OldImageRow != null)
+                    {
+                        OldImageRow.IsDeleted = true;
+                        unitOfWork.UserImageRepository.Update(OldImageRow);
+                    }
+                }
+            }
+
+            return Json(new { success = true });
+        }
+        #endregion
 
         #region New Messages, Likes, Views, Favorites, Block
         public async Task<IActionResult> UserMessages()
@@ -256,6 +370,7 @@ namespace AYMDatingCore.PL.Controllers
             return View(data);
         }
 
+        #region Helper Methods
         [HttpPost]
         public async Task<IActionResult> SaveMessageinChat(string receiverUserName, string message)
         {
@@ -301,6 +416,48 @@ namespace AYMDatingCore.PL.Controllers
         }
         #endregion
 
+        private void DeleteUserImage(string oldImage)
+        {
+            var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ImageUsers", oldImage);
+
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                try
+                {
+                    System.IO.File.Delete(oldImagePath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("⚠️ Error deleting old image: " + ex.Message);
+                }
+            }
+        }
+
+        private async Task<string> AddUserImage(IFormFile file, string UserName)
+        {
+            try
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ImageUsers");
+
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = UserName + "_" + Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                return fileName;
+            }
+            catch (Exception e)
+            {
+                return string.Empty;
+            }
+
+        }
+
         private async Task<AppUser> GetUserByUserName(string UserName)
         {
             return await unitOfWork.UserManager.FindByNameAsync(UserName);
@@ -327,6 +484,7 @@ namespace AYMDatingCore.PL.Controllers
             }
             return new UserHistoryTBL_VM();
         }
+        #endregion
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

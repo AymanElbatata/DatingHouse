@@ -47,7 +47,7 @@ else
                         <a asp-controller="Home" asp-action="UserProfile" asp-route-UserName="@user.AppUser.UserName">
                         @if (!string.IsNullOrEmpty(@user.MainImageUrl))
                             {
-                                <img src="@user.MainImageUrl" class="card-img-top rounded-top-4 fixedimageIndex" alt="@user.AppUser.UserName" />
+                                <img src="~/ImageUsers/@user.MainImageUrl" class="card-img-top rounded-top-4 fixedimageIndex" alt="@user.AppUser.UserName" />
                             }
                             else
                             {

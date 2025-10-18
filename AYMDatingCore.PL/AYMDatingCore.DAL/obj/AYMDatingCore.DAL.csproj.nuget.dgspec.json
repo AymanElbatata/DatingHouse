@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ayman\\Documents\\GitHub\\DatingHouse\\AYMDatingCore.PL\\AYMDatingCore.DAL\\AYMDatingCore.DAL.csproj": {}
+    "D:\\AYM Programming\\Prog&Files\\AYMDatingCore.PL\\AYMDatingCore.DAL\\AYMDatingCore.DAL.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ayman\\Documents\\GitHub\\DatingHouse\\AYMDatingCore.PL\\AYMDatingCore.DAL\\AYMDatingCore.DAL.csproj": {
+    "D:\\AYM Programming\\Prog&Files\\AYMDatingCore.PL\\AYMDatingCore.DAL\\AYMDatingCore.DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ayman\\Documents\\GitHub\\DatingHouse\\AYMDatingCore.PL\\AYMDatingCore.DAL\\AYMDatingCore.DAL.csproj",
+        "projectUniqueName": "D:\\AYM Programming\\Prog&Files\\AYMDatingCore.PL\\AYMDatingCore.DAL\\AYMDatingCore.DAL.csproj",
         "projectName": "AYMDatingCore.DAL",
-        "projectPath": "C:\\Users\\ayman\\Documents\\GitHub\\DatingHouse\\AYMDatingCore.PL\\AYMDatingCore.DAL\\AYMDatingCore.DAL.csproj",
+        "projectPath": "D:\\AYM Programming\\Prog&Files\\AYMDatingCore.PL\\AYMDatingCore.DAL\\AYMDatingCore.DAL.csproj",
         "packagesPath": "C:\\Users\\ayman\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ayman\\Documents\\GitHub\\DatingHouse\\AYMDatingCore.PL\\AYMDatingCore.DAL\\obj\\",
+        "outputPath": "D:\\AYM Programming\\Prog&Files\\AYMDatingCore.PL\\AYMDatingCore.DAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -85,7 +85,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

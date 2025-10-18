@@ -1,0 +1,248 @@
+﻿@model AYMDatingCore.PL.Models.UserHistoryTBL_VM
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+<style>
+    /* 🌸 Romantic Pink Theme */
+    .profile-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #ffe6f0, #ffc2d1, #ffb6c1);
+        background-size: 400% 400%;
+        animation: bgFlow 10s ease infinite;
+        padding: 20px;
+    }
+
+    @@keyframes bgFlow {
+        0%
+
+    {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+
+    }
+
+    .profile-card {
+        background: #fff;
+        border-radius: 25px;
+        padding: 40px;
+        max-width: 900px;
+        width: 100%;
+        box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+        transition: all 0.3s ease;
+    }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .text-rose {
+        color: #ff1493;
+    }
+
+    .form-control {
+        border: 2px solid #ffb6c1;
+        border-radius: 10px;
+        padding: 10px 15px;
+        transition: 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: #ff69b4;
+            box-shadow: 0 0 8px rgba(255, 105, 180, 0.3);
+        }
+
+    .btn-save {
+        background: #ff69b4;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 10px 30px;
+        font-size: 1rem;
+        transition: 0.3s;
+    }
+
+        .btn-save:hover {
+            background: #ff85c1;
+            transform: translateY(-2px);
+        }
+
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .photo-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+        padding-bottom: 10px;
+    }
+
+        .photo-card img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+    .delete-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 50%;
+        color: #ff1493;
+        font-size: 18px;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        line-height: 20px;
+    }
+
+        .delete-btn:hover {
+            background: #ff1493;
+            color: white;
+        }
+
+    .btn-outline-primary {
+        border-color: #ffb6c1;
+        color: #ff69b4;
+    }
+
+        .btn-outline-primary:hover {
+            background: #ff69b4;
+            color: white;
+        }
+</style>
+<div class="profile-container">
+    <div class="profile-card">
+        <h2 class="text-center text-rose mb-4">💖 Edit My Profile 💖</h2>
+
+        <form asp-action="EditProfile" asp-controller="User" method="post" enctype="multipart/form-data">
+            <!-- ✅ Main Profile Photo -->
+            <div class="text-center mb-4">
+                <img id="photo_1" src="~/ImageUsers/@Model.MainImageUrl" class="rounded-circle border border-3 border-pink" width="150" height="150" />
+                <br />
+                <label class="btn btn-light mt-2 border border-pink">
+                    Change Main Photo
+                    <input type="file" id="file1" accept="image/*" class="d-none" onchange="uploadImage(this, 1, '@Model.MainImageUrl')" />
+                </label>
+            </div>
+
+            <!-- ✅ Profile Info -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label>Age Range From</label>
+                    <input asp-for="SearchAgeFrom" type="number" class="form-control" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Age Range To</label>
+                    <input asp-for="SearchAgeTo" type="number" class="form-control" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>City</label>
+                    <input asp-for="City" class="form-control" />
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label>💖 About Me</label>
+                    <textarea asp-for="AboutYou" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label>🌹 My Partner Should Be</label>
+                    <textarea asp-for="AboutPartner" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- ✅ My Photos -->
+            <h4 class="text-rose mt-4 mb-3">📸 My Photos</h4>
+            <div class="photo-grid">
+                @for (int i = 6; i >= 2; i--)
+                {
+                    var img = Model.UserImageTBL_VM?.ElementAtOrDefault(i - 2)?.ImageUrl ?? "blankprofile973460_1280-172650025.png";
+                    if(string.IsNullOrEmpty(img))
+                        img = "blankprofile973460_1280-172650025.png";
+
+                    <div class="photo-card">
+                        <img id="photo_@i" src="~/ImageUsers/@img" alt="Photo @i" />
+                        <button type="button" class="delete-btn" onclick="deletePhoto('@img', @i)">&times;</button>
+                        <input type="file" id="file_@i" accept="image/*" class="d-none" onchange="uploadImage(this, @i, '@img')" />
+                        <button type="button" class="btn btn-outline-primary w-100 mt-2" onclick="document.getElementById('file_@i').click()">Upload</button>
+                    </div>
+                }
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn-save">💾 Save Profile</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <script>
+        async function uploadImage(fileInput, number, oldImage) {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("number", number);
+            formData.append("oldImage", oldImage || "");
+            try {
+                const response = await fetch('@Url.Action("UploadImage", "User")', {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.success) {
+            document.querySelector(`#photo_${number}`).src = "../ImageUsers/"+result.imageUrl;
+                    alert("✅ Photo uploaded successfully!");
+                } else {
+                    alert("❌ Upload failed: " + (result.message || "Unknown error"));
+                }
+            } catch (error) {
+                console.error(error);
+                alert("❌ Upload failed. Please try again.");
+            }
+        }
+
+        async function deletePhoto(imageUrl, number) {
+            if (!confirm("Are you sure you want to delete this photo? 💔")) return;
+            try {
+                    const formData = new FormData();
+                    formData.append("imageUrl", imageUrl);
+                    formData.append("number", number);
+                const response = await fetch('@Url.Action("DeleteImage", "User")', {
+                    method: "POST",
+                    body: formData
+                 });
+
+                const result = await response.json();
+                if (result.success) {
+            document.querySelector(`#photo_${number}`).src = "../ImageUsers/blankprofile973460_1280-172650025.png";
+                    alert("🗑️ Photo deleted!");
+                } else {
+                    alert("❌ Deletion failed: " + (result.message || "Unknown error"));
+                }
+            } catch (error) {
+                console.error(error);
+                alert("❌ Could not delete photo.");
+            }
+        }
+    </script>
