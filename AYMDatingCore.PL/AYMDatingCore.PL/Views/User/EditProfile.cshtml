@@ -172,14 +172,29 @@
             <!-- ✅ My Photos -->
             <h4 class="text-rose mt-4 mb-3">📸 My Photos</h4>
             <div class="photo-grid">
-                @for (int i = 6; i >= 2; i--)
+@*                 @for (int i = 2; i <= 6; i++)
                 {
-                    var img = Model.UserImageTBL_VM?.ElementAtOrDefault(i - 2)?.ImageUrl ?? "blankprofile973460_1280-172650025.png";
+                    var img = Model.UserImageTBL_VM?.ElementAtOrDefault(i - 2)?.ImageUrl ?? "blankprofile973460.png";
                     if(string.IsNullOrEmpty(img))
-                        img = "blankprofile973460_1280-172650025.png";
+                        img = "blankprofile973460.png";
 
                     <div class="photo-card">
                         <img id="photo_@i" src="~/ImageUsers/@img" alt="Photo @i" />
+                        <button type="button" class="delete-btn" onclick="deletePhoto('@img', @i)">&times;</button>
+                        <input type="file" id="file_@i" accept="image/*" class="d-none" onchange="uploadImage(this, @i, '@img')" />
+                        <button type="button" class="btn btn-outline-primary w-100 mt-2" onclick="document.getElementById('file_@i').click()">Upload</button>
+                    </div>
+                } *@
+                @for (int i = 2; i <= 6; i++)
+                {
+                    var img = Model.UserImageTBL_VM?.ElementAtOrDefault(i - 2)?.ImageUrl ?? "blankprofile973460.png";
+                    if (string.IsNullOrEmpty(img))
+                        img = "blankprofile973460.png";
+
+                    var imgPath = Url.Content($"~/ImageUsers/{img}");
+
+                    <div class="photo-card">
+                        <img id="photo_@i" src="@imgPath" alt="Photo @i" />
                         <button type="button" class="delete-btn" onclick="deletePhoto('@img', @i)">&times;</button>
                         <input type="file" id="file_@i" accept="image/*" class="d-none" onchange="uploadImage(this, @i, '@img')" />
                         <button type="button" class="btn btn-outline-primary w-100 mt-2" onclick="document.getElementById('file_@i').click()">Upload</button>
@@ -212,8 +227,8 @@
                 const result = await response.json();
                 if (result.success) {
             document.querySelector(`#photo_${number}`).src = "../ImageUsers/"+result.imageUrl;
-                    alert("✅ Photo uploaded successfully!");
-                } else {
+@*                     alert("✅ Photo uploaded successfully!");
+ *@                } else {
                     alert("❌ Upload failed: " + (result.message || "Unknown error"));
                 }
             } catch (error) {
@@ -235,9 +250,9 @@
 
                 const result = await response.json();
                 if (result.success) {
-            document.querySelector(`#photo_${number}`).src = "../ImageUsers/blankprofile973460_1280-172650025.png";
-                    alert("🗑️ Photo deleted!");
-                } else {
+        document.querySelector(`#photo_${number}`).src = "../ImageUsers/blankprofile973460.png";
+@*                     alert("🗑️ Photo deleted!");
+ *@                } else {
                     alert("❌ Deletion failed: " + (result.message || "Unknown error"));
                 }
             } catch (error) {

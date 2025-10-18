@@ -46,30 +46,14 @@ namespace AYMDatingCore.PL.Controllers
         public async Task<IActionResult> EditProfile(string? UserName)
         {
             var CurrentUser = await GetUserByUserName(User.Identity.Name);
-            var CurrentProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false &&
-                                a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
-
-            var currentUserProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id, includes: new Expression<Func<UserHistoryTBL, object>>[]
-{
-                                         p => p.AppUser,
-                                         p => p.Country,
-                                         p => p.Language,
-                                         p => p.Gender,
-                                         p => p.MaritalStatus,
-                                         p => p.Job,
-                                         p => p.Purpose,
-                                         p => p.FinancialMode,
-                                         p => p.Education,
-
-            }).Where(u => unitOfWork.UserManager.IsInRoleAsync(u.AppUser, "User").Result)
-            .FirstOrDefault();
-            if (currentUserProfile != null)
+            if (CurrentUser != null)
             {
-                var data = Mapper.Map<UserHistoryTBL_VM>(currentUserProfile);
+                var data = GetUserHistoryByUserId(CurrentUser.Id);
                 data.UserImageTBL_VM = Mapper.Map<List<UserImageTBL_VM>>(unitOfWork.UserImageRepository.GetAllCustomized(
-                            filter: a => a.IsDeleted == false && a.AppUserId == CurrentUser.Id).OrderByDescending(a => a.CreationDate));
+                            filter: a => a.IsDeleted == false && a.AppUserId == CurrentUser.Id).OrderBy(a => a.CreationDate));
                 return View(data);
             }
+
             return View(new UserHistoryTBL_VM());           
         }
 
@@ -89,33 +73,20 @@ namespace AYMDatingCore.PL.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile file, int number, string? oldImage)
+        public async Task<IActionResult> UploadImage(IFormFile file, int number, string oldImage)
         {
             if (file == null || file.Length == 0 || number == 0)
                 return Json(new { success = false, message = "No file uploaded." });
 
             var CurrentUser = await GetUserByUserName(User.Identity.Name);
 
-            if (!string.IsNullOrEmpty(oldImage))
-            {
-                DeleteUserImage(oldImage);
-                if (number > 1 && number <= 6)
-                {
-                    var OldImageRow = unitOfWork.UserImageRepository.GetAllCustomized(filter: a => a.ImageUrl == oldImage && a.IsDeleted == false && a.AppUserId == CurrentUser.Id).FirstOrDefault();
-                    if (OldImageRow != null)
-                    {
-                        OldImageRow.IsDeleted = true;
-                        unitOfWork.UserImageRepository.Update(OldImageRow);
-                    }
-                }
-            }
+            await DeleteUserImage(oldImage, number);
 
             var ImageName = await AddUserImage(file, CurrentUser.UserName);
 
             if (number == 1)
             {
-                var CurrentProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false &&
-                    a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+                var CurrentProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false &&a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
                 CurrentProfile.MainImageUrl = ImageName;
                 unitOfWork.UserHistoryRepository.Update(CurrentProfile);
             }
@@ -133,22 +104,7 @@ namespace AYMDatingCore.PL.Controllers
             if (string.IsNullOrEmpty(imageUrl) || number == 0)
                 return Json(new { success = false, message = "No file uploaded." });
 
-
-            if (!string.IsNullOrEmpty(imageUrl))
-            {
-                DeleteUserImage(imageUrl);
-                if (number > 1 && number <= 6)
-                {
-                    var CurrentUser = await GetUserByUserName(User.Identity.Name);
-
-                    var OldImageRow = unitOfWork.UserImageRepository.GetAllCustomized(filter: a => a.ImageUrl == imageUrl && a.IsDeleted == false && a.AppUserId == CurrentUser.Id).FirstOrDefault();
-                    if (OldImageRow != null)
-                    {
-                        OldImageRow.IsDeleted = true;
-                        unitOfWork.UserImageRepository.Update(OldImageRow);
-                    }
-                }
-            }
+            await DeleteUserImage(imageUrl, number);
 
             return Json(new { success = true });
         }
@@ -343,20 +299,8 @@ namespace AYMDatingCore.PL.Controllers
             data.GroupName = UserMessageGroup.NameGuid;
             data.UserMessage_VM = Mapper.Map<List<UserMessage_VM>>(unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromSender == false && (a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).OrderBy(a => a.CreationDate).ToList());
 
-            var RecieverUserProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == ReceiverUser.Id, includes: new Expression<Func<UserHistoryTBL, object>>[]
-{
-                                         p => p.AppUser,
-                                         p => p.Country,
-                                         p => p.Language,
-                                         p => p.Gender,
-                                         p => p.MaritalStatus,
-                                         p => p.Job,
-                                         p => p.Purpose,
-                                         p => p.FinancialMode,
-                                         p => p.Education,
+            var RecieverUserProfile = GetUserHistoryByUserId(ReceiverUser.Id);
 
-            }).Where(u => unitOfWork.UserManager.IsInRoleAsync(u.AppUser, "User").Result)
-            .FirstOrDefault();
             data.UserHistoryTBL_VM = Mapper.Map<UserHistoryTBL_VM>(RecieverUserProfile);
             data.IsThereBlocking = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.IsDeleted == false && a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).Any();
 
@@ -370,6 +314,7 @@ namespace AYMDatingCore.PL.Controllers
             //
             return View(data);
         }
+        #endregion
 
         #region Helper Methods
         [HttpPost]
@@ -415,10 +360,12 @@ namespace AYMDatingCore.PL.Controllers
 
             return Json(new { success = false });
         }
-        #endregion
 
-        private void DeleteUserImage(string oldImage)
+        private async Task DeleteUserImage(string oldImage, int number)
         {
+            if (oldImage == "blankprofile973460.png")
+                return;
+
             var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ImageUsers", oldImage);
 
             if (System.IO.File.Exists(oldImagePath))
@@ -426,6 +373,22 @@ namespace AYMDatingCore.PL.Controllers
                 try
                 {
                     System.IO.File.Delete(oldImagePath);
+                    var CurrentUser = await GetUserByUserName(User.Identity.Name);
+
+                    if (number > 1)
+                    {
+                        var OldImageRow = unitOfWork.UserImageRepository.GetAllCustomized(filter: a => a.ImageUrl == oldImage && a.IsDeleted == false && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+                        if (OldImageRow != null)
+                        {
+                            OldImageRow.IsDeleted = true;
+                            unitOfWork.UserImageRepository.Update(OldImageRow);
+                        }
+                    }
+                    //else if (number == 1) {
+                    //    var currentUserProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+                    //    currentUserProfile.MainImageUrl = null;
+                    //    unitOfWork.UserHistoryRepository.Update(currentUserProfile);
+                    //}
                 }
                 catch (Exception ex)
                 {
