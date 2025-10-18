@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -77,6 +78,9 @@ namespace AYMDatingCore.PL.Controllers
         {
             if (file == null || file.Length == 0 || number == 0)
                 return Json(new { success = false, message = "No file uploaded." });
+
+            if (file.Length > 1 * 1024 * 1024)
+                return Json(new { success = false, message = "Image size must be less than 1 MB." });
 
             var CurrentUser = await GetUserByUserName(User.Identity.Name);
 

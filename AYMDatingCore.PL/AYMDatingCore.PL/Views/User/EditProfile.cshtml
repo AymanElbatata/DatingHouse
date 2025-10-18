@@ -214,6 +214,7 @@
             const file = fileInput.files[0];
             if (!file) return;
 
+            if (validateImageSize(file)){
             const formData = new FormData();
             formData.append("file", file);
             formData.append("number", number);
@@ -236,7 +237,7 @@
                 alert("❌ Upload failed. Please try again.");
             }
         }
-
+            }
         async function deletePhoto(imageUrl, number) {
             if (!confirm("Are you sure you want to delete this photo? 💔")) return;
             try {
@@ -260,4 +261,16 @@
                 alert("❌ Could not delete photo.");
             }
         }
+
+            function validateImageSize(file) {
+        if (file) {
+            const maxSize = 1 * 1024 * 1024; // 1 MB in bytes
+            if (file.size > maxSize) {
+                alert("❌ File too large! Please upload an image smaller than 1 MB.");
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
     </script>
