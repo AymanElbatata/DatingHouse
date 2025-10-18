@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Security.Claims;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AYMDatingCore.PL.Controllers
@@ -79,10 +80,10 @@ namespace AYMDatingCore.PL.Controllers
             var CurrentUser = await GetUserByUserName(User.Identity.Name);
             var currentUserProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
             currentUserProfile.City = model.City;
-            currentUserProfile.SearchAgeFrom = model.SearchAgeFrom;
-            currentUserProfile.SearchAgeTo = model.SearchAgeTo;
-            currentUserProfile.AboutYou = model.AboutYou;
-            currentUserProfile.AboutPartner = model.AboutPartner;
+            currentUserProfile.SearchAgeFrom = model.SearchAgeFrom < 18 || model.SearchAgeFrom > 99 ? 18 : model.SearchAgeFrom;
+            currentUserProfile.SearchAgeTo = model.SearchAgeTo > 99 || model.SearchAgeTo < 18 ? 99 : model.SearchAgeTo;
+            currentUserProfile.AboutYou = model.AboutYou.Length > 1000 ? model.AboutYou.Substring(0, 1000) : model.AboutYou;
+            currentUserProfile.AboutPartner = model.AboutPartner.Length > 1000 ? model.AboutPartner.Substring(0, 1000) : model.AboutPartner;
             unitOfWork.UserHistoryRepository.Update(currentUserProfile);
             return RedirectToAction("UserProfile", "Home", new { UserName = CurrentUser.UserName });
         }
