@@ -210,6 +210,9 @@ namespace AYMDatingCore.PL.Controllers
         #region Chat
         public async Task<IActionResult> Chat(string? RecieverUserName)
         {
+            if (RecieverUserName == User.Identity.Name)
+                return RedirectToAction("UserProfile", "Home", new { UserName = RecieverUserName });
+
             var SenderUser = await GetUserByUserName(User.Identity.Name);
             var ReceiverUser = await GetUserByUserName(RecieverUserName);
 
