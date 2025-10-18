@@ -372,7 +372,7 @@ namespace AYMDatingCore.PL.Controllers
             {
                 try
                 {
-                    System.IO.File.Delete(oldImagePath);
+                    //System.IO.File.Delete(oldImagePath);
                     var CurrentUser = await GetUserByUserName(User.Identity.Name);
 
                     if (number > 1)
