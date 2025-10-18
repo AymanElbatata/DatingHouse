@@ -226,18 +226,13 @@
     <div class="profile-card shadow-lg text-center">
         <!-- Profile Header -->
         <div class="profile-header">
-            @if (!string.IsNullOrEmpty(Model.UserHistoryTBL_VM.MainImageUrl))
-            {
-                <a asp-controller="Home" asp-action="UserProfile" asp-route-UserName="@Model.UserHistoryTBL_VM.AppUser.UserName">
-                    <img src="@Model.UserHistoryTBL_VM.MainImageUrl" alt="Profile Image" class="profile-img" />
-                </a>
-            }
-            else
-            {
-                <a asp-controller="Home" asp-action="UserProfile" asp-route-UserName="@Model.UserHistoryTBL_VM.AppUser.UserName">
-                    <img src="~/images/default-avatar.png" alt="Profile Image" class="profile-img" />
-                </a>
-            }
+            @if (string.IsNullOrEmpty(Model.UserHistoryTBL_VM.MainImageUrl))
+                Model.UserHistoryTBL_VM.MainImageUrl = "blankprofile973460.png";
+
+            <a asp-controller="Home" asp-action="UserProfile" asp-route-UserName="@Model.UserHistoryTBL_VM.AppUser.UserName">
+                <img src="~/ImageUsers/@Model.UserHistoryTBL_VM.MainImageUrl" alt="Profile Image" class="profile-img" />
+            </a>
+
 
             <h2 class="mt-3 text-rose">@Model.UserHistoryTBL_VM.AppUser?.UserName</h2>
             <p class="small text-muted">

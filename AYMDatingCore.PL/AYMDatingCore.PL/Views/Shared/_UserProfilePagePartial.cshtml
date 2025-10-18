@@ -236,14 +236,10 @@
         <div class="profile-header text-center">
 
             <!-- Main Profile Image -->
-            @if (!string.IsNullOrEmpty(@Model.MainImageUrl))
-            {
-                <img src="~/ImageUsers/@Model.MainImageUrl" alt="Profile Image" class="profile-img" />
-            }
-            else
-            {
-                <img src="~/Images/Main/blankprofile973460_1280-172650025.png" alt="Profile Image" class="profile-img" />
-            }
+            @if (string.IsNullOrEmpty(Model.MainImageUrl))
+                Model.MainImageUrl = "blankprofile973460.png";
+
+            <img src="~/ImageUsers/@Model.MainImageUrl" alt="Profile Image" class="profile-img" />
 
             <h2 class="mt-3 text-rose">@Model.AppUser?.UserName</h2>
             <p class="small text-muted">
@@ -263,7 +259,7 @@
                     foreach (var photo in Model.UserImageTBL_VM.Take(5))
                     {
                         if (string.IsNullOrEmpty(photo.ImageUrl))
-                            photo.ImageUrl = "blankprofile973460_1280-172650025.png";
+                            photo.ImageUrl = "blankprofile973460.png";
 
                         <div class="photo-card">
                             <img src="~/ImageUsers/@photo.ImageUrl" alt="User Photo" class="gallery-img" />

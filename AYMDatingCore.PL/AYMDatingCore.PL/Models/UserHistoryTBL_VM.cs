@@ -1,5 +1,6 @@
 ﻿using AYMDatingCore.DAL.BaseEntity;
 using AYMDatingCore.DAL.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace AYMDatingCore.PL.Models
 {
@@ -18,8 +19,13 @@ namespace AYMDatingCore.PL.Models
         public string? MainImageUrl { get; set; } = null!;
         public string City { get; set; } = null!;
         public string ProfileHeading { get; set; } = null!;
+
+        [MaxLength(1000)]
         public string AboutYou { get; set; } = null!;
+
+        [MaxLength(1000)]
         public string AboutPartner { get; set; } = null!;
+
         public bool IsMain { get; set; } = true;
         public bool IsSwitchedOff { get; set; } = false;
 

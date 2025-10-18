@@ -39,14 +39,10 @@
                 <div class="col-md-3 mb-4">
                     <div class="card shadow-lg border-0 rounded-4" style="background:#fff0f5;">
                         <a asp-controller="Home" asp-action="UserProfile" asp-route-UserName="@user.AppUser.UserName">
-                        @if (!string.IsNullOrEmpty(@user.MainImageUrl))
-                            {
-                                <img src="@user.MainImageUrl" class="card-img-top rounded-top-4 fixedimageIndex" alt="@user.AppUser.UserName" />
-                            }
-                            else
-                            {
-                                <img src="~/Images/Main/blankprofile973460_1280-172650025.png" class="card-img-top rounded-top-4 fixedimageIndex" alt="@user.AppUser.UserName" />
-                            }
+                            @if (string.IsNullOrEmpty(user.MainImageUrl))
+                                user.MainImageUrl = "blankprofile973460.png";
+
+                            <img src="~/ImageUsers/@user.MainImageUrl" class="card-img-top rounded-top-4 fixedimageIndex" alt="@user.AppUser.UserName" />
                         </a>
                         <div class="card-body text-center">
                             <h5 class="card-title text-pink">@user.AppUser.FirstName</h5>
