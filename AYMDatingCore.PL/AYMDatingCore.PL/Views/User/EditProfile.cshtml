@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Edit Profile";
 }
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <style>
     /* 🌸 Romantic Pink Theme */
     .profile-container {
@@ -133,9 +136,12 @@
 <div class="profile-container">
     <div class="profile-card">
         <h2 class="text-center text-rose mb-4">💖 Edit My Profile 💖</h2>
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
 
-        <form asp-action="EditProfile" asp-controller="User" method="post" enctype="multipart/form-data">
+        <form id="EditProfileForm" asp-action="EditProfile" asp-controller="User" method="post" enctype="multipart/form-data">
             <!-- ✅ Main Profile Photo -->
+            @Html.AntiForgeryToken()
+
             <div class="text-center mb-4">
                 <img id="photo_1" src="~/ImageUsers/@Model.MainImageUrl" class="rounded-circle border border-3 border-pink" width="150" height="150" />
                 <br />
@@ -149,42 +155,74 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label>Age Range From</label>
-                    <input asp-for="SearchAgeFrom" type="number" class="form-control" min="18" max="99" />
+                    <input asp-for="SearchAgeFrom" type="number" class="form-control" min="18" max="99" required />
                 </div>
                 <div class="col-md-6 mb-3">
                     <label>Age Range To</label>
-                    <input asp-for="SearchAgeTo" type="number" class="form-control" min="18" max="99" />
+                    <input asp-for="SearchAgeTo" type="number" class="form-control" min="18" max="99" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="MaritalStatusId" class="form-label">Marital Status</label>
+                    <select asp-for="MaritalStatusId" id="maritalStatusId" asp-items="Model.MaritalStatusOptions" class="form-select select2" required>
+                        <option value="">Select Status</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="EducationId" class="form-label">Education</label>
+                    <select asp-for="EducationId" id="educationId" asp-items="Model.EducationOptions" class="form-select select2" required>
+                        <option value="">Select Education</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ProfessionId" class="form-label">Profession</label>
+                    <select asp-for="ProfessionId" id="professionId" asp-items="Model.ProfessionOptions" class="form-select select2" required>
+                        <option value="">Select Profession</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="LanguageId" class="form-label">Language</label>
+                    <select asp-for="LanguageId" id="languageId" asp-items="Model.LanguageOptions" class="form-select select2" required>
+                        <option value="">Select Language</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PurposeId" class="form-label">Purpose</label>
+                    <select asp-for="PurposeId" id="purposeId" asp-items="Model.PurposeOptions" class="form-select select2" required>
+                        <option value="">Select Purpose</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="FinancialModeId" class="form-label">Financial Mode</label>
+                    <select asp-for="FinancialModeId" id="financialModeId" asp-items="Model.FinancialModeOptions" class="form-select select2" required>
+                        <option value="">Select Mode</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Profile Heading</label>
+                    <input id="profileHeading" asp-for="ProfileHeading" class="form-control" maxlength="50" required />
                 </div>
                 <div class="col-md-6 mb-3">
                     <label>City</label>
-                    <input asp-for="City" class="form-control" />
+                    <input id="city" asp-for="City" class="form-control" maxlength="50" required/>
                 </div>
                 <div class="col-md-12 mb-3">
                     <label>💖 About Me</label>
-                    <textarea asp-for="AboutYou" class="form-control" rows="3" maxlength="1000"></textarea>
+                    <textarea id="aboutMe" asp-for="AboutYou" class="form-control" rows="3" maxlength="1000" required></textarea>
                 </div>
                 <div class="col-md-12 mb-3">
                     <label>🌹 My Partner Should Be</label>
-                    <textarea asp-for="AboutPartner" class="form-control" rows="3" maxlength="1000"></textarea>
+                    <textarea id="aboutPartner" asp-for="AboutPartner" class="form-control" rows="3" maxlength="1000" required></textarea>
                 </div>
             </div>
 
             <!-- ✅ My Photos -->
             <h4 class="text-rose mt-4 mb-3">📸 My Photos</h4>
             <div class="photo-grid">
-@*                 @for (int i = 2; i <= 6; i++)
-                {
-                    var img = Model.UserImageTBL_VM?.ElementAtOrDefault(i - 2)?.ImageUrl ?? "blankprofile973460.png";
-                    if(string.IsNullOrEmpty(img))
-                        img = "blankprofile973460.png";
-
-                    <div class="photo-card">
-                        <img id="photo_@i" src="~/ImageUsers/@img" alt="Photo @i" />
-                        <button type="button" class="delete-btn" onclick="deletePhoto('@img', @i)">&times;</button>
-                        <input type="file" id="file_@i" accept="image/*" class="d-none" onchange="uploadImage(this, @i, '@img')" />
-                        <button type="button" class="btn btn-outline-primary w-100 mt-2" onclick="document.getElementById('file_@i').click()">Upload</button>
-                    </div>
-                } *@
                 @for (int i = 2; i <= 6; i++)
                 {
                     var img = Model.UserImageTBL_VM?.ElementAtOrDefault(i - 2)?.ImageUrl ?? "blankprofile973460.png";
@@ -227,9 +265,8 @@
 
                 const result = await response.json();
                 if (result.success) {
-            document.querySelector(`#photo_${number}`).src = "../ImageUsers/"+result.imageUrl;
-@*                     alert("✅ Photo uploaded successfully!");
- *@                } else {
+                         document.querySelector(`#photo_${number}`).src = "../ImageUsers/"+result.imageUrl;
+                 } else {
                     alert("❌ Upload failed: " + (result.message || "Unknown error"));
                 }
             } catch (error) {
@@ -251,9 +288,8 @@
 
                 const result = await response.json();
                 if (result.success) {
-        document.querySelector(`#photo_${number}`).src = "../ImageUsers/blankprofile973460.png";
-@*                     alert("🗑️ Photo deleted!");
- *@                } else {
+                        document.querySelector(`#photo_${number}`).src = "../ImageUsers/blankprofile973460.png";
+                     } else {
                     alert("❌ Deletion failed: " + (result.message || "Unknown error"));
                 }
             } catch (error) {
@@ -274,3 +310,58 @@
         }
     }
     </script>
+
+<script>
+$(document).ready(function () {
+
+        // Initialize all select2 dropdowns
+        const selectFields = [
+            { id: '#educationId', placeholder: 'Select Education' },
+            { id: '#professionId', placeholder: 'Select Profession' },
+            { id: '#maritalStatusId', placeholder: 'Select Status' },
+            { id: '#languageId', placeholder: 'Select Language' },
+            { id: '#purposeId', placeholder: 'Select Purpose' },
+            { id: '#financialModeId', placeholder: 'Select Financial Mode' }
+        ];
+
+        selectFields.forEach(field => {
+            $(field.id).select2({
+                placeholder: field.placeholder,
+                allowClear: true
+            });
+        });
+
+        // Handle form submission validation
+        $('#EditProfileForm').on('submit', function (e) {
+            let isValid = true;
+
+            // Reset previous error messages
+            $('.text-danger').text('');
+
+            // Fields to validate (IDs without '#')
+            const requiredFields = [
+                'profileHeading',
+                'city',
+                'aboutMe',
+                'aboutPartner',
+                'educationId',
+                'professionId',
+                'maritalStatusId',
+                'languageId',
+                'purposeId',
+                'financialModeId'
+            ];
+
+            // Loop through and validate
+            requiredFields.forEach(field => {
+                const value = $(`#${field}`).val()?.trim();
+                if (!value) isValid = false;
+            });
+
+            // Prevent submission if validation fails
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>

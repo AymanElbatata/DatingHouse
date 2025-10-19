@@ -14,6 +14,8 @@ namespace AYMDatingCore.BLL.Interfaces
     {
         ICountryTBLRepository CountryTBLRepository { get; }
         IGenderTBLRepository GenderTBLRepository { get; }
+        IUserAddressListTBLRepository UserAddressListTBLRepository { get; }
+
         IAppErrorTBLRepository AppErrorTBLRepository { get; }
         IEmailTBLRepository EmailTBLRepository { get; }
         SignInManager<AppUser> SignInManager { get; }
@@ -26,6 +28,7 @@ namespace AYMDatingCore.BLL.Interfaces
          ILanguageRepository LanguageRepository { get; }
          IProfessionRepository ProfessionRepository { get; }
          IPurposeRepository PurposeRepository { get; }
+         IMaritalStatusRepository MaritalStatusRepository { get; }
          IUserBlockRepository UserBlockRepository { get; }
          IUserFavoriteRepository UserFavoriteRepository { get; }
          IUserHistoryRepository UserHistoryRepository { get; }

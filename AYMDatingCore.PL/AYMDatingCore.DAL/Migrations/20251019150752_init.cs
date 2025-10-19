@@ -265,6 +265,9 @@ namespace AYMDatingCore.DAL.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ActivationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HostName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Browser = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActivated = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -323,6 +326,33 @@ namespace AYMDatingCore.DAL.Migrations
                         principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAddressListTBLs",
+                schema: "BDataSchema",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddressFamily = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedUserID = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastUpdateUserID = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdateDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAddressListTBLs", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_UserAddressListTBLs_Users_AppUserId",
+                        column: x => x.AppUserId,
+                        principalSchema: "ASecurity",
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -426,7 +456,7 @@ namespace AYMDatingCore.DAL.Migrations
                     LanguageId = table.Column<int>(type: "int", nullable: true),
                     GenderId = table.Column<int>(type: "int", nullable: true),
                     MaritalStatusId = table.Column<int>(type: "int", nullable: true),
-                    JobId = table.Column<int>(type: "int", nullable: true),
+                    ProfessionId = table.Column<int>(type: "int", nullable: true),
                     PurposeId = table.Column<int>(type: "int", nullable: true),
                     FinancialModeId = table.Column<int>(type: "int", nullable: true),
                     EducationId = table.Column<int>(type: "int", nullable: true),
@@ -485,8 +515,8 @@ namespace AYMDatingCore.DAL.Migrations
                         principalTable: "MaritalStatusTBLs",
                         principalColumn: "ID");
                     table.ForeignKey(
-                        name: "FK_UserHistoryTBLs_ProfessionTBLs_JobId",
-                        column: x => x.JobId,
+                        name: "FK_UserHistoryTBLs_ProfessionTBLs_ProfessionId",
+                        column: x => x.ProfessionId,
                         principalSchema: "BDataSchema",
                         principalTable: "ProfessionTBLs",
                         principalColumn: "ID");
@@ -784,6 +814,12 @@ namespace AYMDatingCore.DAL.Migrations
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserAddressListTBLs_AppUserId",
+                schema: "BDataSchema",
+                table: "UserAddressListTBLs",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserBlockTBLs_ReceiverAppUserId",
                 schema: "BDataSchema",
                 table: "UserBlockTBLs",
@@ -844,12 +880,6 @@ namespace AYMDatingCore.DAL.Migrations
                 column: "GenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserHistoryTBLs_JobId",
-                schema: "BDataSchema",
-                table: "UserHistoryTBLs",
-                column: "JobId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserHistoryTBLs_LanguageId",
                 schema: "BDataSchema",
                 table: "UserHistoryTBLs",
@@ -860,6 +890,12 @@ namespace AYMDatingCore.DAL.Migrations
                 schema: "BDataSchema",
                 table: "UserHistoryTBLs",
                 column: "MaritalStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserHistoryTBLs_ProfessionId",
+                schema: "BDataSchema",
+                table: "UserHistoryTBLs",
+                column: "ProfessionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserHistoryTBLs_PurposeId",
@@ -990,6 +1026,10 @@ namespace AYMDatingCore.DAL.Migrations
             migrationBuilder.DropTable(
                 name: "RoleClaims",
                 schema: "ASecurity");
+
+            migrationBuilder.DropTable(
+                name: "UserAddressListTBLs",
+                schema: "BDataSchema");
 
             migrationBuilder.DropTable(
                 name: "UserBlockTBLs",

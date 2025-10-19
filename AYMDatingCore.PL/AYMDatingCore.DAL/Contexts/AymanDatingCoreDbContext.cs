@@ -20,6 +20,7 @@ namespace AYMDatingCore.DAL.Contexts
 
         public DbSet<GenderTBL> GenderTBLs { get; set; }
         public DbSet<CountryTBL> CountryTBLs { get; set; }
+        public DbSet<UserAddressListTBL> UserAddressListTBLs { get; set; }
         public DbSet<EducationTBL> EducationTBLs { get; set; }
         public DbSet<FinancialModeTBL> FinancialModeTBLs { get; set; }
         public DbSet<ProfessionTBL> ProfessionTBLs { get; set; }

@@ -14,7 +14,7 @@ namespace AYMDatingCore.DAL.Entities
         public int? LanguageId { get; set; }
         public int? GenderId { get; set; }
         public int? MaritalStatusId { get; set; }
-        public int? JobId { get; set; }
+        public int? ProfessionId { get; set; }
         public int? PurposeId { get; set; }
         public int? FinancialModeId { get; set; }
         public int? EducationId { get; set; }
@@ -35,7 +35,7 @@ namespace AYMDatingCore.DAL.Entities
         public virtual LanguageTBL? Language { get; set; }
         public virtual GenderTBL? Gender { get; set; }
         public virtual MaritalStatusTBL? MaritalStatus { get; set; }
-        public virtual ProfessionTBL? Job { get; set; }
+        public virtual ProfessionTBL? Profession { get; set; }
         public virtual PurposeTBL? Purpose { get; set; }
         public virtual FinancialModeTBL? FinancialMode { get; set; }
         public virtual EducationTBL? Education { get; set; }

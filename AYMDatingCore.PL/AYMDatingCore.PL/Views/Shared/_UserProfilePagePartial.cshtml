@@ -246,7 +246,10 @@
                 @Model.Gender?.Name • @Model.Country?.Name • @Model.City
             </p>
             <p class="small text-muted">
-               Looking for someone between: @Model.SearchAgeFrom • @Model.SearchAgeTo
+               Looking for a partner between: @Model.SearchAgeFrom • @Model.SearchAgeTo
+            </p>
+            <p class="small text-muted">
+                @Model.ProfileHeading
             </p>
         </div>
 
@@ -290,7 +293,7 @@
             <div class="row mt-3">
                 <div class="col-md-6">
                     <p><strong>🎓 Education:</strong> @Model.Education?.Name</p>
-                    <p><strong>💼 Job:</strong> @Model.Job?.Name</p>
+                    <p><strong>💼 Profession:</strong> @Model.Profession?.Name</p>
                     <p><strong>💍 Marital Status:</strong> @Model.MaritalStatus?.Name</p>
                 </div>
                 <div class="col-md-6">

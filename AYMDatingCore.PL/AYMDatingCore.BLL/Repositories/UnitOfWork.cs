@@ -9,6 +9,7 @@ namespace AYMDatingCore.BLL.Repositories
     {
         public IGenderTBLRepository GenderTBLRepository { get; }
         public ICountryTBLRepository CountryTBLRepository { get; }
+        public IUserAddressListTBLRepository UserAddressListTBLRepository { get; }
         public IEmailTBLRepository EmailTBLRepository { get; }
         public IAppErrorTBLRepository AppErrorTBLRepository { get; }
         public SignInManager<AppUser> SignInManager { get; }
@@ -21,6 +22,7 @@ namespace AYMDatingCore.BLL.Repositories
         public ILanguageRepository LanguageRepository { get; }
         public IProfessionRepository ProfessionRepository { get; }
         public IPurposeRepository PurposeRepository { get; }
+        public IMaritalStatusRepository MaritalStatusRepository { get; }
         public IUserBlockRepository UserBlockRepository { get; }
         public IUserFavoriteRepository UserFavoriteRepository { get; }
         public IUserHistoryRepository UserHistoryRepository { get; }
@@ -32,8 +34,8 @@ namespace AYMDatingCore.BLL.Repositories
         public IUserViewRepository UserViewRepository { get; }
 
 
-        public UnitOfWork( IGenderTBLRepository GenderTBLRepository
-            ,ICountryTBLRepository CountryTBLRepository,
+        public UnitOfWork( IGenderTBLRepository GenderTBLRepository ,ICountryTBLRepository CountryTBLRepository,
+            IUserAddressListTBLRepository UserAddressListTBLRepository,
             IEmailTBLRepository EmailTBLRepository,
             IAppErrorTBLRepository AppErrorTBLRepository,
             SignInManager<AppUser> SignInManager,
@@ -45,12 +47,13 @@ namespace AYMDatingCore.BLL.Repositories
             IUserHistoryRepository UserHistoryRepository, IUserImageRepository UserImageRepository,
             IUserLikeRepository UserLikeRepository, IUserMessageGroupRepository UserMessageGroupRepository,
             IUserMessageRepository UserMessageRepository, IUserReportRepository UserReportRepository,
-            IUserViewRepository UserViewRepository
+            IUserViewRepository UserViewRepository, IMaritalStatusRepository MaritalStatusRepository
 
             )
         {
-            this.CountryTBLRepository = CountryTBLRepository;
             this.GenderTBLRepository = GenderTBLRepository;
+            this.CountryTBLRepository = CountryTBLRepository;
+            this.UserAddressListTBLRepository = UserAddressListTBLRepository;
             this.EmailTBLRepository = EmailTBLRepository;
             this.AppErrorTBLRepository = AppErrorTBLRepository;
             this.SignInManager = SignInManager;
@@ -72,6 +75,7 @@ namespace AYMDatingCore.BLL.Repositories
             this.PurposeRepository = PurposeRepository;
             this.UserHistoryRepository = UserHistoryRepository;
             this.UserFavoriteRepository = UserFavoriteRepository;
+            this.MaritalStatusRepository = MaritalStatusRepository;
         }
     }
 }

@@ -24,6 +24,10 @@ namespace AYMDatingCore.DAL.BaseEntity
         public string? Phone { get; set; } = null!;
         public string? ActivationCode { get; set; } = null!;
 
+        public string? IpAddress { get; set; } = null!;
+        public string? HostName { get; set; } = null!;
+        public string? Browser { get; set; } = null!;
+
         public bool IsActivated { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
 

@@ -24,20 +24,20 @@ namespace AYMDatingCore.PL.DTO
 
         [Required(ErrorMessage = "First name is required")]
         [Display(Name = "First Name")]
-        [MaxLength(10, ErrorMessage = "First Name must be at max 10 characters")]
+        [MaxLength(20, ErrorMessage = "First Name must be at max 20 characters")]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Last name is required")]
         [Display(Name = "Last Name")]
-        [MaxLength(10, ErrorMessage = "Last Name must be at max 10 characters")]
+        [MaxLength(20, ErrorMessage = "Last Name must be at max 20 characters")]
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Address is required")]
-        [MaxLength(200, ErrorMessage = "Last Name must be at max 200 character")]
+        [MaxLength(100, ErrorMessage = "Last Name must be at max 100 character")]
         public string Address { get; set; }
 
         [Required(ErrorMessage = "Phone is required")]
-        [MaxLength(50, ErrorMessage = "Phone must be at max 50 character")]
+        [MaxLength(20, ErrorMessage = "Phone must be at max 20 character")]
         public string Phone { get; set; } = null!;
 
         [Required(ErrorMessage = "Country is required")]

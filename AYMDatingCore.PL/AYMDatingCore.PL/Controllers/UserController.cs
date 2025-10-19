@@ -7,6 +7,7 @@ using AYMDatingCore.Helpers;
 using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -52,6 +53,20 @@ namespace AYMDatingCore.PL.Controllers
                 var data = GetUserHistoryByUserId(CurrentUser.Id);
                 data.UserImageTBL_VM = Mapper.Map<List<UserImageTBL_VM>>(unitOfWork.UserImageRepository.GetAllCustomized(
                             filter: a => a.IsDeleted == false && a.AppUserId == CurrentUser.Id).OrderBy(a => a.CreationDate));
+
+                data.EducationOptions = unitOfWork.EducationRepository.GetAllCustomized(
+                    filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                data.ProfessionOptions = unitOfWork.ProfessionRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                data.MaritalStatusOptions = unitOfWork.MaritalStatusRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                data.LanguageOptions = unitOfWork.LanguageRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                data.PurposeOptions = unitOfWork.PurposeRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                data.FinancialModeOptions = unitOfWork.FinancialModeRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+
                 return View(data);
             }
 
@@ -62,15 +77,34 @@ namespace AYMDatingCore.PL.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProfile(UserHistoryTBL_VM model)
         {
-            var CurrentUser = await GetUserByUserName(User.Identity.Name);
-            var currentUserProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
-            currentUserProfile.City = model.City;
-            currentUserProfile.SearchAgeFrom = model.SearchAgeFrom < 18 || model.SearchAgeFrom > 99 ? 18 : model.SearchAgeFrom;
-            currentUserProfile.SearchAgeTo = model.SearchAgeTo > 99 || model.SearchAgeTo < 18 ? 99 : model.SearchAgeTo;
-            currentUserProfile.AboutYou = model.AboutYou.Length > 1000 ? model.AboutYou.Substring(0, 1000) : model.AboutYou;
-            currentUserProfile.AboutPartner = model.AboutPartner.Length > 1000 ? model.AboutPartner.Substring(0, 1000) : model.AboutPartner;
-            unitOfWork.UserHistoryRepository.Update(currentUserProfile);
-            return RedirectToAction("UserProfile", "Home", new { UserName = CurrentUser.UserName });
+            try
+            {
+                var CurrentUser = await GetUserByUserName(User.Identity.Name);
+
+                if (ModelState.IsValid)
+                {
+                    var currentUserProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+                    currentUserProfile.City = model.City.Length > 50 ? model.AboutYou.Substring(0, 50) : model.City;
+                    currentUserProfile.SearchAgeFrom = model.SearchAgeFrom < 18 || model.SearchAgeFrom > 99 ? 18 : model.SearchAgeFrom;
+                    currentUserProfile.SearchAgeTo = model.SearchAgeTo > 99 || model.SearchAgeTo < 18 ? 99 : model.SearchAgeTo;
+                    currentUserProfile.ProfileHeading = model.ProfileHeading.Length > 50 ? model.ProfileHeading.Substring(0, 50) : model.ProfileHeading;
+                    currentUserProfile.AboutYou = model.AboutYou.Length > 1000 ? model.AboutYou.Substring(0, 1000) : model.AboutYou;
+                    currentUserProfile.AboutPartner = model.AboutPartner.Length > 1000 ? model.AboutPartner.Substring(0, 1000) : model.AboutPartner;
+                    currentUserProfile.EducationId = model.EducationId;
+                    currentUserProfile.ProfessionId = model.ProfessionId;
+                    currentUserProfile.MaritalStatusId = model.MaritalStatusId;
+                    currentUserProfile.LanguageId = model.LanguageId;
+                    currentUserProfile.PurposeId = model.PurposeId;
+                    currentUserProfile.FinancialModeId = model.FinancialModeId;
+                    unitOfWork.UserHistoryRepository.Update(currentUserProfile);
+                    return RedirectToAction("UserProfile", "Home", new { UserName = CurrentUser.UserName });
+                }
+                return View(model);
+            }
+            catch (Exception e)
+            {
+                return View(new UserHistoryTBL_VM());
+            }
         }
 
         [HttpPost]
@@ -439,7 +473,7 @@ namespace AYMDatingCore.PL.Controllers
                                          p => p.Language,
                                          p => p.Gender,
                                          p => p.MaritalStatus,
-                                         p => p.Job,
+                                         p => p.Profession,
                                          p => p.Purpose,
                                          p => p.FinancialMode,
                                          p => p.Education,

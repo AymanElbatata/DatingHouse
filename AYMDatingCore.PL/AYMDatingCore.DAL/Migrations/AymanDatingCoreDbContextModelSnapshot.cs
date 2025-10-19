@@ -70,6 +70,9 @@ namespace AYMDatingCore.DAL.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Browser")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -98,6 +101,12 @@ namespace AYMDatingCore.DAL.Migrations
 
                     b.Property<int?>("GenderTBLId")
                         .HasColumnType("int");
+
+                    b.Property<string>("HostName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActivated")
                         .HasColumnType("bit");
@@ -542,6 +551,45 @@ namespace AYMDatingCore.DAL.Migrations
                     b.ToTable("PurposeTBLs", "BDataSchema");
                 });
 
+            modelBuilder.Entity("AYMDatingCore.DAL.Entities.UserAddressListTBL", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressFamily")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CreatedUserID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastUpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastUpdateUserID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("UserAddressListTBLs", "BDataSchema");
+                });
+
             modelBuilder.Entity("AYMDatingCore.DAL.Entities.UserBlockTBL", b =>
                 {
                     b.Property<int>("ID")
@@ -674,9 +722,6 @@ namespace AYMDatingCore.DAL.Migrations
                     b.Property<bool>("IsSwitchedOff")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("JobId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("LanguageId")
                         .HasColumnType("int");
 
@@ -690,6 +735,9 @@ namespace AYMDatingCore.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("MaritalStatusId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProfessionId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProfileHeading")
@@ -717,11 +765,11 @@ namespace AYMDatingCore.DAL.Migrations
 
                     b.HasIndex("GenderId");
 
-                    b.HasIndex("JobId");
-
                     b.HasIndex("LanguageId");
 
                     b.HasIndex("MaritalStatusId");
+
+                    b.HasIndex("ProfessionId");
 
                     b.HasIndex("PurposeId");
 
@@ -1100,6 +1148,15 @@ namespace AYMDatingCore.DAL.Migrations
                     b.Navigation("GenderTBL");
                 });
 
+            modelBuilder.Entity("AYMDatingCore.DAL.Entities.UserAddressListTBL", b =>
+                {
+                    b.HasOne("AYMDatingCore.DAL.BaseEntity.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId");
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("AYMDatingCore.DAL.Entities.UserBlockTBL", b =>
                 {
                     b.HasOne("AYMDatingCore.DAL.BaseEntity.AppUser", "ReceiverAppUser")
@@ -1152,10 +1209,6 @@ namespace AYMDatingCore.DAL.Migrations
                         .WithMany()
                         .HasForeignKey("GenderId");
 
-                    b.HasOne("AYMDatingCore.DAL.Entities.ProfessionTBL", "Job")
-                        .WithMany()
-                        .HasForeignKey("JobId");
-
                     b.HasOne("AYMDatingCore.DAL.Entities.LanguageTBL", "Language")
                         .WithMany()
                         .HasForeignKey("LanguageId");
@@ -1163,6 +1216,10 @@ namespace AYMDatingCore.DAL.Migrations
                     b.HasOne("AYMDatingCore.DAL.Entities.MaritalStatusTBL", "MaritalStatus")
                         .WithMany()
                         .HasForeignKey("MaritalStatusId");
+
+                    b.HasOne("AYMDatingCore.DAL.Entities.ProfessionTBL", "Profession")
+                        .WithMany()
+                        .HasForeignKey("ProfessionId");
 
                     b.HasOne("AYMDatingCore.DAL.Entities.PurposeTBL", "Purpose")
                         .WithMany()
@@ -1178,11 +1235,11 @@ namespace AYMDatingCore.DAL.Migrations
 
                     b.Navigation("Gender");
 
-                    b.Navigation("Job");
-
                     b.Navigation("Language");
 
                     b.Navigation("MaritalStatus");
+
+                    b.Navigation("Profession");
 
                     b.Navigation("Purpose");
                 });

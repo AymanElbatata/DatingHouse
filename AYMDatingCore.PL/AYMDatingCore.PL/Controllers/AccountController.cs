@@ -7,6 +7,7 @@ using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Net;
 using System.Runtime.Intrinsics.X86;
 using System.Web;
 
@@ -183,6 +184,18 @@ namespace AYMDatingCore.PL.Controllers
                     return View(model);
                 }
 
+                //
+                string IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                if (Request.Headers.ContainsKey("X-Forwarded-For"))
+                    IpAddress = Request.Headers["X-Forwarded-For"].ToString();
+
+                // 🧩 2️⃣ Get Browser and Device Info
+                string userBrowser = Request.Headers["User-Agent"].ToString();
+                var entry = await Dns.GetHostEntryAsync(IpAddress);
+                var hostName = entry.HostName;
+                var addressList = entry.AddressList;
+                //
+
                 // Create new user
                 var user = new AppUser
                 {
@@ -195,7 +208,10 @@ namespace AYMDatingCore.PL.Controllers
                     CountryTBLId = model.CountryTBLId,
                     GenderTBLId = model.GenderTBLId,
                     ActivationCode = unitOfWork.MySPECIALGUID.GetUniqueKey(12),
-                    DateOfBirth = Convert.ToDateTime(model.DateOFBirth)
+                    DateOfBirth = Convert.ToDateTime(model.DateOFBirth),
+                    IpAddress = IpAddress,
+                    HostName = hostName,
+                    Browser = userBrowser
                 };
 
                 // Create the user
@@ -204,6 +220,10 @@ namespace AYMDatingCore.PL.Controllers
 
                 if (result.Succeeded)
                 {
+                    foreach (var item in addressList)
+                    {
+                        unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, Address = item.ToString(), AddressFamily=item.AddressFamily.ToString() });
+                    }
                     var userhistory = new UserHistoryTBL
                     {
                         AppUserId = user.Id,
@@ -213,7 +233,7 @@ namespace AYMDatingCore.PL.Controllers
                         EducationId = 1,
                         FinancialModeId = 1,
                         GenderId = model.GenderTBLId,
-                        JobId = model.ProfessionTBLId,
+                        ProfessionId = model.ProfessionTBLId,
                         ProfileHeading = "Your Heading.....",
                         AboutPartner = "AboutPartner...",
                         AboutYou = "AboutYou...",

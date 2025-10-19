@@ -1,5 +1,6 @@
 ﻿using AYMDatingCore.DAL.BaseEntity;
 using AYMDatingCore.DAL.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace AYMDatingCore.PL.Models
@@ -11,13 +12,17 @@ namespace AYMDatingCore.PL.Models
         public int? LanguageId { get; set; }
         public int? GenderId { get; set; }
         public int? MaritalStatusId { get; set; }
-        public int? JobId { get; set; }
+        public int? ProfessionId { get; set; }
         public int? PurposeId { get; set; }
         public int? FinancialModeId { get; set; }
         public int? EducationId { get; set; }
 
         public string? MainImageUrl { get; set; } = null!;
+
+        [MaxLength(50, ErrorMessage = "City must be at max 50 character")]
         public string City { get; set; } = null!;
+
+        [MaxLength(50, ErrorMessage = "Profile Heading must be at max 50 character")]
         public string ProfileHeading { get; set; } = null!;
 
         [MaxLength(1000)]
@@ -37,7 +42,7 @@ namespace AYMDatingCore.PL.Models
         public virtual LanguageTBL? Language { get; set; }
         public virtual GenderTBL? Gender { get; set; }
         public virtual MaritalStatusTBL? MaritalStatus { get; set; }
-        public virtual ProfessionTBL? Job { get; set; }
+        public virtual ProfessionTBL? Profession { get; set; }
         public virtual PurposeTBL? Purpose { get; set; }
         public virtual FinancialModeTBL? FinancialMode { get; set; }
         public virtual EducationTBL? Education { get; set; }
@@ -46,6 +51,13 @@ namespace AYMDatingCore.PL.Models
         public bool IsLiked { get; set; } = false;
         public bool Isblocked { get; set; } = false;
         public bool IsFavorite { get; set; } = false;
+
+        public IEnumerable<SelectListItem> EducationOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> ProfessionOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> MaritalStatusOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> LanguageOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> PurposeOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> FinancialModeOptions { get; set; } = new List<SelectListItem>();
 
 
     }
