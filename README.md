@@ -24,7 +24,7 @@ Whether you are seeking a romantic partner, a lifelong connection, or simply exp
 
 💞 User-Friendly Interface with responsive design using HTML, CSS, and jQuery.
 
-💬 Real-Time Chat System powered by SignalR for instant messaging.
+💬 Real-Time Chat System powered by SignalR for instant messaging and voice sounds.
 
 🧑‍🤝‍🧑 Smart Matching Algorithm to help users find compatible partners.
 
