@@ -55,6 +55,8 @@ namespace AYMDatingCore.PL
             builder.Services.AddScoped<IMySPECIALGUID, MySPECIALGUID>();
             builder.Services.AddScoped<ICountryTBLRepository, CountryTBLRepository>();
             builder.Services.AddScoped<IGenderTBLRepository, GenderTBLRepository>();
+            builder.Services.AddScoped<IMaritalStatusRepository, MaritalStatusRepository>();
+            builder.Services.AddScoped<IUserAddressListTBLRepository, UserAddressListTBLRepository>();
             builder.Services.AddScoped<IAppErrorTBLRepository, AppErrorTBLRepository>();
             builder.Services.AddScoped<IEmailTBLRepository, EmailTBLRepository>();
 
