@@ -7,6 +7,7 @@ using AYMDatingCore.Helpers;
 using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -98,6 +99,30 @@ namespace AYMDatingCore.PL.Controllers
                     currentUserProfile.FinancialModeId = model.FinancialModeId;
                     unitOfWork.UserHistoryRepository.Update(currentUserProfile);
                     return RedirectToAction("UserProfile", "Home", new { UserName = CurrentUser.UserName });
+                }
+                model = GetUserHistoryByUserId(CurrentUser.Id);
+                model.UserImageTBL_VM = Mapper.Map<List<UserImageTBL_VM>>(unitOfWork.UserImageRepository.GetAllCustomized(
+                            filter: a => a.IsDeleted == false && a.AppUserId == CurrentUser.Id).OrderBy(a => a.CreationDate));
+
+                model.EducationOptions = unitOfWork.EducationRepository.GetAllCustomized(
+                 filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                model.ProfessionOptions = unitOfWork.ProfessionRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                model.MaritalStatusOptions = unitOfWork.MaritalStatusRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                model.LanguageOptions = unitOfWork.LanguageRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                model.PurposeOptions = unitOfWork.PurposeRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                model.FinancialModeOptions = unitOfWork.FinancialModeRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        // Add them again (if you want to display them in summary)
+                        ModelState.AddModelError(string.Empty, error.ErrorMessage);
+                    }
                 }
                 return View(model);
             }

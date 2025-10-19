@@ -19,15 +19,19 @@ namespace AYMDatingCore.PL.Models
 
         public string? MainImageUrl { get; set; } = null!;
 
+        [Display(Name = "City")]
         [MaxLength(50, ErrorMessage = "City must be at max 50 character")]
         public string City { get; set; } = null!;
 
+        [Display(Name = "Heading")]
         [MaxLength(50, ErrorMessage = "Profile Heading must be at max 50 character")]
         public string ProfileHeading { get; set; } = null!;
 
+        [Display(Name = "About You")]
         [MaxLength(1000)]
         public string AboutYou { get; set; } = null!;
 
+        [Display(Name = "About Partner")]
         [MaxLength(1000)]
         public string AboutPartner { get; set; } = null!;
 
