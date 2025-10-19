@@ -223,7 +223,7 @@ namespace AYMDatingCore.PL.Controllers
                         MaritalStatusId = 1,
                         PurposeId = 1,
                         IsSwitchedOff = false,
-                        //MainImageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.NfQXJGQIFEdceeyi1sIW8AHaHa%3Fcb%3D12%26pid%3DApi&f=1&ipt=5b5ec62e4fd2be1477ff3e479a81e42bc4f90c88fda41f2db01ca5fc3e652347"
+                        MainImageUrl = "blankprofile973460.png"
                     };
                      unitOfWork.UserHistoryRepository.Add(userhistory);
 
