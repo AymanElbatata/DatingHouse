@@ -271,24 +271,28 @@
                     <label>Profile Heading</label>
                     <input id="profileHeading" asp-for="ProfileHeading" class="form-control" maxlength="50" required />
                     <span asp-validation-for="ProfileHeading" class="text-danger"></span>
+                    <span id="profileHeadingError" class="text-danger"></span>
+
                 </div>
                 <div class="col-md-6 mb-3">
                     <label>City</label>
-                    <input id="city" asp-for="City" class="form-control" maxlength="50" required/>
+                    <input id="city" asp-for="City" class="form-control" maxlength="50" required />
                     <span asp-validation-for="City" class="text-danger"></span>
+                    <span id="cityError" class="text-danger"></span>
                 </div>
                 <div class="col-md-12 mb-3">
                     <label>💖 About Me</label>
                     <textarea id="aboutMe" asp-for="AboutYou" class="form-control" rows="3" maxlength="1000" required></textarea>
                     <span asp-validation-for="AboutYou" class="text-danger"></span>
                     <small id="aboutMeCount" class="text-muted">0/1000</small>
-
+                    <span id="aboutMeError" class="text-danger"></span>
                 </div>
                 <div class="col-md-12 mb-3">
                     <label>🌹 My Partner Should Be</label>
                     <textarea id="aboutPartner" asp-for="AboutPartner" class="form-control" rows="3" maxlength="1000" required></textarea>
                     <span asp-validation-for="AboutPartner" class="text-danger"></span>
                     <small id="aboutPartnerCount" class="text-muted">0/1000</small>
+                    <span id="aboutPartnerError" class="text-danger"></span>
                 </div>
             </div>
 
@@ -321,7 +325,6 @@
 
 <script>
     $(document).ready(function () {
-
         /* ===================================================
            🎓 Initialize Select2 Dropdowns
         =================================================== */
@@ -346,6 +349,7 @@
            🧠 Form Validation Before Submit
         =================================================== */
         $('#EditProfileForm').on('submit', function (e) {
+            debugger;
             let isValid = true;
             $('.text-danger').text(''); // Clear previous error messages
 
@@ -365,14 +369,26 @@
             // Validate empty fields
             requiredFields.forEach(field => {
                 const value = $(`#${field}`).val()?.trim();
-                if (!value) isValid = false;
+                if (!value)
+                {
+                    isValid = false;
+                    $(`#${field+"Error"}`).text('Required');
+                }
             });
+
 
             // Character limit check
             const aboutMeLen = $('#aboutMe').val().length;
             const aboutPartnerLen = $('#aboutPartner').val().length;
-            if (aboutMeLen > 1000 || aboutPartnerLen > 1000) {
-                alert('⚠️ Each "About" section must be under 1000 characters.');
+            if (aboutMeLen > 1000) {
+                alert('⚠️ About Me section must be under 1000 characters.');
+                $('#aboutMe').val() = $('#aboutMe').val().substring(0, 1000);
+                e.preventDefault();
+                return false;
+            }
+            if (aboutPartnerLen > 1000) {
+                alert('⚠️ About Partner section must be under 1000 characters.');
+                $('#aboutPartner').val() = $('#aboutPartner').val().substring(0, 1000);
                 e.preventDefault();
                 return false;
             }

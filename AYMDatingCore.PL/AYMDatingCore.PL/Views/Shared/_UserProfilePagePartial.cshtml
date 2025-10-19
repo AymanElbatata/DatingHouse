@@ -377,38 +377,53 @@
 </script>
    
 <script>
-        // Like button toggle
-        document.getElementById("likeBtn").addEventListener("click", function () {
-            AddLikeFavoriteBlock("@Model.AppUser?.UserName",1);
-            this.classList.toggle("liked");
-            const liked = this.classList.contains("liked");
-            const icon = this.querySelector("i");
-            icon.className = liked ? "fas fa-heart" : "far fa-heart";
-            this.textContent = liked ? "Is Liked" : " Add Like";
-            this.prepend(icon);
-        });
+    document.addEventListener("DOMContentLoaded", function () {
 
-        // Favorite button toggle
-        document.getElementById("favoriteBtn").addEventListener("click", function () {
-            AddLikeFavoriteBlock("@Model.AppUser?.UserName",2);
-            this.classList.toggle("added");
-            const added = this.classList.contains("added");
-            const icon = this.querySelector("i");
-            icon.className = added ? "fas fa-star" : "far fa-star";
-            this.textContent = added ? "Is Favorited" : " Add to Favorite";
-            this.prepend(icon);
-        });
+        // 🔹 Helper for toggle buttons
+        function setupToggleButton(buttonId, actionType, activeClass, activeIcon, inactiveIcon, activeText, inactiveText) {
+            const btn = document.getElementById(buttonId);
+            if (!btn) {
+                 return;
+            }
 
-        // Block button toggle
-        document.getElementById("blockBtn").addEventListener("click", function () {
-            AddLikeFavoriteBlock("@Model.AppUser?.UserName",3);
-            this.classList.toggle("blocked");
-            const blocked = this.classList.contains("blocked");
-            const icon = this.querySelector("i");
-            icon.className = blocked ? "fas fa-ban" : "far fa-ban";
-            this.textContent = blocked ? "Is blocked" : " Add Block";
-            this.prepend(icon);
-        });
+            btn.addEventListener("click", function () {
+                AddLikeFavoriteBlock("@Model.AppUser?.UserName", actionType);
+                this.classList.toggle(activeClass);
+
+                const isActive = this.classList.contains(activeClass);
+                const icon = this.querySelector("i");
+
+                if (icon) {
+                    icon.className = isActive ? activeIcon : inactiveIcon;
+                }
+
+                this.textContent = isActive ? activeText : inactiveText;
+                this.prepend(icon);
+            });
+        }
+
+        // ✅ Like button
+        setupToggleButton("likeBtn", 1, "liked", "fas fa-heart", "far fa-heart", "Is Liked", "Add Like");
+
+        // ✅ Favorite button
+        setupToggleButton("favoriteBtn", 2, "added", "fas fa-star", "far fa-star", "Is Favorited", "Add to Favorite");
+
+        // ✅ Block button
+        setupToggleButton("blockBtn", 3, "blocked", "fas fa-ban", "far fa-ban", "Is Blocked", "Add Block");
+
+        // ✅ Chat button (redirect or open modal)
+        const chatBtn = document.getElementById("chatBtn");
+        if (chatBtn) {
+            chatBtn.addEventListener("click", function () {
+                const username = '@Model.AppUser?.UserName';
+                const url = '@Url.Action("Chat", "User")' + '?RecieverUserName=' + encodeURIComponent(username);
+                window.location.href = url; // Redirect to chat
+            });
+        } else {
+            console.warn("chatBtn not found in DOM.");
+        }
+
+    });
 
         function AddLikeFavoriteBlock(RecieverUserName,operation){
             $.ajax({
@@ -429,12 +444,5 @@
             }
         });
         }
-        // Chat button (redirect or open modal)
-        document.getElementById("chatBtn").addEventListener("click", function () {
-            // Replace with your chat URL or modal logic
-             const username = '@Model.AppUser?.UserName';
-             const url = '@Url.Action("Chat", "User")' + '?RecieverUserName=' + encodeURIComponent(username);
-            window.location.href = url;
 
-        });
     </script>
