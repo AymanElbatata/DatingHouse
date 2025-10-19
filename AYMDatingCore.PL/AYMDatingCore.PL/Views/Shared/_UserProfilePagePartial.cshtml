@@ -334,7 +334,7 @@
                     </button>
                 </div>
             }
-            if (User.IsInRole("User"))
+            if (User.Identity.Name == Model.AppUser.UserName && User.IsInRole("User"))
             {
                 <div class="text-center mt-3">
                     <a href="@Url.Action("EditProfile", "User", new { UserName = Model.AppUser.UserName })"
