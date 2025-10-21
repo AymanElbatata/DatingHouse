@@ -244,8 +244,79 @@
     }
 
     }
-</style>
 
+    .chat-file-preview {
+        display: flex;
+        align-items: center;
+        background: #fff0f5;
+        border-radius: 12px;
+        padding: 8px 12px;
+        max-width: 100%;
+        margin-top: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: background 0.2s ease;
+    }
+
+        .chat-file-preview:hover {
+            background: #ffe4ed;
+        }
+
+        .chat-file-preview .file-icon {
+            background: #ffb6c1;
+            color: white;
+            border-radius: 50%;
+            padding: 10px;
+            max-width: 50%;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            margin-right: 10px;
+        }
+
+        .chat-file-preview .file-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-file-preview .file-name {
+            color: #ff1493;
+            text-decoration: none;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+            .chat-file-preview .file-name:hover {
+                text-decoration: underline;
+            }
+
+        .chat-file-preview .file-size {
+            font-size: 12px;
+            color: #777;
+        }
+
+    /* 🖼 Image preview */
+    .chat-image-preview img {
+        max-width: 25%;
+        max-height: 25%;
+        border-radius: 12px;
+        margin-top: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    /* 🎥 Video preview */
+    .chat-video-preview video {
+        max-width: 25%;
+        max-height: 25%;
+        border-radius: 12px;
+        margin-top: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+</style>
 
 
 <div class="profile-chat-container">
@@ -292,12 +363,41 @@
                             }
                             else
                             {
-                                <a class="chat-file" href="@Url.Content($"~/FileUsers/{msg.FileDataUrl}")"
-                                   target="_blank"
-                                   download>
-                                    <i class="fa fa-paperclip"></i>
-                                    @msg.FileDataUrl
-                                </a>
+                                @if (msg.FileDataUrl != null)
+                                {
+                                    var filePath = Url.Content($"~/FileUsers/{msg.FileDataUrl}");
+                                    var fileExtension = System.IO.Path.GetExtension(msg.FileDataUrl).ToLower();
+
+                                    if (fileExtension == ".jpg" || fileExtension == ".jpeg" || fileExtension == ".png" || fileExtension == ".gif")
+                                    {
+                                        <div class="chat-image-preview">
+                                            <a href="@filePath" target="_blank">
+                                                <img src="@filePath" alt="Image preview" />
+                                            </a>
+                                        </div>
+                                    }
+                                    else if (fileExtension == ".mp4" || fileExtension == ".webm" || fileExtension == ".ogg")
+                                    {
+                                        <div class="chat-video-preview">
+                                            <video controls>
+                                                <source src="@filePath" type="video/@fileExtension.TrimStart('.')">
+                                                Your browser does not support video playback.
+                                            </video>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="chat-file-preview">
+                                            <div class="file-icon">
+                                                <i class="fa fa-file"></i>
+                                            </div>
+                                            <div class="file-info">
+                                                <a href="@filePath" target="_blank" download class="file-name">@msg.FileDataUrl</a>
+                                                <small class="file-size">File</small>
+                                            </div>
+                                        </div>
+                                    }
+                                }
                             }
                         </li>
                     }
@@ -370,7 +470,7 @@
 </div>
 
 
- <script>
+<script>
      let CurrentUserChatMessage = document.getElementById("sendButtonMsg").value;
          const connection = new signalR.HubConnectionBuilder()
         .withUrl("/chathub")
@@ -718,12 +818,38 @@
         }
 
         const fileUrl = `../FileUsers/${fileName}`;
-        const fileElement = `
-            <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${senderUserName}</strong></p>
-            <a href="${fileUrl}" target="_blank" download="${fileName}">
-                <i class="fa fa-paperclip"></i> ${fileName}
-            </a>
+    let fileElement = `
+        <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${senderUserName}</strong></p>
+    `;
+
+    if (/\.(jpg|jpeg|png|gif)$/i.test(fileName)) {
+        fileElement += `
+            <div class="chat-image-preview">
+                <a href="${fileUrl}" target="_blank">
+                    <img src="${fileUrl}" alt="Image preview" />
+                </a>
+            </div>
         `;
+    } else if (/\.(mp4|webm|ogg)$/i.test(fileName)) {
+        fileElement += `
+            <div class="chat-video-preview">
+                <video controls>
+                    <source src="${fileUrl}" type="video/${fileName.split('.').pop()}">
+                    Your browser does not support video playback.
+                </video>
+            </div>
+        `;
+    } else {
+        fileElement += `
+            <div class="chat-file-preview">
+                <div class="file-icon"><i class="fa fa-file"></i></div>
+                <div class="file-info">
+                    <a href="${fileUrl}" target="_blank" download="${fileName}" class="file-name">${fileName}</a>
+                    <small class="file-size">File</small>
+                </div>
+            </div>
+        `;
+    }
 
         li.innerHTML = fileElement;
         list.appendChild(li);
