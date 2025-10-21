@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace AYMDatingCore.Helpers
 {
-    [Authorize]
     public class NotificationHub : Hub
     {
         public async Task GetLikeNotification(string userRecieverId)
         {
-            await Clients.User(userRecieverId).SendAsync("ReceiveLikeNotification",1);
+            await Clients.User(userRecieverId).SendAsync("ReceiveLikeNotification");
         }
         public async Task GetViewNotification(string userRecieverId)
         {

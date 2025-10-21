@@ -19,18 +19,22 @@ namespace AYMDatingCore.PL.Models
 
         public string? MainImageUrl { get; set; } = null!;
 
+        [Required(ErrorMessage = "City is required")]
         [Display(Name = "City")]
         [MaxLength(50, ErrorMessage = "City must be at max 50 character")]
         public string City { get; set; } = null!;
 
+        [Required(ErrorMessage = "Heading is required")]
         [Display(Name = "Heading")]
         [MaxLength(50, ErrorMessage = "Profile Heading must be at max 50 character")]
         public string ProfileHeading { get; set; } = null!;
 
+        [Required(ErrorMessage = "About You is required")]
         [Display(Name = "About You")]
         [MaxLength(1000)]
         public string AboutYou { get; set; } = null!;
 
+        [Required(ErrorMessage = "About Partner is required")]
         [Display(Name = "About Partner")]
         [MaxLength(1000)]
         public string AboutPartner { get; set; } = null!;

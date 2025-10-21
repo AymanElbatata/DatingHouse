@@ -13,6 +13,7 @@ namespace AYMDatingCore.DAL.Entities
         public string? ReceiverAppUserId { get; set; }
         public string? Message { get; set; } = null!;
         public string? AudioDataUrl { get; set; } = null!;
+        public string? FileDataUrl { get; set; } = null!;
 
         public bool IsSeen { get; set; } = false;
         public bool IsDeletedFromSender { get; set; } = false;

@@ -659,6 +659,7 @@ namespace AYMDatingCore.DAL.Migrations
                     ReceiverAppUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AudioDataUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FileDataUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsSeen = table.Column<bool>(type: "bit", nullable: false),
                     IsDeletedFromSender = table.Column<bool>(type: "bit", nullable: false),
                     IsDeletedFromReceiver = table.Column<bool>(type: "bit", nullable: false),

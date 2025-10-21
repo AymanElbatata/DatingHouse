@@ -10,6 +10,7 @@
 }
 
 <style>
+    /* 🌸 Global Layout */
     .profile-chat-container {
         display: flex;
         justify-content: center;
@@ -19,60 +20,49 @@
         min-height: 100vh;
     }
 
+    /* 🩷 Profile Card */
     .profile-card {
-        background: white;
+        background: #fff;
         border-radius: 25px;
         max-width: 800px;
         width: 100%;
-        padding: 25px 35px;
+        padding: 25px 30px;
         box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+        text-align: center;
+        transition: all 0.3s ease;
     }
 
+        .profile-card:hover {
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.4);
+        }
+
+    /* 👤 Profile Image */
     .profile-img {
-        width: 140px;
-        height: 140px;
+        width: 130px;
+        height: 130px;
         border-radius: 50%;
-        border: 5px solid #ff69b4;
+        border: 4px solid #ff69b4;
         object-fit: cover;
         transition: transform 0.3s ease;
     }
 
         .profile-img:hover {
-            transform: scale(1.15);
+            transform: scale(1.1);
         }
 
+    /* 💖 Text Colors */
     .text-rose {
         color: #ff1493;
     }
 
-    .action-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-    }
-
-    .action-btn {
-        background: #fff;
-        border: 2px solid #ff69b4;
-        border-radius: 50%;
-        width: 45px;
-        height: 45px;
-        color: #ff69b4;
-        transition: all 0.3s ease;
-    }
-
-        .action-btn:hover {
-            background: #ff69b4;
-            color: white;
-            transform: scale(1.1);
-        }
-
+    /* ✨ Chat Section */
     .chat-section {
         background: #fff8fa;
         border-radius: 15px;
         padding: 15px;
         max-height: 400px;
         overflow-y: auto;
+        margin-top: 1.5rem;
     }
 
     .message-list {
@@ -86,105 +76,131 @@
         border-radius: 10px;
         padding: 10px 15px;
         margin: 8px 0;
+        transition: all 0.2s ease;
     }
 
         .message-item.sent {
             background: #ffd1dc;
-            text-align: left;
         }
 
     .message-meta {
         font-size: 0.8rem;
-        color: #888;
+        color: #777;
         margin-bottom: 5px;
     }
 
     .message-text {
         font-size: 1rem;
         color: #333;
+        word-wrap: break-word;
     }
 
+    /* 🗨️ Chat Input */
     .chat-input {
         margin-top: 20px;
     }
 
     .chat-btn {
         background-color: #ff69b4;
-        color: white !important;
+        color: #fff !important;
         border-radius: 25px;
         padding: 8px 16px;
-        text-decoration: none;
+        border: none;
+        transition: 0.3s ease;
     }
 
-    .voice-recorder-container {
+        .chat-btn:hover {
+            background-color: #ff4da6;
+        }
+
+    /* 🎙 Voice Recorder & File Upload Buttons */
+    .voice-recorder-container,
+    .file-upload-container {
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
         margin-top: 20px;
     }
 
-    .voice-controls {
+    .voice-controls,
+    .file-controls {
         display: flex;
         align-items: center;
-        gap: 15px;
+        justify-content: center;
+        gap: 12px;
     }
 
+    /* 🎛 FAB Buttons (Unified Style) */
     .voice-btn {
-        width: 60px;
-        height: 60px;
+        width: 55px;
+        height: 55px;
         border-radius: 50%;
         border: none;
         cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 24px;
+        font-size: 22px;
         display: flex;
         justify-content: center;
         align-items: center;
         box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
     }
 
-    /* Microphone (green) */
+    /* 🎤 Mic (Green) */
     .mic-btn {
         background-color: #25D366;
-        color: white;
+        color: #fff;
     }
 
         .mic-btn:hover {
             background-color: #1EBE5A;
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
 
-    /* Stop/Send (red/orange) */
+    /* 🛑 Stop (Red) */
     .stop-btn {
         background-color: #FF3B30;
-        color: white;
+        color: #fff;
     }
 
         .stop-btn:hover {
             background-color: #e63228;
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
 
-    /* === Recording Dots Animation === */
+    /* 📁 File (Pink Variants) */
+    .file-btn {
+        background-color: #ffb6c1;
+        color: #fff;
+    }
+
+    .upload-btn {
+        background-color: #ff85a2;
+        color: #fff;
+    }
+
+        .file-btn:hover,
+        .upload-btn:hover {
+            transform: scale(1.1);
+            filter: brightness(1.1);
+        }
+
+    /* 🎞 Dots Animation (Recording / Uploading) */
     .recording-dots {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 4px;
+        gap: 5px;
         height: 20px;
     }
 
     .dot {
         width: 6px;
         height: 6px;
-        background-color: #25D366;
+        background-color: #ff69b4;
         border-radius: 50%;
         animation: blink 1.4s infinite both;
     }
-
-        .dot:nth-child(1) {
-            animation-delay: 0s;
-        }
 
         .dot:nth-child(2) {
             animation-delay: 0.2s;
@@ -209,18 +225,28 @@
 
     }
 
-    /* Responsive for phones */
+    /* 📱 Responsive Design */
     @@media (max-width: 600px) {
-        .voice-btn
+        .profile-card
 
     {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
+        padding: 20px;
+    }
+
+    .voice-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+    }
+
+    .chat-section {
+        max-height: 300px;
     }
 
     }
 </style>
+
+
 
 <div class="profile-chat-container">
     <div class="profile-card shadow-lg text-center">
@@ -239,7 +265,7 @@
                 @Model.UserHistoryTBL_VM.Gender?.Name • @Model.UserHistoryTBL_VM.Country?.Name • @Model.UserHistoryTBL_VM.City
             </p>
             <p class="small text-muted">
-                🎯 Looking for someone between: <strong>@Model.UserHistoryTBL_VM.SearchAgeFrom</strong> - <strong>@Model.UserHistoryTBL_VM.SearchAgeTo</strong>
+                🎯 Looking for a partner between: <strong>@Model.UserHistoryTBL_VM.SearchAgeFrom</strong> - <strong>@Model.UserHistoryTBL_VM.SearchAgeTo</strong>
             </p>
 
         </div>
@@ -257,12 +283,21 @@
                             {
                                 <p class="message-text">@msg.Message</p>
                             }
-                            else
+                            else if (!string.IsNullOrEmpty(msg.AudioDataUrl))
                             {
                                 <audio controls style="width:100%;">
                                     <source src="~/AudioUsers/@msg.AudioDataUrl" type="audio/webm">
                                     Your browser does not support audio playback.
                                 </audio>
+                            }
+                            else
+                            {
+                                <a class="chat-file" href="@Url.Content($"~/FileUsers/{msg.FileDataUrl}")"
+                                   target="_blank"
+                                   download>
+                                    <i class="fa fa-paperclip"></i>
+                                    @msg.FileDataUrl
+                                </a>
                             }
                         </li>
                     }
@@ -278,7 +313,7 @@
         <div class="chat-input mt-3">
             @if (!Model.IsThereBlocking)
             {
-                <input id="sendButtonMsg" placeholder="Write your message and press Enter..." onkeyup="CheckEnter()" class="form-control" />
+                <input id="sendButtonMsg" placeholder="Write your message and hit Enter..." onkeyup="CheckEnter()" class="form-control" />
                 <div class="voice-recorder-container">
                     <div class="voice-controls">
                         <button id="startBtn" class="voice-btn mic-btn">
@@ -295,6 +330,32 @@
                             <i class="fa fa-paper-plane"></i>
                         </button>
                     </div>
+                </div>
+                <div class="file-upload-container mt-3">
+                    <div class="file-controls d-flex align-items-center gap-2">
+                        <!-- Hidden file input -->
+                        <input type="file" id="userFile" class="form-control-file" style="display: none;" />
+
+                        <!-- Choose File Button -->
+                        <button id="chooseFileBtn" class="voice-btn file-btn" onclick="document.getElementById('userFile').click()">
+                            <i class="fa fa-folder-open"></i>
+                        </button>
+
+                        <!-- Upload Button -->
+                        <button id="uploadBtn" class="voice-btn upload-btn" disabled>
+                            <i class="fa fa-upload"></i>
+                        </button>
+
+                        <!-- Dots animation (same as recording) -->
+                        <div id="uploadDots" class="recording-dots" style="display: none;">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+
+                    <!-- Optional filename display -->
+                    <p id="selectedFileName" class="text-muted mt-2" style="font-size: 0.9rem;"></p>
                 </div>
             }
             else
@@ -527,7 +588,6 @@
             },
             success: function (response) {
                 if (response.success) {
-                    console.log("🎧 Audio message saved successfully.");
                     $("#sendButtonMsg").show();
                     $("#thereisBlockingBtn").hide();
                 } else {
@@ -542,4 +602,131 @@
             }
         });
     }
+
+</script>
+
+<script>
+        document.getElementById("userFile").addEventListener("change", function () {
+        const file = this.files[0];
+        const uploadBtn = document.getElementById("uploadBtn");
+        const fileNameLabel = document.getElementById("selectedFileName");
+
+        if (file) {
+            uploadBtn.disabled = false;
+            fileNameLabel.textContent = `📂 Selected: ${file.name}`;
+        } else {
+            uploadBtn.disabled = true;
+            fileNameLabel.textContent = "";
+        }
+    });
+    // --- File upload setup ---
+    const uploadBtn = document.getElementById("uploadBtn");
+    const fileInput = document.getElementById("userFile");
+    const uploadDots = document.getElementById("uploadDots"); // Optional animation like recordingDots
+
+    // --- Handle File Upload Button Click ---
+    uploadBtn.addEventListener("click", async () => {
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Please select a file first.");
+            return;
+        }
+
+        const file = fileInput.files[0];
+            const maxFileSize = 5 * 1024 * 1024; // 5 MB in bytes
+    if (file.size > maxFileSize) {
+        alert("⚠️ The file size must be less than 5 MB.");
+        return;
+    }
+        uploadDots.style.display = "flex"; // show uploading animation if you have one
+
+
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // 🔹 Save file in database and server folder
+            SaveFileInDB("@Model.ReceiverAppUser.UserName", file);
+
+            uploadBtn.disabled = true;
+            console.log("📁 File upload started...");
+        } catch (err) {
+            console.error("❌ File upload error:", err);
+            alert("File upload failed. Please try again.");
+        }
+    });
+
+    // --- Save File in DB via AJAX ---
+    async function SaveFileInDB(ReceiverUserName, file) {
+        const formData = new FormData();
+        formData.append("receiverUserName", ReceiverUserName);
+        formData.append("file", file);
+
+        $.ajax({
+            url: '@Url.Action("SaveFileMessageInChat", "User")', // new controller action
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                uploadDots.style.display = "none";
+                uploadBtn.disabled = false;
+
+                if (response.success) {
+                    $("#sendButtonMsg").show();
+                    $("#thereisBlockingBtn").hide();
+                // 🔹 Match your message structure — send via SignalR to group
+                connection.invoke(
+                    "SendFileToGroup", // Hub method name
+                    "@Model.GroupName", // Group name
+                    "@Model.SenderAppUser.UserName", // Sender username
+                     response.fileUrl // sending just file name for real-time notification
+                ).catch(err => console.error("❌ Error sending file notification:", err));
+                 $("#selectedFileName").text("");
+
+                } else {
+                    $('#sendButtonMsg').hide();
+                    $('#startBtn').hide();
+                    $('#stopBtn').hide();
+                    $('#uploadBtn').hide();
+                    $('#userFile').hide();
+                    $('#thereisBlockingBtn').show();
+                }
+            },
+            error: function (xhr) {
+                uploadDots.style.display = "none";
+                uploadBtn.disabled = false;
+                console.error("❌ Error saving file:", xhr.responseText);
+            }
+        });
+    }
+
+    // --- Receiving and displaying file messages ---
+    connection.on("ReceiveFileFromGroup", (senderUserName, fileName) => {
+        if ($('#ThereISNoMessagesyet').length) {
+            $('#ThereISNoMessagesyet').hide();
+        }
+
+        const list = document.getElementById("MessageListArea");
+        const li = document.createElement("li");
+        li.classList.add("message-item");
+
+        const currentUser = '@User.Identity.Name';
+        if (senderUserName === currentUser) {
+            li.classList.add("sent");
+        } else {
+            li.classList.add("received");
+        }
+
+        const fileUrl = `../FileUsers/${fileName}`;
+        const fileElement = `
+            <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${senderUserName}</strong></p>
+            <a href="${fileUrl}" target="_blank" download="${fileName}">
+                <i class="fa fa-paperclip"></i> ${fileName}
+            </a>
+        `;
+
+        li.innerHTML = fileElement;
+        list.appendChild(li);
+        GoToLastMessage();
+    });
 </script>

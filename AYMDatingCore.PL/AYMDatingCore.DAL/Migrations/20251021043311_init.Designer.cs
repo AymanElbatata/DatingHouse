@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AYMDatingCore.DAL.Migrations
 {
     [DbContext(typeof(AymanDatingCoreDbContext))]
-    [Migration("20251019150752_init")]
+    [Migration("20251021043311_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -914,6 +914,9 @@ namespace AYMDatingCore.DAL.Migrations
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FileDataUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
