@@ -901,8 +901,10 @@
 
     // --- 2️⃣ When incoming call arrives ---
     connection.on("IncomingCall", async (caller) => {
+        ringtone.play();
         const accept = confirm(`📞 '@Model.SenderAppUser.UserName' is calling you. Accept?`);
          if (accept) {
+            ringtone.pause();
             callAcceptSound.play();
             await connection.invoke("AcceptCall", caller, currentUser);
             startVoiceCall(caller, true);
