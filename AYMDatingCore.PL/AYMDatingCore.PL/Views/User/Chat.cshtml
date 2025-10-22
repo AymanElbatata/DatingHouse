@@ -901,7 +901,7 @@
 
     // --- 2️⃣ When incoming call arrives ---
     connection.on("IncomingCall", async (caller) => {
-        const accept = confirm(`📞 ${'@Model.SenderAppUser.UserName'} is calling you. Accept?`);
+        const accept = confirm(`📞 '@Model.SenderAppUser.UserName' is calling you. Accept?`);
          if (accept) {
             callAcceptSound.play();
             await connection.invoke("AcceptCall", caller, currentUser);
@@ -986,6 +986,9 @@
         ringtone.pause();
         callAcceptSound.pause();
         callStatus.innerText = "";
+
+        SaveinDB("@Model.ReceiverAppUser.UserName","Voice Call had been ended..");
+        connection.invoke("SendMessageToGroup", "@Model.GroupName", "Voice Call had been ended..","@Model.SenderAppUser.UserName");
 
         // 🔹 Notify the other user that the call has ended
         await connection.invoke("EndCall", currentUser, receiverUser);
