@@ -37,7 +37,14 @@ else
 @if (Model!= null)
 {
     <div class="container mt-4">
-        <h3 class="text-center text-danger">💖 Matches Found 💖</h3>
+        @if (ViewBag.CounterUsers!= null)
+        {
+            <h3 class="text-center text-danger">💖 Partners Found (@ViewBag.CounterUsers) 💖</h3>
+        }
+        else
+        {
+            <h3 class="text-center text-danger">💖 Matches Found (@ViewBag.MatchedUsers) 💖</h3>
+        }
 
         <div class="row mt-3">
             @foreach (var user in Model)

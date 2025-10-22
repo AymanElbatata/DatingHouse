@@ -34,13 +34,17 @@ namespace AYMDatingCore.PL.Controllers
 
         public IActionResult Index()
         {
-            return View(GetAllUsersOrFiltered(new UserMainSearchDTO()));
+            var data = GetAllUsersOrFiltered(new UserMainSearchDTO());
+            ViewBag.CounterUsers = data.Count();
+            return View(data.Take(6));
         }
 
         [HttpPost]
         public IActionResult Index(UserMainSearchDTO model)
         {
-            return View(GetAllUsersOrFiltered(model));
+            var data = GetAllUsersOrFiltered(model);
+            ViewBag.MatchedUsers = data.Count();
+            return View(data);
         }
 
         public async Task<IActionResult> UserProfile(string? UserName)
