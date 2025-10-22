@@ -97,6 +97,12 @@ namespace AYMDatingCore.PL.Controllers
                     var result = await unitOfWork.SignInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
                     if (result.Succeeded)
                     {
+                        string IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                        if (Request.Headers.ContainsKey("X-Forwarded-For"))
+                            IpAddress = Request.Headers["X-Forwarded-For"].ToString();
+
+                        unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, Address = IpAddress });
+
                         var isAdmin = await unitOfWork.UserManager.IsInRoleAsync(user, "Admin");
                         if (isAdmin)
                             return RedirectToAction("Index", "Admin", new { UserName = user.UserName });
@@ -185,10 +191,6 @@ namespace AYMDatingCore.PL.Controllers
                 }
 
                 //
-                string IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-                if (Request.Headers.ContainsKey("X-Forwarded-For"))
-                    IpAddress = Request.Headers["X-Forwarded-For"].ToString();
-
                 // 🧩 2️⃣ Get Browser and Device Info
                 string userBrowser = Request.Headers["User-Agent"].ToString();
                 //var entry = await Dns.GetHostEntryAsync(IpAddress);
@@ -211,7 +213,7 @@ namespace AYMDatingCore.PL.Controllers
                     GenderTBLId = model.GenderTBLId,
                     ActivationCode = unitOfWork.MySPECIALGUID.GetUniqueKey(12),
                     DateOfBirth = Convert.ToDateTime(model.DateOFBirth),
-                    IpAddress = IpAddress,
+                    IpAddress = ip,
                     HostName = hostName,
                     Browser = userBrowser
                 };
@@ -226,7 +228,6 @@ namespace AYMDatingCore.PL.Controllers
                     //{
                     //    unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, Address = ip, AddressFamily = item.AddressFamily.ToString() });
                     //}
-                    unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, Address = ip });
 
                     var userhistory = new UserHistoryTBL
                     {
