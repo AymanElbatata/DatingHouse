@@ -465,9 +465,10 @@
                 </div>
 
                 <!-- 🔔 Ringing Audio -->
-                <audio id="ringtone" src="~/Sounds/SKYPECALLSOUND.mp3" preload="auto"></audio>
-                <audio id="callAcceptSound" src="~/Sounds/SKYPE-StartCONNECTIONSOUND.mp3" preload="auto"></audio>
-                <audio id="callRejectSound" src="~/Sounds/SKYPE-EndCONNECTIONSOUND.mp3" preload="auto"></audio>
+                <audio id="ringtone" src="~/Sounds/MakeCall.mp3" preload="auto"></audio>
+                <audio id="callAcceptSound" src="~/Sounds/StartCall.mp3" preload="auto"></audio>
+                <audio id="callRejectSound" src="~/Sounds/RejectCall.mp3" preload="auto"></audio>
+                <audio id="callEndSound" src="~/Sounds/EndCall.mp3" preload="auto"></audio>
 
                 <!-- 🎙️ Voice Call View -->
                 <div id="callArea" style="display:none; text-align:center; margin-top:20px;">
@@ -884,6 +885,7 @@
     const ringtone = document.getElementById("ringtone");
     const callAcceptSound = document.getElementById("callAcceptSound");
     const callRejectSound = document.getElementById("callRejectSound");
+    const callEndSound = document.getElementById("callEndSound");
     const callArea = document.getElementById("callArea");
     const remoteAudio = document.getElementById("remoteAudio");
     const callStatus = document.getElementById("callStatus");
@@ -1008,6 +1010,7 @@
         hangupBtn.style.display = "none";
         ringtone.pause();
         callAcceptSound.pause();
+        callEndSound.play();
       let userWhoEndedUserName = userWhoEnded == '@Model.Users_VM.FirstOrDefault().Id' ? '@Model.Users_VM.FirstOrDefault().UserName' : '@Model.Users_VM.LastOrDefault().UserName';
         callStatus.innerText = `${userWhoEndedUserName} ended the call.`;
         alert(`${userWhoEndedUserName} ended the call.`)
