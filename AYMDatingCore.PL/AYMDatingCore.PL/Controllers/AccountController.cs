@@ -35,6 +35,10 @@ namespace AYMDatingCore.PL.Controllers
         [AllowAnonymous]
         public IActionResult Login(string? returnUrl, string? Message)
         {
+            if (configuration["AymanStore.Pl.AllowedLogin"] != "1")
+            {
+                return RedirectToAction("Index", "Home");
+            }
             ViewData["ReturnUrl"] = returnUrl; // pass returnUrl to view
 
             // Check if user is already authenticated
@@ -139,6 +143,10 @@ namespace AYMDatingCore.PL.Controllers
         [AllowAnonymous]
         public IActionResult Register()
         {
+            if (configuration["AymanStore.Pl.AllowedRegistration"] != "1")
+            {
+                return RedirectToAction("Index", "Home");
+            }
             // Check if user is already authenticated
             if (User.Identity.IsAuthenticated)
             {
