@@ -191,9 +191,11 @@ namespace AYMDatingCore.PL.Controllers
 
                 // 🧩 2️⃣ Get Browser and Device Info
                 string userBrowser = Request.Headers["User-Agent"].ToString();
-                var entry = await Dns.GetHostEntryAsync(IpAddress);
-                var hostName = entry.HostName;
-                var addressList = entry.AddressList;
+                //var entry = await Dns.GetHostEntryAsync(IpAddress);
+                //var hostName = entry.HostName;
+                //var addressList = entry.AddressList;
+
+                var (ip, hostName) = await GetClientInfo(HttpContext);
                 //
 
                 // Create new user
@@ -220,10 +222,12 @@ namespace AYMDatingCore.PL.Controllers
 
                 if (result.Succeeded)
                 {
-                    foreach (var item in addressList)
-                    {
-                        unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, Address = item.ToString(), AddressFamily=item.AddressFamily.ToString() });
-                    }
+                    //foreach (var item in addressList)
+                    //{
+                    //    unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, Address = ip, AddressFamily = item.AddressFamily.ToString() });
+                    //}
+                    unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, Address = ip });
+
                     var userhistory = new UserHistoryTBL
                     {
                         AppUserId = user.Id,
@@ -481,6 +485,38 @@ namespace AYMDatingCore.PL.Controllers
             return View(model);
         }
         #endregion
+
+        #region Helpers
+        public static async Task<(string Ip, string HostName)> GetClientInfo(HttpContext context)
+        {
+            string ip = context.Connection.RemoteIpAddress?.ToString();
+
+            // Handle reverse proxy (e.g., Nginx, Cloudflare, IIS)
+            if (context.Request.Headers.ContainsKey("X-Forwarded-For"))
+            {
+                var forwardedIp = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+                if (!string.IsNullOrWhiteSpace(forwardedIp))
+                    ip = forwardedIp.Split(',').FirstOrDefault();
+            }
+
+            string hostName = "Unknown";
+            if (!string.IsNullOrEmpty(ip))
+            {
+                try
+                {
+                    var entry = await Dns.GetHostEntryAsync(ip);
+                    hostName = entry.HostName;
+                }
+                catch
+                {
+                    hostName = "Unknown";
+                }
+            }
+
+            return (ip ?? "Unknown", hostName);
+        }
+        #endregion
+
 
         private async Task<string> GetActivationTemplateAsync(string FirstName, string Subject, string Code, string activationLink)
         {
