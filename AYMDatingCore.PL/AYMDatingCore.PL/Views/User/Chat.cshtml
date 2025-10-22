@@ -457,6 +457,23 @@
                     <!-- Optional filename display -->
                     <p id="selectedFileName" class="text-muted mt-2" style="font-size: 0.9rem;"></p>
                 </div>
+
+                <!-- 🎧 Voice Call Buttons -->
+                <div class="voice-call-container">
+                    <button id="callBtn" class="btn btn-success"><i class="fa fa-phone"></i> Call</button>
+                    <button id="hangupBtn" class="btn btn-danger" style="display:none;"><i class="fa fa-phone-slash"></i> End</button>
+                </div>
+
+                <!-- 🔔 Ringing Audio -->
+                <audio id="ringtone" src="~/Sounds/SKYPECALLSOUND.mp3" preload="auto"></audio>
+                <audio id="callAcceptSound" src="~/Sounds/SKYPE-StartCONNECTIONSOUND.mp3" preload="auto"></audio>
+                <audio id="callRejectSound" src="~/Sounds/SKYPE-EndCONNECTIONSOUND.mp3" preload="auto"></audio>
+
+                <!-- 🎙️ Voice Call View -->
+                <div id="callArea" style="display:none; text-align:center; margin-top:20px;">
+                    <h4 id="callStatus">Connecting...</h4>
+                    <audio id="remoteAudio" autoplay></audio>
+                </div>
             }
             else
             {
@@ -855,4 +872,140 @@
         list.appendChild(li);
         GoToLastMessage();
     });
+</script>
+
+<script>
+    let localStream;
+    let peerConnection;
+    const configuration = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+
+    const callBtn = document.getElementById("callBtn");
+    const hangupBtn = document.getElementById("hangupBtn");
+    const ringtone = document.getElementById("ringtone");
+    const callAcceptSound = document.getElementById("callAcceptSound");
+    const callRejectSound = document.getElementById("callRejectSound");
+    const callArea = document.getElementById("callArea");
+    const remoteAudio = document.getElementById("remoteAudio");
+    const callStatus = document.getElementById("callStatus");
+
+    const currentUser = "@Model.SenderAppUser.Id";
+    const receiverUser = "@Model.ReceiverAppUser.Id";
+
+    // --- 1️⃣ Call button clicked ---
+    callBtn.onclick = async () => {
+        ringtone.play();
+        callStatus.innerText = `Calling ${'@Model.ReceiverAppUser.UserName'}...`;
+        callArea.style.display = "block";
+        await connection.invoke("CallUser", currentUser, receiverUser);
+    };
+
+    // --- 2️⃣ When incoming call arrives ---
+    connection.on("IncomingCall", async (caller) => {
+        const accept = confirm(`📞 ${'@Model.SenderAppUser.UserName'} is calling you. Accept?`);
+         if (accept) {
+            callAcceptSound.play();
+            await connection.invoke("AcceptCall", caller, currentUser);
+            startVoiceCall(caller, true);
+        } else {
+            await connection.invoke("RejectCall", caller, currentUser);
+        }
+    });
+
+    // --- 3️⃣ When call accepted ---
+    connection.on("CallAccepted", (receiver) => {
+        ringtone.pause();
+        callAcceptSound.play();
+        startVoiceCall(receiver, false);
+    });
+
+    // --- 4️⃣ When call rejected ---
+    connection.on("CallRejected", (receiver) => {
+        ringtone.pause();
+        callRejectSound.play();
+        alert(`${'@Model.ReceiverAppUser.UserName'} rejected your call.`);
+        callArea.style.display = "none";
+    });
+
+    // --- 5️⃣ Start WebRTC connection ---
+    async function startVoiceCall(remoteUser, isReceiver) {
+        callBtn.style.display = "none";
+        hangupBtn.style.display = "inline-block";
+        callStatus.innerText = "Connected 🎙️";
+        callArea.style.display = "block";
+
+        localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        peerConnection = new RTCPeerConnection(configuration);
+
+        // Stream local mic audio
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+        // Receive remote audio
+        peerConnection.ontrack = event => {
+            remoteAudio.srcObject = event.streams[0];
+        };
+
+        // ICE candidate exchange
+        peerConnection.onicecandidate = event => {
+            if (event.candidate) {
+                connection.invoke("SendIceCandidate", remoteUser, JSON.stringify(event.candidate));
+            }
+        };
+
+        if (isReceiver) {
+            connection.on("ReceiveOffer", async (offerJson) => {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(offerJson)));
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                connection.invoke("SendAnswer", remoteUser, JSON.stringify(answer));
+            });
+        } else {
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            connection.invoke("SendOffer", remoteUser, JSON.stringify(offer));
+        }
+
+        connection.on("ReceiveAnswer", async (answerJson) => {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(answerJson)));
+        });
+
+        connection.on("ReceiveIceCandidate", async (candidateJson) => {
+            await peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidateJson)));
+        });
+    }
+
+    // --- 6️⃣ Hang up ---
+        hangupBtn.onclick = async () => {
+        if (peerConnection) {
+            peerConnection.close();
+            peerConnection = null;
+        }
+
+        callArea.style.display = "none";
+        callBtn.style.display = "inline-block";
+        hangupBtn.style.display = "none";
+        ringtone.pause();
+        callAcceptSound.pause();
+        callStatus.innerText = "";
+
+        // 🔹 Notify the other user that the call has ended
+        await connection.invoke("EndCall", currentUser, receiverUser);
+    };
+
+    // --- 7️⃣ Listen for remote hang up ---
+    connection.on("CallEnded", (userWhoEnded) => {
+        if (peerConnection) {
+            peerConnection.close();
+            peerConnection = null;
+        }
+
+        callArea.style.display = "none";
+        callBtn.style.display = "inline-block";
+        hangupBtn.style.display = "none";
+        ringtone.pause();
+        callAcceptSound.pause();
+      let userWhoEndedUserName = userWhoEnded == '@Model.Users_VM.FirstOrDefault().Id' ? '@Model.Users_VM.FirstOrDefault().UserName' : '@Model.Users_VM.LastOrDefault().UserName';
+        callStatus.innerText = `${userWhoEndedUserName} ended the call.`;
+        alert(`${userWhoEndedUserName} ended the call.`)
+    });
+
 </script>

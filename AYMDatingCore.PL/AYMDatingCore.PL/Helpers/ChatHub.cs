@@ -25,25 +25,38 @@ namespace AYMDatingCore.Helpers
             // Send to all clients in the group
             await Clients.Group(groupName).SendAsync("ReceiveFileFromGroup", senderUserName, fileName);
         }
-        //public async Task GetLikeNotification(string userRecieverId)
-        //{
-        //    await Clients.User(userRecieverId).SendAsync("ReceiveLikeNotification");
-        //}
-        //public async Task GetViewNotification(string userRecieverId)
-        //{
-        //    await Clients.User(userRecieverId).SendAsync("ReceiveViewNotification");
-        //}
-        //public async Task GetMessageNotification(string userRecieverId)
-        //{
-        //    await Clients.User(userRecieverId).SendAsync("ReceiveMessageNotification");
-        //}
-        //public async Task GetFavoriteNotification(string userRecieverId)
-        //{
-        //    await Clients.User(userRecieverId).SendAsync("ReceiveFavoriteNotification");
-        //}
-        //public async Task GetBlockNotification(string userRecieverId)
-        //{
-        //    await Clients.User(userRecieverId).SendAsync("ReceiveBlockNotification");
-        //}
+        public async Task CallUser(string caller, string receiver)
+        {
+            await Clients.User(receiver).SendAsync("IncomingCall", caller);
+        }
+
+        public async Task AcceptCall(string caller, string receiver)
+        {
+            await Clients.User(caller).SendAsync("CallAccepted", receiver);
+        }
+
+        public async Task RejectCall(string caller, string receiver)
+        {
+            await Clients.User(caller).SendAsync("CallRejected", receiver);
+        }
+        public async Task EndCall(string caller, string receiver)
+        {
+            // Notify both sides that the call has ended
+            await Clients.Users(caller, receiver).SendAsync("CallEnded", caller);
+        }
+        public async Task SendOffer(string receiver, string offer)
+        {
+            await Clients.User(receiver).SendAsync("ReceiveOffer", offer);
+        }
+
+        public async Task SendAnswer(string receiver, string answer)
+        {
+            await Clients.User(receiver).SendAsync("ReceiveAnswer", answer);
+        }
+
+        public async Task SendIceCandidate(string receiver, string candidate)
+        {
+            await Clients.User(receiver).SendAsync("ReceiveIceCandidate", candidate);
+        }
     }
 }

@@ -18,5 +18,7 @@ namespace AYMDatingCore.PL.Models
 
         public UserHistoryTBL_VM UserHistoryTBL_VM { get; set; } = new UserHistoryTBL_VM();
 
+        public List<UserChat_VM> Users_VM { get; set; } = new List<UserChat_VM>();
+
     }
 }

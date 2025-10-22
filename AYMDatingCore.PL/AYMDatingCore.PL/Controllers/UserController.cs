@@ -357,6 +357,8 @@ namespace AYMDatingCore.PL.Controllers
             var UserMessageGroup = unitOfWork.UserMessageGroupRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.IsDeleted == false && a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).FirstOrDefault();
 
             var data = new Chat_VM();
+            data.Users_VM.Add(new UserChat_VM() { Id = SenderUser.Id, UserName = SenderUser.UserName});
+            data.Users_VM.Add(new UserChat_VM() { Id = ReceiverUser.Id, UserName = ReceiverUser.UserName });
             data.SenderAppUser = SenderUser;
             data.ReceiverAppUser = ReceiverUser;
             data.GroupName = UserMessageGroup.NameGuid;
