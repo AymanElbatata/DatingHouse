@@ -522,7 +522,10 @@
                 {
                   $('#ThereISNoMessagesyet').hide();
                 }
+             IsThereBlockingBetweenUsers();
+
             PrintNewMessage(message,SenderUserName);
+
       });
 
     function SaveinDB(RecieverUserName,CurrentMessage){
@@ -537,12 +540,9 @@
                 if (response.success) {
                     // PrintNewMessage();
                     document.getElementById("sendButtonMsg").value = "";
-                     $("#sendButtonMsg").show();
-                     $("#thereisBlockingBtn").hide();
                 }
                 else{
-                    $('#sendButtonMsg').hide();
-                    $('#thereisBlockingBtn').show();
+
                 }
             },
             error: function (xhr) {
@@ -550,6 +550,40 @@
             }
         });
     }
+
+    function IsThereBlockingBetweenUsers(){
+            $.ajax({
+            url: '@Url.Action("IsThereBlockingBetweenUsers", "User")', // ✅ uses Razor directly
+            type: 'POST',
+            data: {
+                receiverUserName: '@Model.ReceiverAppUser.UserName',
+            },
+            success: function (response) {
+                if (response.success) {
+                    ActionInBlockingFunc();
+                }
+                else{
+                }
+            },
+            error: function (xhr) {
+                console.error("❌ Error sending message:", xhr.responseText);
+            }
+        });
+    }
+
+    function ActionInBlockingFunc(){
+                    $('#sendButtonMsg').remove();
+                    $('#startBtn').remove();
+                    $('#stopBtn').remove();
+                    $('#chooseFileBtn').remove();
+                    $('#uploadBtn').remove();
+                    $('#userFile').remove();
+                    $('#recordingDots').remove();
+                    $('#callBtn').remove();
+                    $('#hangupBtn').remove();
+                    $('#thereisBlockingBtn').show();
+    }
+
 
     function PrintNewMessage(message,SenderUserName){
                 let list = document.getElementById("MessageListArea");
@@ -667,6 +701,8 @@
             $('#ThereISNoMessagesyet').hide();
         }
 
+        IsThereBlockingBetweenUsers();
+
         const list = document.getElementById("MessageListArea");
         const li = document.createElement("li");
         li.classList.add("message-item");
@@ -706,13 +742,9 @@
             },
             success: function (response) {
                 if (response.success) {
-                    $("#sendButtonMsg").show();
-                    $("#thereisBlockingBtn").hide();
+
                 } else {
-                    $('#sendButtonMsg').hide();
-                    $('#startBtn').hide();
-                    $('#stopBtn').hide();
-                    $('#thereisBlockingBtn').show();
+
                 }
             },
             error: function (xhr) {
@@ -790,8 +822,7 @@
                 uploadBtn.disabled = false;
 
                 if (response.success) {
-                    $("#sendButtonMsg").show();
-                    $("#thereisBlockingBtn").hide();
+
                 // 🔹 Match your message structure — send via SignalR to group
                 connection.invoke(
                     "SendFileToGroup", // Hub method name
@@ -802,12 +833,7 @@
                  $("#selectedFileName").text("");
 
                 } else {
-                    $('#sendButtonMsg').hide();
-                    $('#startBtn').hide();
-                    $('#stopBtn').hide();
-                    $('#uploadBtn').hide();
-                    $('#userFile').hide();
-                    $('#thereisBlockingBtn').show();
+                    
                 }
             },
             error: function (xhr) {
@@ -823,6 +849,8 @@
         if ($('#ThereISNoMessagesyet').length) {
             $('#ThereISNoMessagesyet').hide();
         }
+
+         IsThereBlockingBetweenUsers();
 
         const list = document.getElementById("MessageListArea");
         const li = document.createElement("li");
@@ -903,6 +931,8 @@
 
     // --- 2️⃣ When incoming call arrives ---
     connection.on("IncomingCall", async (caller) => {
+        IsThereBlockingBetweenUsers();
+
         ringtone.play();
         const accept = confirm(`📞 '@Model.SenderAppUser.UserName' is calling you. Accept?`);
          if (accept) {
@@ -1004,6 +1034,8 @@
             peerConnection.close();
             peerConnection = null;
         }
+
+        IsThereBlockingBetweenUsers();
 
         callArea.style.display = "none";
         callBtn.style.display = "inline-block";

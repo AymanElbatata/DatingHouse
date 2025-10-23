@@ -398,6 +398,14 @@ namespace AYMDatingCore.PL.Controllers
             return Json(new { success = false });
         }
 
+        public async Task<IActionResult> IsThereBlockingBetweenUsers(string receiverUserName)
+        {
+            var SenderUser = await GetUserByUserName(User.Identity.Name);
+            var RecieverUser = await GetUserByUserName(receiverUserName);
+            bool IsThereBlocking = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == RecieverUser.Id) || (a.IsDeleted == false && a.SenderAppUserId == RecieverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).Any();
+            return Json(new { success = IsThereBlocking });
+        }
+
         [HttpPost]
         public async Task<IActionResult> SaveAudioMessageInChat(string receiverUserName, string base64Audio)
         {
