@@ -59,6 +59,7 @@ namespace AYMDatingCore.PL.DTO
         public IEnumerable<SelectListItem> CountryOptions { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> GenderOptions { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> ProfessionOptions { get; set; } = new List<SelectListItem>();
+        public Dictionary<string, string[]>? Errors { get; set; }
 
     }
 }

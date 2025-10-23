@@ -228,7 +228,6 @@ namespace AYMDatingCore.PL.Controllers
 
                 // Create the user
                 var result = await unitOfWork.UserManager.CreateAsync(user, model.Password);
-                await unitOfWork.UserManager.AddToRoleAsync(user, "User");
 
                 if (result.Succeeded)
                 {
@@ -236,6 +235,7 @@ namespace AYMDatingCore.PL.Controllers
                     //{
                     //    unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, Address = ip, AddressFamily = item.AddressFamily.ToString() });
                     //}
+                    await unitOfWork.UserManager.AddToRoleAsync(user, "User");
 
                     var userhistory = new UserHistoryTBL
                     {
@@ -297,6 +297,16 @@ namespace AYMDatingCore.PL.Controllers
                                 filter: a => a.IsDeleted == false)
                         .Select(g => new SelectListItem { Value = g.ID.ToString(), Text = g.Name, Selected = (g.ID == model.GenderTBLId) })
                         .ToList();
+
+            if (!ModelState.IsValid)
+            {
+                model.Errors = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                    );
+            }
 
             return View(model);
         }
