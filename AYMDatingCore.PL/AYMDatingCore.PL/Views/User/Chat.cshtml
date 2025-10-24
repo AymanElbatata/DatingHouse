@@ -469,6 +469,7 @@
                 <audio id="callAcceptSound" src="~/Sounds/StartCall.mp3" preload="auto"></audio>
                 <audio id="callRejectSound" src="~/Sounds/RejectCall.mp3" preload="auto"></audio>
                 <audio id="callEndSound" src="~/Sounds/EndCall.mp3" preload="auto"></audio>
+                <audio id="SendingMessageSound" src="~/Sounds/WirlessSignal.mp3" preload="auto"></audio>
 
                 <!-- 🎙️ Voice Call View -->
                 <div id="callArea" style="display:none; text-align:center; margin-top:20px;">
@@ -489,6 +490,8 @@
 
 
 <script>
+        const SendingMessageSound = document.getElementById("SendingMessageSound");
+
      let CurrentUserChatMessage = document.getElementById("sendButtonMsg").value;
          const connection = new signalR.HubConnectionBuilder()
         .withUrl("/chathub")
@@ -499,7 +502,6 @@
         connection.invoke("JoinGroup", "@Model.GroupName");
         GoToLastMessage();
         GototheBottomoFPage2();
-        // GotoTheBottomoFPage();
 
     });
 
@@ -523,9 +525,9 @@
                   $('#ThereISNoMessagesyet').hide();
                 }
              IsThereBlockingBetweenUsers();
-
+            
+             SendingMessageSound.play();
             PrintNewMessage(message,SenderUserName);
-
       });
 
     function SaveinDB(RecieverUserName,CurrentMessage){
@@ -728,6 +730,7 @@
         `;
 
         list.appendChild(li);
+       SendingMessageSound.play();
         GoToLastMessage();
     });
 
@@ -899,6 +902,7 @@
 
         li.innerHTML = fileElement;
         list.appendChild(li);
+        SendingMessageSound.play();
         GoToLastMessage();
     });
 </script>
