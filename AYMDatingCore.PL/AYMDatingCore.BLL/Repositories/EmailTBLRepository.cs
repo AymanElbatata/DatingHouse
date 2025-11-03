@@ -24,7 +24,7 @@ namespace AYMDatingCore.BLL.Repositories
 
             client.EnableSsl = true;
 
-            client.Credentials = new NetworkCredential(email.From, "yours");
+            client.Credentials = new NetworkCredential(email.From, "your code");
 
             client.Send(email.From, email.To, email.Subject, email.Body);
 
@@ -43,7 +43,7 @@ namespace AYMDatingCore.BLL.Repositories
 
             using var smtp = new MailKit.Net.Smtp.SmtpClient();
             await smtp.ConnectAsync("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(emails.From, "yours");
+            await smtp.AuthenticateAsync(emails.From, "your code");
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
         }
@@ -53,7 +53,7 @@ namespace AYMDatingCore.BLL.Repositories
             var smtp = new System.Net.Mail.SmtpClient("smtp.gmail.com") // or your SMTP server
             {
                 Port = 587,
-                Credentials = new NetworkCredential(emails.From, "yours"),
+                Credentials = new NetworkCredential(emails.From, "your code"),
                 EnableSsl = true,
             };
 

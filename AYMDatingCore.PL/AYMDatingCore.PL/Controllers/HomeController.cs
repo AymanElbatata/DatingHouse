@@ -5,6 +5,7 @@ using AYMDatingCore.DAL.BaseEntity;
 using AYMDatingCore.DAL.Entities;
 using AYMDatingCore.Helpers;
 using AYMDatingCore.PL.DTO;
+using AYMDatingCore.PL.Helpers;
 using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -32,18 +33,19 @@ namespace AYMDatingCore.PL.Controllers
             _hubContext = hubContext;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 12)
         {
-            var data = GetAllUsersOrFiltered(new UserMainSearchDTO());
-            ViewBag.CounterUsers = data.Count();
-            return View(data.Take(6));
+            var data = GetAllUsersOrFiltered(new UserMainSearchDTO(), page, pageSize);
+            ViewBag.CounterUsers = data.TotalCount;
+            data.ViewName = "Index";
+            return View(data);
         }
 
-        [HttpPost]
-        public IActionResult Index(UserMainSearchDTO model)
+        public IActionResult SearchPartner(UserMainSearchDTO model, int page = 1, int pageSize = 12)
         {
-            var data = GetAllUsersOrFiltered(model);
-            ViewBag.MatchedUsers = data.Count();
+            var data = GetAllUsersOrFiltered(model,page,pageSize);
+            ViewBag.MatchedUsers = data.TotalCount;
+            data.ViewName = "SearchPartner";
             return View(data);
         }
 
@@ -136,7 +138,7 @@ namespace AYMDatingCore.PL.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private List<UserHistoryTBL_VM> GetAllUsersOrFiltered(UserMainSearchDTO model)
+        private Pagination<UserHistoryTBL_VM> GetAllUsersOrFiltered(UserMainSearchDTO model, int page, int pageSize)
         {
             var users = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.AppUser.EmailConfirmed == true && a.IsMain == true, includes: new Expression<Func<UserHistoryTBL, object>>[]
             {
@@ -168,9 +170,18 @@ namespace AYMDatingCore.PL.Controllers
                     user.UserImageTBL_VM = Mapper.Map<List<UserImageTBL_VM>>(unitOfWork.UserImageRepository.GetAllCustomized(
                             filter: a => a.IsDeleted == false).OrderByDescending(a => a.CreationDate));
                 }
-                return data;
+                int totalCount = data.Count();
+                int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                var result = new Pagination<UserHistoryTBL_VM>();
+                result.MyList = data.Skip(result.Skip).Take(pageSize).ToList();
+                result.CurrentPage = page;
+                result.TotalPages = totalPages;
+                result.PageSize = pageSize;
+                result.TotalCount = totalCount;
+                return result;
             }
-            return new List<UserHistoryTBL_VM>();
+            return new Pagination<UserHistoryTBL_VM>();
         }
 
         private int CalculateAge(DateTime birthDate)

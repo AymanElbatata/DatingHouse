@@ -369,6 +369,7 @@ namespace AYMDatingCore.PL.Controllers
 
 
                 user.EmailConfirmed = true;
+                user.IsActivated = true;
                 var result = await unitOfWork.UserManager.UpdateAsync(user);
 
                 if (result.Succeeded)
