@@ -33,19 +33,18 @@ namespace AYMDatingCore.PL.Controllers
             _hubContext = hubContext;
         }
 
-        public IActionResult Index(int page = 1, int pageSize = 12)
+        public IActionResult Index()
         {
-            var data = GetAllUsersOrFiltered(new UserMainSearchDTO(), page, pageSize);
-            ViewBag.CounterUsers = data.TotalCount;
-            data.ViewName = "Index";
+            var data = GetAllUsersOrFiltered(new UserMainSearchDTO());
+            ViewBag.CounterUsers = data.Count();
             return View(data);
         }
 
-        public IActionResult SearchPartner(UserMainSearchDTO model, int page = 1, int pageSize = 12)
+        [HttpPost]
+        public IActionResult Index(UserMainSearchDTO model)
         {
-            var data = GetAllUsersOrFiltered(model,page,pageSize);
-            ViewBag.MatchedUsers = data.TotalCount;
-            data.ViewName = "SearchPartner";
+            var data = GetAllUsersOrFiltered(model);
+            ViewBag.MatchedUsers = data.Count();
             return View(data);
         }
 
@@ -138,7 +137,7 @@ namespace AYMDatingCore.PL.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private Pagination<UserHistoryTBL_VM> GetAllUsersOrFiltered(UserMainSearchDTO model, int page, int pageSize)
+        private List<UserHistoryTBL_VM> GetAllUsersOrFiltered(UserMainSearchDTO model)
         {
             var users = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.AppUser.EmailConfirmed == true && a.IsMain == true, includes: new Expression<Func<UserHistoryTBL, object>>[]
             {
@@ -170,18 +169,9 @@ namespace AYMDatingCore.PL.Controllers
                     user.UserImageTBL_VM = Mapper.Map<List<UserImageTBL_VM>>(unitOfWork.UserImageRepository.GetAllCustomized(
                             filter: a => a.IsDeleted == false).OrderByDescending(a => a.CreationDate));
                 }
-                int totalCount = data.Count();
-                int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
-                var result = new Pagination<UserHistoryTBL_VM>();
-                result.MyList = data.Skip(result.Skip).Take(pageSize).ToList();
-                result.CurrentPage = page;
-                result.TotalPages = totalPages;
-                result.PageSize = pageSize;
-                result.TotalCount = totalCount;
-                return result;
+                return data;
             }
-            return new Pagination<UserHistoryTBL_VM>();
+            return new List<UserHistoryTBL_VM>();
         }
 
         private int CalculateAge(DateTime birthDate)

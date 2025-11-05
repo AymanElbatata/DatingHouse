@@ -3,7 +3,7 @@
 
 <div class="romantic-search-bar py-3">
     <div class="container">
-        <form asp-controller="Home" asp-action="SearchPartner" method="get" class="row g-2 align-items-center justify-content-center">
+        <form asp-controller="Home" asp-action="Index" method="post" class="row g-2 align-items-center justify-content-center">
 
             <div class="col-md-2 col-6">
                 <select asp-for="IwantGender" asp-items="Model.Genders" class="form-select romantic-input">
@@ -24,7 +24,7 @@
 
             <div class="col-md-2 col-6 d-flex align-items-center">
                 <input asp-for="AgeFrom" class="form-control romantic-input me-2" placeholder="From" value="18" min="18" max="99" required />
-                <input asp-for="AgeTo" class="form-control romantic-input" placeholder="To" min="18" value="99" max="99" required />
+                <input asp-for="AgeTo" class="form-control romantic-input" placeholder="To" value="99" min="18" max="99" required />
             </div>
 
             <div class="col-md-2 col-6 form-check d-flex align-items-center justify-content-center">
