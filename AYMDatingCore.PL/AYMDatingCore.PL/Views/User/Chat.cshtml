@@ -937,7 +937,8 @@
         IsThereBlockingBetweenUsers();
 
         ringtone.play();
-        const accept = confirm(`📞 '@Model.SenderAppUser.UserName' is calling you. Accept?`);
+          let userWhocaller = caller == '@Model.Users_VM.FirstOrDefault().Id' ? '@Model.Users_VM.FirstOrDefault().UserName' : '@Model.Users_VM.LastOrDefault().UserName';
+        const accept = confirm(`📞 ${userWhocaller} is calling you. Accept?`);
          if (accept) {
             ringtone.pause();
             callAcceptSound.play();
@@ -959,7 +960,8 @@
     connection.on("CallRejected", (receiver) => {
         ringtone.pause();
         callRejectSound.play();
-        alert(`${'@Model.ReceiverAppUser.UserName'} rejected your call.`);
+        let userWhoEndedreceiver = receiver == '@Model.Users_VM.FirstOrDefault().Id' ? '@Model.Users_VM.FirstOrDefault().UserName' : '@Model.Users_VM.LastOrDefault().UserName';
+        alert(`${userWhoEndedreceiver} rejected your call.`);
         callArea.style.display = "none";
     });
 
