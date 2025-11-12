@@ -208,6 +208,9 @@
             @Html.AntiForgeryToken()
 
             <div class="text-center mb-4">
+                @if (string.IsNullOrEmpty(@Model.MainImageUrl))
+                    Model.MainImageUrl = "blankprofile973460.png";
+
                 <img id="photo_1" src="~/ImageUsers/@Model.MainImageUrl" class="rounded-circle border border-3 border-pink" width="150" height="150" />
                 <br />
                 <label class="btn btn-light mt-2 border border-pink">

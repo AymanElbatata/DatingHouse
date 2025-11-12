@@ -256,7 +256,7 @@ namespace AYMDatingCore.PL.Controllers
                         MaritalStatusId = 1,
                         PurposeId = 1,
                         IsSwitchedOff = false,
-                        MainImageUrl = "blankprofile973460.png"
+                        //MainImageUrl = "blankprofile973460.png"
                     };
                      unitOfWork.UserHistoryRepository.Add(userhistory);
 
