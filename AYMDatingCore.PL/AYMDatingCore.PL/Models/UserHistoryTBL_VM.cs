@@ -66,7 +66,7 @@ namespace AYMDatingCore.PL.Models
         public IEnumerable<SelectListItem> LanguageOptions { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> PurposeOptions { get; set; } = new List<SelectListItem>();
         public IEnumerable<SelectListItem> FinancialModeOptions { get; set; } = new List<SelectListItem>();
-
+        public IEnumerable<SelectListItem> CountryOptions { get; set; } = new List<SelectListItem>();
 
     }
 }

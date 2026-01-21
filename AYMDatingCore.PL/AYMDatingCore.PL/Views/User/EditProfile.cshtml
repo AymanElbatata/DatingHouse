@@ -271,17 +271,22 @@
                     </select>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label>Profile Heading</label>
-                    <input id="profileHeading" asp-for="ProfileHeading" class="form-control" maxlength="50" required />
-                    <span asp-validation-for="ProfileHeading" class="text-danger"></span>
-                    <span id="profileHeadingError" class="text-danger"></span>
-
+                    <label asp-for="CountryId" class="form-label">Country</label>
+                    <select asp-for="CountryId" id="countryId" asp-items="Model.CountryOptions" class="form-select select2" required>
+                        <option value="">Select Country</option>
+                    </select>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label>City</label>
                     <input id="city" asp-for="City" class="form-control" maxlength="50" required />
                     <span asp-validation-for="City" class="text-danger"></span>
                     <span id="cityError" class="text-danger"></span>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label>Profile Heading</label>
+                    <input id="profileHeading" asp-for="ProfileHeading" class="form-control" maxlength="50" required />
+                    <span asp-validation-for="ProfileHeading" class="text-danger"></span>
+                    <span id="profileHeadingError" class="text-danger"></span>
                 </div>
                 <div class="col-md-12 mb-3">
                     <label>💖 About Me</label>
@@ -337,7 +342,8 @@
             { id: '#maritalStatusId', placeholder: 'Select Status' },
             { id: '#languageId', placeholder: 'Select Language' },
             { id: '#purposeId', placeholder: 'Select Purpose' },
-            { id: '#financialModeId', placeholder: 'Select Financial Mode' }
+            { id: '#financialModeId', placeholder: 'Select Financial Mode' },
+            { id: '#countryId', placeholder: 'Select Country' }
         ];
 
         selectFields.forEach(({ id, placeholder }) => {
@@ -366,7 +372,8 @@
                 'maritalStatusId',
                 'languageId',
                 'purposeId',
-                'financialModeId'
+                'financialModeId',
+                'countryId'
             ];
 
             // Validate empty fields

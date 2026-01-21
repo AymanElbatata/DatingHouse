@@ -67,6 +67,8 @@ namespace AYMDatingCore.PL.Controllers
                      filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
                 data.FinancialModeOptions = unitOfWork.FinancialModeRepository.GetAllCustomized(
                      filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                data.CountryOptions = unitOfWork.CountryTBLRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
 
                 return View(data);
             }
@@ -97,6 +99,7 @@ namespace AYMDatingCore.PL.Controllers
                     currentUserProfile.LanguageId = model.LanguageId;
                     currentUserProfile.PurposeId = model.PurposeId;
                     currentUserProfile.FinancialModeId = model.FinancialModeId;
+                    currentUserProfile.CountryId = model.CountryId;
                     unitOfWork.UserHistoryRepository.Update(currentUserProfile);
                     return RedirectToAction("UserProfile", "Home", new { UserName = CurrentUser.UserName });
                 }
@@ -105,17 +108,20 @@ namespace AYMDatingCore.PL.Controllers
                             filter: a => a.IsDeleted == false && a.AppUserId == CurrentUser.Id).OrderBy(a => a.CreationDate));
 
                 model.EducationOptions = unitOfWork.EducationRepository.GetAllCustomized(
-                 filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                 filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name, Selected = (c.ID == model.EducationId) }).ToList();
                 model.ProfessionOptions = unitOfWork.ProfessionRepository.GetAllCustomized(
-                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name, Selected = (c.ID == model.ProfessionId) }).ToList();
                 model.MaritalStatusOptions = unitOfWork.MaritalStatusRepository.GetAllCustomized(
-                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name, Selected = (c.ID == model.MaritalStatusId) }).ToList();
                 model.LanguageOptions = unitOfWork.LanguageRepository.GetAllCustomized(
-                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name, Selected = (c.ID == model.LanguageId) }).ToList();
                 model.PurposeOptions = unitOfWork.PurposeRepository.GetAllCustomized(
-                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name, Selected = (c.ID == model.PurposeId) }).ToList();
                 model.FinancialModeOptions = unitOfWork.FinancialModeRepository.GetAllCustomized(
-                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name, Selected = (c.ID == model.FinancialModeId) }).ToList();
+                model.CountryOptions = unitOfWork.CountryTBLRepository.GetAllCustomized(
+                     filter: a => a.IsDeleted == false).Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name, Selected = (c.ID == model.CountryId) }).ToList();
+
                 foreach (var state in ModelState)
                 {
                     foreach (var error in state.Value.Errors)

@@ -509,6 +509,8 @@
     });
 
     function CheckEnter(){
+        if(!IsThereBlockingBetweenUsers()){      
+
         CurrentUserChatMessage = document.getElementById("sendButtonMsg").value;
         if (event.key === "Enter" && CurrentUserChatMessage.trim() !== "") {
             // TODO: Call SignalR sendMessage function here
@@ -517,16 +519,17 @@
 
             // input.value = "";      
         }}
-
+        }
       connection.on("ReceiveGroupMessage", function (message,SenderUserName) {
               if ($('#ThereISNoMessagesyet').length) 
                 {
                   $('#ThereISNoMessagesyet').hide();
                 }
-             IsThereBlockingBetweenUsers();
-            
+             if(!IsThereBlockingBetweenUsers()){
+
              SendingMessageSound.play();
             PrintNewMessage(message,SenderUserName);
+             }
       });
 
     function SaveinDB(RecieverUserName,CurrentMessage){
@@ -562,8 +565,10 @@
             success: function (response) {
                 if (response.success) {
                     ActionInBlockingFunc();
+                    return true;
                 }
                 else{
+                    return false;
                 }
             },
             error: function (xhr) {
@@ -637,11 +642,14 @@
     const stopBtn = document.getElementById("stopBtn");
     const recordingDots = document.getElementById("recordingDots");
 
-
+   
     document.getElementById("startBtn").addEventListener("click", async () => {
             recordingDots.style.display = "flex";
+        if(!IsThereBlockingBetweenUsers())
+        {
 
         try {
+
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaRecorder = new MediaRecorder(stream);
             audioChunks = [];
@@ -654,15 +662,19 @@
             document.getElementById("startBtn").disabled = true;
             document.getElementById("stopBtn").disabled = false;
             console.log("🎙️ Recording started...");
+
         } catch (err) {
             console.error("❌ Microphone access error:", err);
             alert("Microphone access denied or unavailable.");
         }
-    });
 
+        }
+    });
+   
     document.getElementById("stopBtn").addEventListener("click", async () => {
             recordingDots.style.display = "none";
-
+        if(!IsThereBlockingBetweenUsers())
+        {
         if (!mediaRecorder) return;
 
         mediaRecorder.stop();
@@ -684,6 +696,8 @@
             document.getElementById("stopBtn").disabled = true;
             console.log("🎧 Audio sent!");
         };
+
+        }
     });
 
     // Convert Blob to Base64
@@ -926,16 +940,19 @@
 
     // --- 1️⃣ Call button clicked ---
     callBtn.onclick = async () => {
+        if(!IsThereBlockingBetweenUsers())
+        {     
         ringtone.play();
         callStatus.innerText = `Calling ${'@Model.ReceiverAppUser.UserName'}...`;
         callArea.style.display = "block";
         await connection.invoke("CallUser", currentUser, receiverUser);
+        }
     };
 
     // --- 2️⃣ When incoming call arrives ---
     connection.on("IncomingCall", async (caller) => {
-        IsThereBlockingBetweenUsers();
-
+        if(!IsThereBlockingBetweenUsers())
+        {       
         ringtone.play();
           let userWhocaller = caller == '@Model.Users_VM.FirstOrDefault().Id' ? '@Model.Users_VM.FirstOrDefault().UserName' : '@Model.Users_VM.LastOrDefault().UserName';
         const accept = confirm(`📞 ${userWhocaller} is calling you. Accept?`);
@@ -947,26 +964,35 @@
         } else {
             await connection.invoke("RejectCall", caller, currentUser);
         }
+        }
     });
 
     // --- 3️⃣ When call accepted ---
     connection.on("CallAccepted", (receiver) => {
+        if(!IsThereBlockingBetweenUsers())
+        {
         ringtone.pause();
         callAcceptSound.play();
         startVoiceCall(receiver, false);
+        }
     });
 
     // --- 4️⃣ When call rejected ---
     connection.on("CallRejected", (receiver) => {
+        if(!IsThereBlockingBetweenUsers())
+        {
         ringtone.pause();
         callRejectSound.play();
         let userWhoEndedreceiver = receiver == '@Model.Users_VM.FirstOrDefault().Id' ? '@Model.Users_VM.FirstOrDefault().UserName' : '@Model.Users_VM.LastOrDefault().UserName';
         alert(`${userWhoEndedreceiver} rejected your call.`);
         callArea.style.display = "none";
+        }
     });
 
     // --- 5️⃣ Start WebRTC connection ---
     async function startVoiceCall(remoteUser, isReceiver) {
+        if(!IsThereBlockingBetweenUsers())
+        {
         callBtn.style.display = "none";
         hangupBtn.style.display = "inline-block";
         callStatus.innerText = "Connected 🎙️";
@@ -1010,10 +1036,13 @@
         connection.on("ReceiveIceCandidate", async (candidateJson) => {
             await peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidateJson)));
         });
+        }
     }
 
     // --- 6️⃣ Hang up ---
         hangupBtn.onclick = async () => {
+        if(!IsThereBlockingBetweenUsers())
+        {
         if (peerConnection) {
             peerConnection.close();
             peerConnection = null;
@@ -1031,6 +1060,7 @@
 
         // 🔹 Notify the other user that the call has ended
         await connection.invoke("EndCall", currentUser, receiverUser);
+        }
     };
 
     // --- 7️⃣ Listen for remote hang up ---
