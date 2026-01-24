@@ -1,0 +1,287 @@
+﻿using AutoMapper;
+using AYMDatingCore.BLL.Interfaces;
+using AYMDatingCore.BLL.Repositories;
+using AYMDatingCore.DAL.BaseEntity;
+using AYMDatingCore.DAL.Entities;
+using AYMDatingCore.Helpers;
+using AYMDatingCore.PL.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+using System.Linq.Expressions;
+
+namespace AYMDatingCore.PL.Controllers
+{
+    [Authorize(Roles = "Admin")]
+    public class AdminController(ILogger<AdminController> logger, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : Controller
+    {
+        private readonly ILogger<AdminController> _logger = logger;
+
+        private readonly IUnitOfWork unitOfWork = unitOfWork;
+        private readonly IMapper Mapper = mapper;
+        private readonly IConfiguration configuration = configuration;
+
+        public async Task<IActionResult> Index()
+        {
+            var model = new UserSelectViewModel
+            { 
+            Users = await unitOfWork.UserManager.Users.Where(a => a.IsDeleted == false && a.Email !="ayman.fathy.elbatata@gmail.com")
+                .Select(u => new SelectListItem
+                {
+                    Value = u.Id,
+                    Text = u.UserName + "/" + u.Email,
+                })
+                .ToListAsync()
+                };
+            return View(model);
+        }
+
+        public IActionResult UserMessages(string? userId)
+        {
+            var userMessages = unitOfWork.UserMessageRepository.GetAllCustomized(
+                filter: a => a.SenderAppUserId == userId || a.ReceiverAppUserId == userId,
+                includes: new Expression<Func<UserMessageTBL, object>>[]
+                {
+                    p => p.SenderAppUser!,
+                    p => p.ReceiverAppUser!
+                }).OrderByDescending(a => a.CreationDate);
+
+            return View(Mapper.Map<List<UserMessage_VM>>(userMessages));
+        }
+
+        public IActionResult UserManagement()
+        {
+            return View();
+        }
+
+        public IActionResult UserEmails()
+        {
+            var userEmails = unitOfWork.EmailTBLRepository.GetAll().OrderByDescending(a => a.CreationDate);
+            return View(Mapper.Map<List<EmailTBL_VM>>(userEmails));
+        }
+
+        public IActionResult UserReports()
+        {
+            var userReports = unitOfWork.UserReportRepository.GetAllCustomized(
+                includes: new Expression<Func<UserReportTBL, object>>[]
+                {
+                    p => p.SenderAppUser!,
+                    p => p.ReceiverAppUser!
+                }).OrderByDescending(a => a.CreationDate);
+            return View(Mapper.Map<List<UserReportTBL_VM>>(userReports));
+        }
+
+        public IActionResult UserContactUs()
+        {
+            var userContactMsgs = unitOfWork.ContactUsRepository.GetAll().OrderByDescending(a => a.CreationDate);
+            return View(Mapper.Map<List<ContactUsTBL_VM>>(userContactMsgs));
+        }
+
+        #region Manage Users
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var users = await unitOfWork.UserManager.Users.Where(a => a.Email != "ayman.fathy.elbatata@gmail.com")
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Email,
+                    u.FirstName,
+                    u.LastName,
+                    u.UserName,
+                    u.IsBlocked,
+                    u.IsDeleted
+                })
+                .ToListAsync();
+
+            var userViewModels = new List<UserViewModel>();
+            foreach (var user in users)
+            {
+                var usermodel = new UserViewModel();
+                usermodel.Email = user.Email;
+                usermodel.FirstName = user.FirstName;
+                usermodel.LastName = user.LastName;
+                usermodel.UserName = user.UserName;
+                usermodel.IsBlocked = user.IsBlocked;
+                usermodel.IsDeleted = user.IsDeleted;
+                usermodel.Id = user.Id;
+                var UserinRules = unitOfWork.UserManager.Users.FirstOrDefault(u => u.Email == user.Email);
+                usermodel.Roles = (List<string>)unitOfWork.UserManager.GetRolesAsync(UserinRules).Result ?? new List<string>();
+                userViewModels.Add(usermodel);
+            }
+
+            return Json(userViewModels);
+        }
+
+        // GET: Users/GetRoles
+        [HttpGet]
+        public async Task<IActionResult> GetRoles()
+        {
+            var roles = await unitOfWork.RoleManager.Roles
+                .Select(r => new { Id = r.Id, Name = r.Name })
+                .ToListAsync();
+
+            var RolesModels = new List<RoleViewModel>();
+            foreach (var user in roles)
+            {
+                var roleModel = new RoleViewModel();
+                roleModel.Id = user.Id;
+                roleModel.Name = user.Name;
+                RolesModels.Add(roleModel);
+            }
+
+            return Json(RolesModels);
+        }
+
+        // POST: Users/Create
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] UserInputModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new AppUser
+                {
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    NormalizedUserName = model.FirstName + "." + model.LastName,
+                    IsBlocked = model.IsBlocked
+                };
+
+                var result = await unitOfWork.UserManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    if (model.SelectedRoles != null && model.SelectedRoles.Any())
+                    {
+                        await unitOfWork.UserManager.AddToRolesAsync(user, model.SelectedRoles);
+                    }
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false, errors = result.Errors.Select(e => e.Description) });
+            }
+            return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)) });
+        }
+
+        // GET: Users/GetUser/{id}
+        [HttpGet]
+        public async Task<IActionResult> GetUser(string id)
+        {
+            var user = await unitOfWork.UserManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = new UserInputModel
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                IsBlocked = user.IsBlocked,
+                isDeleted = user.IsDeleted,
+                IsSwitchedOff = unitOfWork.UserHistoryRepository.GetAllCustomized(
+                            filter: a => a.IsMain == true && a.AppUserId == id).OrderBy(a => a.CreationDate).FirstOrDefault().IsSwitchedOff,
+
+                SelectedRoles = (await unitOfWork.UserManager.GetRolesAsync(user)).ToList()
+            };
+
+            return Json(model);
+        }
+
+        // POST: Users/Edit/{id}
+        [HttpPost]
+        public async Task<IActionResult> Edit(string id, [FromBody] UserInputModelUpdate model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await unitOfWork.UserManager.FindByIdAsync(id);
+                if (user == null)
+                {
+                    return Json(new { success = false, error = "User not found" });
+                }
+
+                user.Email = model.Email;
+                user.UserName = model.UserName;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.IsBlocked = model.IsBlocked;
+                if (!model.isDeleted && unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == true && a.IsMain == true  && a.AppUserId == user.Id).Any())
+                {
+                    user.IsDeleted = false;
+                    var UserHistory = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == true && a.IsMain == true && a.AppUserId == user.Id).LastOrDefault();
+                    if (UserHistory != null)
+                    {
+                        var newHistory = UserHistory;
+                        UserHistory.IsMain = false;
+                        unitOfWork.UserHistoryRepository.Update(UserHistory);
+
+                        newHistory.IsMain = true;
+                        newHistory.IsDeleted = false;
+                        newHistory.IsSwitchedOff = false;
+                        newHistory.ID = 0;
+                        unitOfWork.UserHistoryRepository.Add(newHistory);
+                    }
+                }
+                else if (model.isDeleted)
+                {
+                    user.IsDeleted = true;
+                    var UserHistory = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == user.Id).FirstOrDefault();
+                    if (UserHistory != null)
+                    {
+                        UserHistory.IsDeleted = true;
+                        unitOfWork.UserHistoryRepository.Update(UserHistory);
+                    }
+                }
+                    var result = await unitOfWork.UserManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    var currentRoles = await unitOfWork.UserManager.GetRolesAsync(user);
+                    await unitOfWork.UserManager.RemoveFromRolesAsync(user, currentRoles);
+
+                    if (model.SelectedRoles != null && model.SelectedRoles.Any())
+                    {
+                        await unitOfWork.UserManager.AddToRolesAsync(user, model.SelectedRoles);
+                    }
+
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false, errors = result.Errors.Select(e => e.Description) });
+            }
+            return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)) });
+        }
+
+        // POST: Users/Delete/{id}
+        [HttpPost]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var user = await unitOfWork.UserManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                var UserHistory = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == id).FirstOrDefault();
+                if (UserHistory != null)
+                {
+                    UserHistory.IsDeleted = true;
+                    unitOfWork.UserHistoryRepository.Update(UserHistory);
+                }
+                user.IsDeleted = true;
+                var result = await unitOfWork.UserManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false, errors = result.Errors.Select(e => e.Description) });
+            }
+            return Json(new { success = false, error = "User not found" });
+        }
+
+        #endregion
+    }
+}
+

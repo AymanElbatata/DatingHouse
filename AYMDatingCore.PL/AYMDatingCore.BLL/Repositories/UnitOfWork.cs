@@ -11,6 +11,7 @@ namespace AYMDatingCore.BLL.Repositories
         public ICountryTBLRepository CountryTBLRepository { get; }
         public IUserAddressListTBLRepository UserAddressListTBLRepository { get; }
         public IEmailTBLRepository EmailTBLRepository { get; }
+        public IContactUsRepository ContactUsRepository { get; }
         public IAppErrorTBLRepository AppErrorTBLRepository { get; }
         public SignInManager<AppUser> SignInManager { get; }
         public RoleManager<AppRole> RoleManager { get; }
@@ -38,6 +39,7 @@ namespace AYMDatingCore.BLL.Repositories
             IUserAddressListTBLRepository UserAddressListTBLRepository,
             IEmailTBLRepository EmailTBLRepository,
             IAppErrorTBLRepository AppErrorTBLRepository,
+            IContactUsRepository ContactUsRepository,
             SignInManager<AppUser> SignInManager,
             RoleManager<AppRole> RoleManager, UserManager<AppUser> UserManager,
             IMySPECIALGUID MySPECIALGUID, IEducationRepository EducationRepository,
@@ -56,6 +58,7 @@ namespace AYMDatingCore.BLL.Repositories
             this.UserAddressListTBLRepository = UserAddressListTBLRepository;
             this.EmailTBLRepository = EmailTBLRepository;
             this.AppErrorTBLRepository = AppErrorTBLRepository;
+            this.ContactUsRepository = ContactUsRepository;
             this.SignInManager = SignInManager;
             this.RoleManager = RoleManager;
             this.UserManager = UserManager;

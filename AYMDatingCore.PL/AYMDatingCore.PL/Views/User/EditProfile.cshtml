@@ -327,6 +327,14 @@
             <div class="text-center mt-4">
                 <button type="submit" class="btn-save">💾 Save Profile</button>
             </div>
+
+            <div class="text-center mt-5 py-2">
+                <a href="javascript:void(0)"
+                   class="text-danger fw-semibold"
+                   onclick="confirmDeleteAccount()">
+                    🗑️ Delete My Account
+                </a>
+            </div>
         </form>
     </div>
 </div>
@@ -495,5 +503,17 @@
             return false;
         }
         return true;
+    }
+</script>
+<script>
+    function confirmDeleteAccount() {
+        const confirmDelete = confirm(
+            "⚠️ Are you sure you want to delete your account?\n\n" +
+            "This action is permanent and all your data will be removed 💔"
+        );
+
+        if (confirmDelete) {
+            window.location.href = '@Url.Action("DeleteUser", "User", new { UserName = Model.AppUser.UserName })';
+        }
     }
 </script>

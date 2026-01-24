@@ -65,7 +65,7 @@ namespace AYMDatingCore.PL.Controllers
 
             if (!string.IsNullOrEmpty(User.Identity.Name) && User.Identity.Name != UserName) {
                 var SenderUser = await GetUserByUserName(User.Identity.Name);
-                if (!unitOfWork.UserViewRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == user.Id).Any())
+                if (unitOfWork.UserManager.IsInRoleAsync(SenderUser, "User").Result && !unitOfWork.UserViewRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == user.Id).Any())
                 {
                     unitOfWork.UserViewRepository.Add(new UserViewTBL() { SenderAppUserId = SenderUser.Id, ReceiverAppUserId = user.Id });
                     await _hubContext.Clients.User(user.Id).SendAsync("ReceiveViewNotification", unitOfWork.UserViewRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == user.Id).Count());
@@ -131,11 +131,29 @@ namespace AYMDatingCore.PL.Controllers
         {
             return View();
         }
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+
+        public IActionResult ContactUs()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public IActionResult ContactUs(ContactUsTBL_VM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var contactUs = Mapper.Map<ContactUsTBL>(model);
+                unitOfWork.ContactUsRepository.Add(contactUs);
+
+                TempData["SuccessMessage"] = "Your message has been sent successfully 💖";
+
+                return RedirectToAction(nameof(ContactUs));
+            }
+
+            return View(model);
+        }
+
 
         private List<UserHistoryTBL_VM> GetAllUsersOrFiltered(UserMainSearchDTO model)
         {
@@ -189,6 +207,13 @@ namespace AYMDatingCore.PL.Controllers
         private async Task<AppUser> GetUserByUserName(string UserName)
         {
             return await unitOfWork.UserManager.FindByNameAsync(UserName);
+        }
+
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

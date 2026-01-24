@@ -30,7 +30,12 @@ namespace AYMDatingCore.PL
                 {
                     options.HtmlHelperOptions.ClientValidationEnabled = true;
                 });
-            builder.Services.AddSession();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromDays(365); // Session timeout
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             builder.Services.AddDbContext<AymanDatingCoreDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
                     sqlOptions => sqlOptions.EnableRetryOnFailure()
@@ -44,8 +49,11 @@ namespace AYMDatingCore.PL
                         .AllowCredentials()
                         .SetIsOriginAllowed(_ => true));
             });
-            //builder.Services.AddHttpContextAccessor();
-            //builder.Services.AddHttpClient<GeoLocationHelper>();
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromDays(365);
+                options.SlidingExpiration = true; // يجدد المدة لو المستخدم نشط
+            });
 
 
             //services.AddSingleton 
@@ -58,6 +66,7 @@ namespace AYMDatingCore.PL
             builder.Services.AddScoped<IMaritalStatusRepository, MaritalStatusRepository>();
             builder.Services.AddScoped<IUserAddressListTBLRepository, UserAddressListTBLRepository>();
             builder.Services.AddScoped<IAppErrorTBLRepository, AppErrorTBLRepository>();
+            builder.Services.AddScoped<IContactUsRepository, ContactUsRepository>();
             builder.Services.AddScoped<IEmailTBLRepository, EmailTBLRepository>();
 
             builder.Services.AddScoped<IEducationRepository, EducationRepository>();

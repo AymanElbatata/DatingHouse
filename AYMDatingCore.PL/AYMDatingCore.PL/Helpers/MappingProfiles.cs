@@ -11,6 +11,7 @@ namespace AYMDatingCore.PL.Helpers
         public MappingProfiles()
         {
             CreateMap<ProfessionTBL, ProfessionTBL_VM>().ReverseMap();
+            CreateMap<ContactUsTBL, ContactUsTBL_VM>().ReverseMap();
             CreateMap<CountryTBL, CountryTBL_VM>().ReverseMap();
             CreateMap<GenderTBL, GenderTBL_VM>().ReverseMap();
             CreateMap<EmailTBL, EmailTBL_VM>().ReverseMap();
@@ -18,6 +19,7 @@ namespace AYMDatingCore.PL.Helpers
             CreateMap<UserHistoryTBL, UserHistoryTBL_VM>().ReverseMap();
             CreateMap<UserImageTBL, UserImageTBL_VM>().ReverseMap();
             CreateMap<UserMessageTBL, UserMessage_VM>().ReverseMap();
+            CreateMap<UserReportTBL, UserReportTBL_VM>().ReverseMap();
         }
     }
 }

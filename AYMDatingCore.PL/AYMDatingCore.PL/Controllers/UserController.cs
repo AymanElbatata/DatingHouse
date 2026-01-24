@@ -4,6 +4,7 @@ using AYMDatingCore.BLL.Repositories;
 using AYMDatingCore.DAL.BaseEntity;
 using AYMDatingCore.DAL.Entities;
 using AYMDatingCore.Helpers;
+using AYMDatingCore.PL.DTO;
 using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +45,7 @@ namespace AYMDatingCore.PL.Controllers
             return RedirectToAction("UserProfile", "Home", new { UserName =  UserName});
         }
 
-        #region Edit Profile and Upload Images
+        #region Edit/Delete/Report Profile and Upload Images
         [HttpGet]
         public async Task<IActionResult> EditProfile(string? UserName)
         {
@@ -177,6 +178,72 @@ namespace AYMDatingCore.PL.Controllers
 
             return Json(new { success = true });
         }
+
+        [HttpGet]
+        public IActionResult DeleteUser(string? UserName)
+        {
+            if (User.Identity.Name == UserName)
+            {
+                return View(true);
+            }
+            return View(false);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser()
+        {
+            var CurrentUser = await GetUserByUserName(User.Identity.Name);
+            if (CurrentUser != null)
+            {
+                CurrentUser.IsDeleted = true;
+                await unitOfWork.UserManager.UpdateAsync(CurrentUser);
+                var UserHistory = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+                if (UserHistory != null)
+                {
+                    UserHistory.IsSwitchedOff = true;
+                    UserHistory.IsDeleted = true;
+                    unitOfWork.UserHistoryRepository.Update(UserHistory);
+                }
+            }
+            return RedirectToAction("Logout", "Account");
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ReportUser(string? RecieverUserName)
+        {
+            var RecieverUser = await GetUserByUserName(RecieverUserName);
+            if (RecieverUser != null)
+            {
+                return View(new UserReport_DTO() { ReceiverAppUserUsername = RecieverUserName });
+            }
+            return View(new UserReport_DTO());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReportUser(UserReport_DTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                var CurrentUser = await GetUserByUserName(User.Identity.Name);
+                var RecieverUser = await GetUserByUserName(model.ReceiverAppUserUsername);
+
+                if (CurrentUser != null && RecieverUser != null)
+                {
+                    unitOfWork.UserReportRepository.Add(new DAL.Entities.UserReportTBL()
+                    {
+                        SenderAppUserId = CurrentUser.Id,
+                        ReceiverAppUserId = RecieverUser.Id,
+                        Complaint = model.Complaint.Length > 1000 ? model.Complaint.Substring(0, 1000) : model.Complaint
+                    });
+                    return RedirectToAction("UserProfile", "Home", new { UserName = model.ReceiverAppUserUsername });
+                }
+            }
+            return View(model);
+        }
+        
         #endregion
 
         #region New Messages, Likes, Views, Favorites, Block
@@ -218,8 +285,11 @@ namespace AYMDatingCore.PL.Controllers
             foreach (var item in allNewViews)
             {
                 Views_VM.UserHistoryTBL_VM.Add(GetUserHistoryByUserId(item.SenderAppUserId));
-                item.IsSeen = true;
-                unitOfWork.UserViewRepository.Update(item);
+                if (!item.IsSeen)
+                {
+                    item.IsSeen = true;
+                    unitOfWork.UserViewRepository.Update(item);
+                }
             }
             Views_VM.UserHistoryTBL_VM.OrderByDescending(a => a.CreationDate);
             return View(Views_VM);
@@ -234,8 +304,11 @@ namespace AYMDatingCore.PL.Controllers
             foreach (var item in allNewLikes)
             {
                 Views_VM.UserHistoryTBL_VM.Add(GetUserHistoryByUserId(item.SenderAppUserId));
-                item.IsSeen = true;
-                unitOfWork.UserLikeRepository.Update(item);
+                if (!item.IsSeen)
+                {
+                    item.IsSeen = true;
+                    unitOfWork.UserLikeRepository.Update(item);
+                }
             }
             Views_VM.UserHistoryTBL_VM.OrderByDescending(a => a.CreationDate);
             return View(Views_VM);
@@ -250,8 +323,11 @@ namespace AYMDatingCore.PL.Controllers
             foreach (var item in allNewFavorites)
             {
                 Views_VM.UserHistoryTBL_VM.Add(GetUserHistoryByUserId(item.SenderAppUserId));
-                item.IsSeen = true;
-                unitOfWork.UserFavoriteRepository.Update(item);
+                if (!item.IsSeen) 
+                {
+                    item.IsSeen = true;
+                    unitOfWork.UserFavoriteRepository.Update(item);
+                }
             }
             Views_VM.UserHistoryTBL_VM.OrderByDescending(a => a.CreationDate);
             return View(Views_VM);
@@ -266,8 +342,11 @@ namespace AYMDatingCore.PL.Controllers
             foreach (var item in allNewBlocks)
             {
                 Views_VM.UserHistoryTBL_VM.Add(GetUserHistoryByUserId(item.SenderAppUserId));
-                item.IsSeen = true;
-                unitOfWork.UserBlockRepository.Update(item);
+                if (!item.IsSeen) 
+                {
+                    item.IsSeen = true;
+                    unitOfWork.UserBlockRepository.Update(item);
+                }
             }
             Views_VM.UserHistoryTBL_VM.OrderByDescending(a => a.CreationDate);
             return View(Views_VM);
@@ -368,21 +447,22 @@ namespace AYMDatingCore.PL.Controllers
             data.SenderAppUser = SenderUser;
             data.ReceiverAppUser = ReceiverUser;
             data.GroupName = UserMessageGroup.NameGuid;
-            data.UserMessage_VM = Mapper.Map<List<UserMessage_VM>>(unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromSender == false && (a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).OrderBy(a => a.CreationDate).ToList());
+            var UserMessages = unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromSender == false && (a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).OrderBy(a => a.CreationDate).ToList();
+
+            // Seen Old Messages
+            foreach (var item in UserMessages.Where(a => a.IsSeen == false && a.ReceiverAppUserId == SenderUser.Id))
+            {
+                item.IsSeen = true;
+                unitOfWork.UserMessageRepository.Update(item);
+            }
+            //
+            data.UserMessage_VM = Mapper.Map<List<UserMessage_VM>>(UserMessages);
 
             var RecieverUserProfile = GetUserHistoryByUserId(ReceiverUser.Id);
 
             data.UserHistoryTBL_VM = Mapper.Map<UserHistoryTBL_VM>(RecieverUserProfile);
             data.IsThereBlocking = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == ReceiverUser.Id) || (a.IsDeleted == false && a.SenderAppUserId == ReceiverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).Any();
 
-            // Seen Old Messages
-            var allNewMessages = unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromSender == false && a.IsSeen == false && a.ReceiverAppUserId == SenderUser.Id && a.SenderAppUserId == ReceiverUser.Id).ToList();
-            foreach (var item in allNewMessages)
-            {
-                item.IsSeen = true;
-                unitOfWork.UserMessageRepository.Update(item);
-            }
-            //
             return View(data);
         }
         #endregion

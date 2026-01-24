@@ -2,56 +2,6 @@
     ViewData["Title"] = "About MarryMe 💞";
 }
 
-<section class="about-section py-5">
-    <div class="container text-center">
-        <h1 class="display-5 fw-bold mb-4 text-romantic">About MarryMe 💞</h1>
-        <p class="lead text-muted mb-5">
-            Welcome to <strong>MarryMe</strong> — where hearts connect and love stories begin.
-            We’re a passionate team of dreamers, developers, and romantics building a platform to help you find your perfect match.
-        </p>
-
-        <!-- Cards -->
-        <div class="row justify-content-center g-4">
-            <div class="col-md-4">
-                <div class="card-romantic">
-                    <h3>Our Mission</h3>
-                    <p>
-                        To bring people together with sincerity and technology — helping them find love that lasts forever.
-                    </p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card-romantic">
-                    <h3>Our Vision</h3>
-                    <p>
-                        To be the most trusted and romantic matchmaking platform across the world, connecting souls beyond borders.
-                    </p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card-romantic">
-                    <h3>Our Values</h3>
-                    <p>
-                        Love, honesty, and respect guide every step we take — because every relationship begins with trust. ❤️
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Team Section -->
-        <div class="mt-5">
-            <h2 class="fw-bold text-romantic mb-4">Meet Our Team</h2>
-            <div class="d-flex flex-wrap justify-content-center gap-4">
-                <div class="team-card">
-                    <img src="~/Images/Main/AYM_512x512_2023.jpg" alt="Ayman Elbatata" />
-                    <h4>Ayman Elbatata</h4>
-                    <p>CEO & Founder</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Romantic Styles -->
 <style>
     body {
@@ -117,17 +67,65 @@
         }
 
     @@keyframes fadeInUp {
-        from
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
 
-    {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 </style>
+
+<section class="about-section py-5">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-4 text-romantic">About MarryMe 💞</h1>
+        <p class="lead text-muted mb-5">
+            Welcome to <strong>MarryMe</strong> — where hearts connect and love stories begin.
+            We’re a passionate team of dreamers, developers, and romantics building a platform to help you find your perfect match.
+        </p>
+
+        <!-- Cards -->
+        <div class="row justify-content-center g-4">
+            <div class="col-md-4">
+                <div class="card-romantic">
+                    <h3>Our Mission</h3>
+                    <p>
+                        To bring people together with sincerity and technology — helping them find love that lasts forever.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-romantic">
+                    <h3>Our Vision</h3>
+                    <p>
+                        To be the most trusted and romantic matchmaking platform across the world, connecting souls beyond borders.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-romantic">
+                    <h3>Our Values</h3>
+                    <p>
+                        Love, honesty, and respect guide every step we take — because every relationship begins with trust. ❤️
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Section -->
+        <div class="mt-5">
+            <h2 class="fw-bold text-romantic mb-4">Meet Our Team</h2>
+            <div class="d-flex flex-wrap justify-content-center gap-4">
+                <div class="team-card">
+                    <img src="~/Images/Main/AYM_512x512_2023.jpg" alt="Ayman Elbatata" />
+                    <h4>Ayman Elbatata</h4>
+                    <p>CEO & Founder</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

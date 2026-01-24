@@ -229,6 +229,37 @@
             box-shadow: 0 6px 15px rgba(255, 111, 145, 0.6);
             color: #fff;
         }
+
+    .report-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 22px;
+        border-radius: 50px;
+        border: none;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        background: linear-gradient(135deg, #ff6b6b, #ff8787);
+        color: #fff;
+        box-shadow: 0 8px 18px rgba(255, 107, 107, 0.35);
+        transition: all 0.3s ease;
+    }
+
+        .report-btn i {
+            font-size: 1rem;
+        }
+
+        .report-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 14px 28px rgba(255, 107, 107, 0.45);
+            background: linear-gradient(135deg, #fa5252, #ff6b6b);
+        }
+
+        .report-btn:active {
+            transform: scale(0.97);
+        }
+
 </style>
 
 <div class="profile-container">
@@ -334,6 +365,12 @@
                     <button id="chatBtn" class="action-btn chat-btn"
                     onclick="window.location.href='@Url.Action("Chat", "User", new { RecieverUserName = Model.AppUser.UserName })'">
                         <i class="fas fa-comments"></i> Chat
+                    </button>
+
+                    <button class="action-btn report-btn mt-3"
+                            onclick="window.location.href='@Url.Action("ReportUser", "User", new { RecieverUserName = Model.AppUser.UserName })'">
+                        <i class="fas fa-flag"></i>
+                        <span>Report</span>
                     </button>
                 </div>
             }

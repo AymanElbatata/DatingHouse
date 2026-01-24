@@ -348,7 +348,16 @@
                     foreach (var msg in PreviousMessage)
                     {
                         <li class="message-item @(msg.SenderAppUser.UserName == User.Identity.Name ? "sent" : "received")">
-                            <p class="message-meta">@msg.CreationDate?.ToString("dd MMMM yyyy, hh:mm tt") • <strong>@msg.SenderAppUser.UserName</strong></p>
+                            <p class="message-meta">@msg.CreationDate?.ToString("dd MMMM yyyy, hh:mm tt") • <strong>@msg.SenderAppUser.UserName</strong>
+                                @if (msg.IsSeen)
+                                {
+                                    <i class="fa-solid fa-check-double text-primary"></i>
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-check text-muted"></i>
+                                }
+                            </p>
                             @if (!string.IsNullOrEmpty(msg.Message))
                             {
                                 <p class="message-text">@msg.Message</p>
@@ -607,7 +616,7 @@
 
                 // Message content
                 li.innerHTML = `
-                    <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${SenderUserName}</strong></p>
+                    <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${SenderUserName}</strong>  <i class="fa-solid fa-check text-muted"></i></p>
                     <p class="message-text">${message}</p>
                 `;
 
@@ -738,7 +747,7 @@
         `;
 
         li.innerHTML = `
-            <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${senderUserName}</strong></p>
+            <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${senderUserName}</strong> <i class="fa-solid fa-check text-muted"></i></p>
             ${audioElement}
         `;
 
@@ -881,7 +890,7 @@
 
         const fileUrl = `../FileUsers/${fileName}`;
     let fileElement = `
-        <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${senderUserName}</strong></p>
+        <p class="message-meta">${"@DateTime.Now.ToString("dd MMMM yyyy, hh:mm tt")"} • <strong>${senderUserName}</strong> <i class="fa-solid fa-check text-muted"></i></p>
     `;
 
     if (/\.(jpg|jpeg|png|gif)$/i.test(fileName)) {

@@ -17,6 +17,7 @@ namespace AYMDatingCore.BLL.Interfaces
         IUserAddressListTBLRepository UserAddressListTBLRepository { get; }
 
         IAppErrorTBLRepository AppErrorTBLRepository { get; }
+        IContactUsRepository ContactUsRepository { get; }
         IEmailTBLRepository EmailTBLRepository { get; }
         SignInManager<AppUser> SignInManager { get; }
         RoleManager<AppRole> RoleManager { get; }

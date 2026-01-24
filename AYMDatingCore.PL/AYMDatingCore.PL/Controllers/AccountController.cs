@@ -69,8 +69,17 @@ namespace AYMDatingCore.PL.Controllers
                     ModelState.AddModelError("", "Invalid Email");
                     return View(model);
                 }
-
-                if (!user.EmailConfirmed)
+                else if (user.IsBlocked)
+                {
+                    ModelState.AddModelError("", "Account is Blocked");
+                    return View(model);
+                }
+                else if (user.IsDeleted)
+                {
+                    ModelState.AddModelError("", "Account is Deleted");
+                    return View(model);
+                }
+                else if (!user.EmailConfirmed)
                 {
                     //ModelState.AddModelError("", "Email is not Confirmed, Check your email address now!");
 

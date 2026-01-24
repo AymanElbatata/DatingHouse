@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AYMDatingCore.DAL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+279c8edee842c8922fa70ef9f8a80feed7f9d2c3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
 [assembly: System.Reflection.AssemblyProductAttribute("AYMDatingCore.DAL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AYMDatingCore.DAL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
