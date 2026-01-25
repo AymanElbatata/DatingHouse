@@ -148,6 +148,13 @@
             </div>
         }
 
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success text-center rounded-pill mb-4"
+                 style="background:#ffe6f0;border:none;color:#d63384;font-weight:600;">
+                💌 @TempData["SuccessMessage"]
+            </div>
+        }
         <form id="reportForm" asp-action="ReportUser" asp-controller="User" method="post">
 
             @Html.AntiForgeryToken()

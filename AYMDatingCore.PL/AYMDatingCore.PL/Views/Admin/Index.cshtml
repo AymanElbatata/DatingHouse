@@ -4,14 +4,18 @@
     ViewData["Title"] = "Admin Panel";
 }
 
-<!-- Select2 CSS & JS -->
+<!-- ===============================
+     Select2
+================================ -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <style>
-    /* 🌸 Body & Wrapper */
+    /* ===============================
+           Global
+        ================================ */
     body {
-        background: linear-gradient(135deg, #ffe6f0, #fff);
+        background: linear-gradient(135deg, #fde7f3, #ffffff);
         font-family: 'Poppins', sans-serif;
     }
 
@@ -20,201 +24,217 @@
         text-align: center;
     }
 
-    /* Titles */
     .admin-title {
         font-weight: 700;
-        color: #d63384;
+        color: #c2185b;
     }
 
     .admin-subtitle {
         color: #6c757d;
-        font-size: 1.1rem;
-        margin-bottom: 50px;
+        font-size: 1.05rem;
+        margin-bottom: 45px;
     }
 
-    /* Card Styles */
+    /* ===============================
+           Cards
+        ================================ */
     .admin-card {
         border: none;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(214, 51, 132, 0.15);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 22px;
+        box-shadow: 0 12px 30px rgba(194, 24, 91, 0.15);
+        transition: all .35s ease;
     }
 
         .admin-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 15px 35px rgba(214, 51, 132, 0.25);
+            box-shadow: 0 18px 40px rgba(194, 24, 91, 0.25);
         }
 
     .card-icon {
-        font-size: 40px;
+        font-size: 42px;
         margin-bottom: 15px;
     }
 
-    /* Gradient Backgrounds */
+    /* ===============================
+           Backgrounds
+        ================================ */
     .bg-pink {
         background: linear-gradient(135deg, #ff5fa2, #ff85c2);
         color: #fff;
     }
 
-    .bg-soft-pink {
-        background: linear-gradient(135deg, #ff85c2, #ffc2dc);
+    .bg-soft {
+        background: linear-gradient(135deg, #ff9ecf, #ffd3e7);
         color: #fff;
     }
 
     .bg-email {
-        background: linear-gradient(135deg, #ff6fae, #ff9fcf);
+        background: linear-gradient(135deg, #ff7bbd, #ffb3da);
         color: #fff;
     }
 
     .bg-contact {
-        background: linear-gradient(135deg, #ff7eb3, #ffb6d5);
+        background: linear-gradient(135deg, #ff8fb1, #ffd1e1);
         color: #fff;
     }
 
-    /* Buttons */
-    .btn-pink {
-        background-color: #fff;
-        color: #d63384;
-        border-radius: 30px;
-        font-weight: 600;
-        padding: 10px 25px;
-        transition: all 0.3s ease;
+    .bg-reports {
+        background: linear-gradient(135deg, #ff6b6b, #ff9a9a);
+        color: #fff;
     }
 
-        .btn-pink:hover {
-            background-color: #d63384;
+    /* ===============================
+           Buttons
+        ================================ */
+    .btn-soft {
+        background: #fff;
+        color: #c2185b;
+        border-radius: 30px;
+        font-weight: 600;
+        padding: 10px 26px;
+        transition: .3s ease;
+    }
+
+        .btn-soft:hover {
+            background: #c2185b;
             color: #fff;
         }
 
-    .bg-reports {
-        background: linear-gradient(135deg, #ff4d4f, #ff7a7a);
-        color: #fff;
-    }
-
-    .btn-report {
+    .btn-danger-soft {
         background: #fff;
         color: #ff4d4f;
         border-radius: 30px;
         font-weight: 600;
-        padding: 10px 25px;
-        transition: all 0.3s ease;
+        padding: 10px 26px;
+        transition: .3s ease;
     }
 
-        .btn-report:hover {
-            background-color: #ff4d4f;
+        .btn-danger-soft:hover {
+            background: #ff4d4f;
             color: #fff;
         }
 </style>
 
 <div class="admin-wrapper">
-    <h1 class="admin-title mb-3">Admin Control Panel</h1>
-    <p class="admin-subtitle">Manage users, messages, and platform settings with ease 💖</p>
+
+    <!-- Logout -->
+    <div class="mb-4">
+        @Html.ActionLink("Logout All Users", "LogoutAllUsers", "Admin", null, new { @class = "btn btn-soft" })
+    </div>
+
+    <h1 class="admin-title mb-2">Admin Control Panel</h1>
+    <p class="admin-subtitle">
+        Centralized management for users, messages, and system controls
+    </p>
 
     <div class="container">
         <div class="row g-4 justify-content-center">
 
-            <!-- =========================
-                 Messages Card
-                 ========================= -->
+            <!-- ===============================
+                 User Messages
+            ================================ -->
             <div class="col-md-4">
                 <div class="card admin-card bg-pink h-100">
                     <div class="card-body p-4">
                         <div class="card-icon">💬</div>
-                        <h4 class="card-title">User Messages</h4>
-                        <p class="card-text">View, edit, and manage all user conversations.</p>
+                        <h4>User Messages</h4>
+                        <p>Monitor and manage private conversations.</p>
 
-                        <form asp-action="UserMessages" asp-controller="Admin" id="GoToMessagesForm" method="get" class="mt-4">
+                        <form asp-action="UserMessages" asp-controller="Admin" id="GoToMessagesForm" method="get">
                             <div class="mb-3">
-                                <select asp-for="UserId" id="userId" asp-items="Model.Users" class="form-select" required>
+                                <select asp-for="UserId"
+                                        asp-items="Model.Users"
+                                        id="userId"
+                                        class="form-select">
                                     <option value="">-- Select User --</option>
                                 </select>
-                                <span id="userIdError" class="text-danger"></span>
+                                <small id="userIdError" class="text-warning"></small>
                             </div>
 
-                            <button type="submit" class="btn btn-pink mt-2">Manage Messages</button>
+                            <button type="submit" class="btn btn-soft">
+                                Open Messages
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <!-- =========================
-                 Users Card
-                 ========================= -->
+            <!-- ===============================
+                 User Management
+            ================================ -->
             <div class="col-md-4">
-                <div class="card admin-card bg-soft-pink h-100">
+                <div class="card admin-card bg-soft h-100">
                     <div class="card-body p-4">
                         <div class="card-icon">👥</div>
-                        <h4 class="card-title">User Management</h4>
-                        <p class="card-text">Review profiles, update details, and control access.</p>
-                        @Html.ActionLink(
-                        "Manage Users",
-                                                "UserManagement",
-                                                "Admin",
-                                                null,
-                                                new { @class = "btn btn-pink mt-3" }
-                                                )
+                        <h4>User Management</h4>
+                        <p>Control profiles, roles, and access.</p>
+
+                        @Html.ActionLink("Manage Users", "UserManagement", "Admin", null,
+                        new { @class = "btn btn-soft mt-3" })
                     </div>
                 </div>
             </div>
 
-            <!-- =========================
-                 User Emails Card
-                 ========================= -->
+            <!-- ===============================
+                 Emails
+            ================================ -->
             <div class="col-md-4">
                 <div class="card admin-card bg-email h-100">
                     <div class="card-body p-4">
                         <div class="card-icon">📧</div>
-                        <h4 class="card-title">User Emails</h4>
-                        <p class="card-text">View all emails sent to users for audit and support purposes.</p>
-                        @Html.ActionLink(
-                                                "View Emails",
-                                                "UserEmails",
-                                                "Admin",
-                                                null,
-                                                new { @class = "btn btn-pink mt-3" }
-                                                )
+                        <h4>User Emails</h4>
+                        <p>Audit and review outgoing emails.</p>
+
+                        @Html.ActionLink("View Emails", "UserEmails", "Admin", null,
+                                                new { @class = "btn btn-soft mt-3" })
                     </div>
                 </div>
             </div>
 
-            <!-- =========================
-                 Contact Messages Card
-                 ========================= -->
+            <!-- ===============================
+                 Contact Us
+            ================================ -->
             <div class="col-md-4">
                 <div class="card admin-card bg-contact h-100">
                     <div class="card-body p-4">
                         <div class="card-icon">💌</div>
-                        <h4 class="card-title">Contact Messages</h4>
-                        <p class="card-text">View messages sent from the Contact Us page.</p>
-                        @Html.ActionLink(
-                                                "View Messages",
-                                                "UserContactUs",
-                                                "Admin",
-                                                null,
-                                                new { @class = "btn btn-pink mt-3" }
-                                                )
+                        <h4>Contact Messages</h4>
+                        <p>Messages received from Contact Us page.</p>
+
+                        @Html.ActionLink("View Messages", "UserContactUs", "Admin", null,
+                                                new { @class = "btn btn-soft mt-3" })
                     </div>
                 </div>
             </div>
 
-            <!-- =========================
-                 User Reports Card
-                 ========================= -->
+            <!-- ===============================
+                 Reports
+            ================================ -->
             <div class="col-md-4">
                 <div class="card admin-card bg-reports h-100">
                     <div class="card-body p-4">
                         <div class="card-icon">🚨</div>
-                        <h4 class="card-title">User Reports</h4>
-                        <p class="card-text">
-                            Review complaints submitted by users against others.
-                        </p>
-                        @Html.ActionLink(
-                                                "Review Reports",
-                                                "UserReports",
-                                                "Admin",
-                                                null,
-                                                new { @class = "btn btn-report mt-3" }
-                                                )
+                        <h4>User Reports</h4>
+                        <p>Complaints and abuse reports between users.</p>
+
+                        @Html.ActionLink("Review Reports", "UserReports", "Admin", null,
+                                                new { @class = "btn btn-danger-soft mt-3" })
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===============================
+                 Allowance Panel
+            ================================ -->
+            <div class="col-md-4">
+                <div class="card admin-card bg-reports h-100">
+                    <div class="card-body p-4">
+                        <div class="card-icon">⚙️</div>
+                        <h4>Operation Panel</h4>
+                        <p>Manage platform permissions and rules.</p>
+
+                        @Html.ActionLink("Operation Panel", "AllowancePanel", "Admin", null,
+                                                new { @class = "btn btn-danger-soft mt-3" })
                     </div>
                 </div>
             </div>
@@ -224,27 +244,20 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(function () {
 
-        // ===============================
-        // Initialize Select2
-        // ===============================
+        // Select2
         $('#userId').select2({
-            placeholder: 'Select User',
-            allowClear: true,
-            width: '100%'
+            placeholder: "Select user",
+            width: "100%",
+            allowClear: true
         });
 
-        // ===============================
-        // Form Validation
-        // ===============================
+        // Validation
         $('#GoToMessagesForm').on('submit', function (e) {
-            const userId = $('#userId').val();
-            $('#userIdError').text('');
-
-            if (!userId) {
+            if (!$('#userId').val()) {
                 e.preventDefault();
-                $('#userIdError').text('User selection is required');
+                $('#userIdError').text('Please select a user first.');
             }
         });
     });

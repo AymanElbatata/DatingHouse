@@ -20,6 +20,7 @@ namespace AYMDatingCore.PL.Helpers
             CreateMap<UserImageTBL, UserImageTBL_VM>().ReverseMap();
             CreateMap<UserMessageTBL, UserMessage_VM>().ReverseMap();
             CreateMap<UserReportTBL, UserReportTBL_VM>().ReverseMap();
+            CreateMap<AdminPanelTBL, AdminPanelTBL_VM>().ReverseMap();
         }
     }
 }

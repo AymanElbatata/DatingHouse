@@ -42,13 +42,26 @@ namespace AYMDatingCore.PL.Controllers
 
         public IActionResult Index(string? UserName)
         {
-            return RedirectToAction("UserProfile", "Home", new { UserName =  UserName});
+            try
+            {
+                return RedirectToAction("UserProfile", "Home", new { UserName = UserName });
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
         }
 
-        #region Edit/Delete/Report Profile and Upload Images
+        #region Edit/Delete Profile and Upload Images
         [HttpGet]
         public async Task<IActionResult> EditProfile(string? UserName)
         {
+            try
+            {
+            if (configuration["AymanStore.Pl.AllowedUserEditProfile"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowUserEditProfile")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
             var CurrentUser = await GetUserByUserName(User.Identity.Name);
             if (CurrentUser != null)
             {
@@ -74,7 +87,13 @@ namespace AYMDatingCore.PL.Controllers
                 return View(data);
             }
 
-            return View(new UserHistoryTBL_VM());           
+            return View(new UserHistoryTBL_VM());
+
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
         }
 
         [HttpPost]
@@ -83,6 +102,10 @@ namespace AYMDatingCore.PL.Controllers
         {
             try
             {
+                if (configuration["AymanStore.Pl.AllowedUserEditProfile"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowUserEditProfile")).FirstOrDefault().Activation)
+                {
+                    return RedirectToAction("ServiceIsDown", "Home");
+                }
                 var CurrentUser = await GetUserByUserName(User.Identity.Name);
 
                 if (ModelState.IsValid)
@@ -135,7 +158,7 @@ namespace AYMDatingCore.PL.Controllers
             }
             catch (Exception e)
             {
-                return View(new UserHistoryTBL_VM());
+                return RedirectToAction("ServiceIsDown", "Home");
             }
         }
 
@@ -193,6 +216,9 @@ namespace AYMDatingCore.PL.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser()
         {
+            try
+            {
+
             var CurrentUser = await GetUserByUserName(User.Identity.Name);
             if (CurrentUser != null)
             {
@@ -207,12 +233,25 @@ namespace AYMDatingCore.PL.Controllers
                 }
             }
             return RedirectToAction("Logout", "Account");
+
+            }
+            catch (Exception e)
+            {
+
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
         }
 
+        #endregion
 
+        #region User Report
         [HttpGet]
         public async Task<IActionResult> ReportUser(string? RecieverUserName)
         {
+            if (configuration["AymanStore.Pl.AllowedUserReport"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowUserReport")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
             var RecieverUser = await GetUserByUserName(RecieverUserName);
             if (RecieverUser != null)
             {
@@ -225,6 +264,10 @@ namespace AYMDatingCore.PL.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ReportUser(UserReport_DTO model)
         {
+            if (configuration["AymanStore.Pl.AllowedUserReport"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowUserReport")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
             if (ModelState.IsValid)
             {
                 var CurrentUser = await GetUserByUserName(User.Identity.Name);
@@ -238,12 +281,13 @@ namespace AYMDatingCore.PL.Controllers
                         ReceiverAppUserId = RecieverUser.Id,
                         Complaint = model.Complaint.Length > 1000 ? model.Complaint.Substring(0, 1000) : model.Complaint
                     });
-                    return RedirectToAction("UserProfile", "Home", new { UserName = model.ReceiverAppUserUsername });
+                    TempData["SuccessMessage"] = "Your Report has been sent successfully";
+
+                    return RedirectToAction(nameof(ReportUser));
                 }
             }
             return View(model);
         }
-        
         #endregion
 
         #region New Messages, Likes, Views, Favorites, Block

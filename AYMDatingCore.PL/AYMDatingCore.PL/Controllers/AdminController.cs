@@ -82,6 +82,27 @@ namespace AYMDatingCore.PL.Controllers
             return View(Mapper.Map<List<ContactUsTBL_VM>>(userContactMsgs));
         }
 
+        #region Allowances / AllowancePanel
+        public IActionResult AllowancePanel()
+        {
+            var AdminAllowedPanel = unitOfWork.AdminPanelTBLRepository.GetAll().OrderByDescending(a => a.CreationDate);
+            return View(Mapper.Map<List<AdminPanelTBL_VM>>(AdminAllowedPanel));
+        }
+
+        [HttpPost]
+        public IActionResult TogglePanelActivation(int id, bool activation)
+        {
+            var panel = unitOfWork.AdminPanelTBLRepository.GetById(id);
+            if (panel == null)
+                return NotFound();
+
+            panel.Activation = activation;
+            unitOfWork.AdminPanelTBLRepository.Update(panel);
+
+            return Ok(new { success = true });
+        }
+        #endregion
+
         #region Manage Users
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -305,6 +326,19 @@ namespace AYMDatingCore.PL.Controllers
             return Json(new { success = false, error = "User not found!" });
         }
 
+        #endregion
+
+        #region LogoutAllUsers
+        [HttpGet]
+        public async Task<IActionResult> LogoutAllUsers()
+        {
+            var Users = await unitOfWork.UserManager.Users.Where(a => a.IsActivated == true && a.IsDeleted == false && a.Email != "ayman.fathy.elbatata@gmail.com").ToListAsync();
+            foreach (var user in Users)
+            {
+                await unitOfWork.UserManager.UpdateSecurityStampAsync(user);
+            }
+            return RedirectToAction("Index");
+        }
         #endregion
     }
 }

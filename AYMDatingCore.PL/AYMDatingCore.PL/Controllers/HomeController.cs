@@ -24,13 +24,15 @@ namespace AYMDatingCore.PL.Controllers
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper Mapper;
         private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly IConfiguration configuration;
 
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IMapper Mapper, IHubContext<NotificationHub> hubContext)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IMapper Mapper, IHubContext<NotificationHub> hubContext, IConfiguration configuration)
         {
             _logger = logger;
             this.unitOfWork = unitOfWork;
             this.Mapper = Mapper;
             _hubContext = hubContext;
+            this.configuration = configuration;
         }
 
         public IActionResult Index()
@@ -132,15 +134,40 @@ namespace AYMDatingCore.PL.Controllers
             return View();
         }
 
-        public IActionResult ContactUs()
+        public IActionResult ServiceIsDown()
         {
             return View();
+        }
+
+        public IActionResult ContactUs()
+        {
+            try
+            {
+
+            if (configuration["AymanStore.Pl.AllowedContactUs"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowContactUs")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
+            return View();
+
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
         }
 
         [ValidateAntiForgeryToken]
         [HttpPost]
         public IActionResult ContactUs(ContactUsTBL_VM model)
         {
+            try
+            {
+
+            if (configuration["AymanStore.Pl.AllowedContactUs"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowContactUs")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
             if (ModelState.IsValid)
             {
                 var contactUs = Mapper.Map<ContactUsTBL>(model);
@@ -152,6 +179,13 @@ namespace AYMDatingCore.PL.Controllers
             }
 
             return View(model);
+
+            }
+            catch (Exception e)
+            {
+
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
         }
 
 

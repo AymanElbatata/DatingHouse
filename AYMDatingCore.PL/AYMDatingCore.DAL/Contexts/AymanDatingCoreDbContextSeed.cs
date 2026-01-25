@@ -19,6 +19,18 @@ namespace AYMDatingCore.DAL.Contexts
         {
             try
             {
+                if (!context.AdminPanelTBLs.Any())
+                {
+                    context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName ="AllowHome"});
+                    context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "AllowLogin" });
+                    context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "AllowRegister" });
+                    context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "AllowActivation" });
+                    context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "AllowForgotPassword" });
+                    context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "AllowContactUs" });
+                    context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "AllowUserReport" });
+                    context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "AllowUserEditProfile" });
+                    await context.SaveChangesAsync();
+                }
                 if (!context.CountryTBLs.Any())
                 {
                     var Countries = File.ReadAllText("../AYMDatingCore.DAL/Contexts/SeedData/Country.json");
@@ -140,7 +152,8 @@ namespace AYMDatingCore.DAL.Contexts
                         LockoutEnabled = false,
                         PhoneNumber = "201284878483",
                         DateOfBirth = new DateTime(1982, 02, 01),
-                        CountryTBLId = 50
+                        CountryTBLId = 50,
+                        GenderTBLId = 1
                     };
                     var user2 = new AppUser
                     {
@@ -154,7 +167,8 @@ namespace AYMDatingCore.DAL.Contexts
                         EmailConfirmed = true,
                         LockoutEnabled = false,
                         PhoneNumber = "201202025251",
-                        CountryTBLId = 50
+                        CountryTBLId = 50,
+                        GenderTBLId = 1
                     };
 
                     var user3 = new AppUser
@@ -169,7 +183,8 @@ namespace AYMDatingCore.DAL.Contexts
                         EmailConfirmed = true,
                         LockoutEnabled = false,
                         PhoneNumber = "201284878421",
-                        CountryTBLId = 50
+                        CountryTBLId = 50,
+                        GenderTBLId = 2
                     };
                     var user4 = new AppUser
                     {
@@ -183,7 +198,8 @@ namespace AYMDatingCore.DAL.Contexts
                         EmailConfirmed = true,
                         LockoutEnabled = false,
                         PhoneNumber = "201284878422",
-                        CountryTBLId = 51
+                        CountryTBLId = 51,
+                        GenderTBLId = 2
                     };
 
                     var user5 = new AppUser
@@ -198,14 +214,15 @@ namespace AYMDatingCore.DAL.Contexts
                         EmailConfirmed = true,
                         LockoutEnabled = false,
                         PhoneNumber = "201284878423",
-                        CountryTBLId = 52
+                        CountryTBLId = 52,
+                        GenderTBLId = 2
                     };
 
-                    await userManager.CreateAsync(user1, "Aym@8513");
-                    await userManager.CreateAsync(user2, "Aym@8513");
-                    await userManager.CreateAsync(user3, "Aym@8513");
-                    await userManager.CreateAsync(user4, "Aym@8513");
-                    await userManager.CreateAsync(user5, "Aym@8513");
+                    await userManager.CreateAsync(user1, "Aym@1111");
+                    await userManager.CreateAsync(user2, "Aym@1111");
+                    await userManager.CreateAsync(user3, "Aym@1111");
+                    await userManager.CreateAsync(user4, "Aym@1111");
+                    await userManager.CreateAsync(user5, "Aym@1111");
 
                     await userManager.AddToRoleAsync(user1, "Admin");
                     await userManager.AddToRoleAsync(user2, "User");
@@ -328,6 +345,55 @@ namespace AYMDatingCore.DAL.Contexts
                     context.UserHistoryTBLs.Add(userhistory5);
                     await context.SaveChangesAsync();
 
+                    // Add More Users
+                    //for (int i = 1; i <= 30; i++)
+                    //{
+                    //    var Newuser = new AppUser
+                    //    {
+                    //        NormalizedUserName = "Test" + "User" + i,
+                    //        Email = "Test" + "User" + i + "@gmail.com",
+                    //        UserName = "Test" + "." + "User" + i + "-" + i *2,
+                    //        FirstName = "Test" + i,
+                    //        LastName = "User",
+                    //        IsActivated = true,
+                    //        EmailConfirmed = true,
+                    //        LockoutEnabled = false,
+                    //        PhoneNumber = "2012848784" + i,
+                    //        DateOfBirth = new DateTime(1970+i, 03, 01 + i),
+                    //        CountryTBLId = 50 + i,
+                    //        GenderTBLId = i <= 15 ? 1 : 2
+                    //    };
+
+                    //    await userManager.CreateAsync(Newuser, "Aym@8513");
+                    //    await userManager.AddToRoleAsync(Newuser, "User");
+                    //    await context.SaveChangesAsync();
+
+                    //    var userhistory = new UserHistoryTBL
+                    //    {
+                    //        AppUserId = Newuser.Id,
+                    //        SearchAgeFrom = 18,
+                    //        SearchAgeTo = 40,
+                    //        CountryId = 50 + i,
+                    //        EducationId = 1,
+                    //        FinancialModeId = 1,
+                    //        GenderId = i <= 15 ? 1 : 2,
+                    //        ProfessionId = 1,
+                    //        ProfileHeading = "ProfileHeading" + i,
+                    //        AboutPartner = "AboutPartnerTest" + i,
+                    //        AboutYou = "AboutYouTest" + i,
+                    //        City = "CityTest" + i,
+                    //        IsMain = true,
+                    //        LanguageId = 1,
+                    //        MaritalStatusId = 1,
+                    //        PurposeId = 1,
+                    //        IsSwitchedOff = false,
+                    //        MainImageUrl = "blankprofile973460.png"
+                    //    };
+                    //    context.UserHistoryTBLs.Add(userhistory);
+                    //    await context.SaveChangesAsync();
+
+                    //}
+                    // End More users
                     //context.UserImageTBLs.Add(new UserImageTBL() { AppUserId = user2.Id, ImageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F614810%2Fpexels-photo-614810.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-simon-robben-55958-614810.jpg%26fm%3Djpg&f=1&nofb=1&ipt=1b1531702376832372569e03fb9372ac06071e12ddf446404ba0b7390c1b5188" });
                     //context.UserImageTBLs.Add(new UserImageTBL() { AppUserId = user2.Id, ImageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fthumbs.dreamstime.com%2Fb%2Fman-posing-image-english-retro-gangster-near-brick-wall-s-dressed-peaky-blinders-style-old-175309337.jpg%3Fw%3D768&f=1&nofb=1&ipt=6e9f17696391968f7f94ea202cc98acba373bb751fed5a735bba060ba85f38c0" });
                     //context.UserImageTBLs.Add(new UserImageTBL() { AppUserId = user2.Id, ImageUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fc8.alamy.com%2Fcomp%2FE51NMR%2Fyoung-man-in-a-suit-showing-something-E51NMR.jpg&f=1&nofb=1&ipt=8aae35c5c97e1fb13e27e4e987381a5d2fc72d5fc362da55c774af70eb87f1c4" });

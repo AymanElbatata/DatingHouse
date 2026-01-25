@@ -17,6 +17,7 @@ namespace AYMDatingCore.BLL.Repositories
         public RoleManager<AppRole> RoleManager { get; }
         public UserManager<AppUser> UserManager { get; }
         public IMySPECIALGUID MySPECIALGUID { get; }
+        public IAdminPanelTBLRepository AdminPanelTBLRepository { get; }
 
         public IEducationRepository EducationRepository { get; }
         public IFinancialModeRepository FinancialModeRepository { get; }
@@ -49,7 +50,8 @@ namespace AYMDatingCore.BLL.Repositories
             IUserHistoryRepository UserHistoryRepository, IUserImageRepository UserImageRepository,
             IUserLikeRepository UserLikeRepository, IUserMessageGroupRepository UserMessageGroupRepository,
             IUserMessageRepository UserMessageRepository, IUserReportRepository UserReportRepository,
-            IUserViewRepository UserViewRepository, IMaritalStatusRepository MaritalStatusRepository
+            IUserViewRepository UserViewRepository, IMaritalStatusRepository MaritalStatusRepository,
+            IAdminPanelTBLRepository AdminPanelTBLRepository
 
             )
         {
@@ -79,6 +81,7 @@ namespace AYMDatingCore.BLL.Repositories
             this.UserHistoryRepository = UserHistoryRepository;
             this.UserFavoriteRepository = UserFavoriteRepository;
             this.MaritalStatusRepository = MaritalStatusRepository;
+            this.AdminPanelTBLRepository = AdminPanelTBLRepository;
         }
     }
 }

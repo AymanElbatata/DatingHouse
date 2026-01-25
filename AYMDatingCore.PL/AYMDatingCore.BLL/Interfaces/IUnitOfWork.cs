@@ -23,6 +23,7 @@ namespace AYMDatingCore.BLL.Interfaces
         RoleManager<AppRole> RoleManager { get; }
         UserManager<AppUser> UserManager { get; }
         IMySPECIALGUID MySPECIALGUID { get; }
+        IAdminPanelTBLRepository AdminPanelTBLRepository { get; }
 
          IEducationRepository EducationRepository { get; }
          IFinancialModeRepository FinancialModeRepository { get; }

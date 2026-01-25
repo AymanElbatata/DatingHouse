@@ -64,6 +64,7 @@ namespace AYMDatingCore.PL
             builder.Services.AddScoped<IAppErrorTBLRepository, AppErrorTBLRepository>();
             builder.Services.AddScoped<IContactUsRepository, ContactUsRepository>();
             builder.Services.AddScoped<IEmailTBLRepository, EmailTBLRepository>();
+            builder.Services.AddScoped<IAdminPanelTBLRepository, AdminPanelTBLRepository>();
 
             builder.Services.AddScoped<IEducationRepository, EducationRepository>();
             builder.Services.AddScoped<IFinancialModeRepository, FinancialModeRepository>();

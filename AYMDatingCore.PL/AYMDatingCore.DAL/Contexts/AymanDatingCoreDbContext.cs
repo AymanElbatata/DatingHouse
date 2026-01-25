@@ -39,6 +39,7 @@ namespace AYMDatingCore.DAL.Contexts
         public DbSet<EmailTBL> EmailTBLs { get; set; }
         public DbSet<AppErrorTBL> AppErrorTBLs { get; set; }
         public DbSet<ContactUsTBL> ContactUsTBLs { get; set; }
+        public DbSet<AdminPanelTBL> AdminPanelTBLs { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

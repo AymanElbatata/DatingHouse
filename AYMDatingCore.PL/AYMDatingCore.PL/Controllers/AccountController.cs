@@ -35,9 +35,9 @@ namespace AYMDatingCore.PL.Controllers
         [AllowAnonymous]
         public IActionResult Login(string? returnUrl, string? Message)
         {
-            if (configuration["AymanStore.Pl.AllowedLogin"] != "1")
+            if (configuration["AymanStore.Pl.AllowedLogin"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowLogin")).FirstOrDefault().Activation)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("ServiceIsDown", "Home");
             }
             ViewData["ReturnUrl"] = returnUrl; // pass returnUrl to view
 
@@ -58,6 +58,10 @@ namespace AYMDatingCore.PL.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDTO model, string returnUrl = null)
         {
+            if (configuration["AymanStore.Pl.AllowedLogin"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowLogin")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
             ViewData["ReturnUrl"] = returnUrl;
 
             if (ModelState.IsValid)
@@ -152,9 +156,9 @@ namespace AYMDatingCore.PL.Controllers
         [AllowAnonymous]
         public IActionResult Register()
         {
-            if (configuration["AymanStore.Pl.AllowedRegistration"] != "1")
+            if (configuration["AymanStore.Pl.AllowedRegistration"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowRegister")).FirstOrDefault().Activation)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("ServiceIsDown", "Home");
             }
             // Check if user is already authenticated
             if (User.Identity.IsAuthenticated)
@@ -185,6 +189,10 @@ namespace AYMDatingCore.PL.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterDTO model)
         {
+            if (configuration["AymanStore.Pl.AllowedRegistration"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowRegister")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
             if (ModelState.IsValid)
             {
                 // Check if email already exists
@@ -325,6 +333,10 @@ namespace AYMDatingCore.PL.Controllers
         [AllowAnonymous]
         public IActionResult Activation(string? Email, string? ActivationCode, string? Message)
         {
+            if (configuration["AymanStore.Pl.AllowedActivation"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowActivation")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
             // Check if user is already authenticated
             if (User.Identity.IsAuthenticated)
             {
@@ -357,6 +369,10 @@ namespace AYMDatingCore.PL.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Activation(ActivationDTO model)
         {
+            if (configuration["AymanStore.Pl.AllowedActivation"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowActivation")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
             if (ModelState.IsValid)
             {
                 // Check if email already exists
@@ -402,6 +418,10 @@ namespace AYMDatingCore.PL.Controllers
         [AllowAnonymous]
         public IActionResult ForgetPassword()
         {
+            if (configuration["AymanStore.Pl.AllowedForgetPassword"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowForgotPassword")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
             // Check if user is already authenticated
             if (User.Identity.IsAuthenticated)
             {
@@ -415,6 +435,10 @@ namespace AYMDatingCore.PL.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgetPassword(ForgetPasswordDTO model)
         {
+            if (configuration["AymanStore.Pl.AllowedForgetPassword"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowForgotPassword")).FirstOrDefault().Activation)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
             if (ModelState.IsValid)
             {
                 // Check if email already exists
