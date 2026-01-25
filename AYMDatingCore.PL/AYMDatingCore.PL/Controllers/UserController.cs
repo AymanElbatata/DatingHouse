@@ -252,7 +252,8 @@ namespace AYMDatingCore.PL.Controllers
             var Messages_VM = new Messages_VM();
 
             var currentUser = await GetUserByUserName(User.Identity.Name);
-            var allNewMessages = unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromReceiver == false && a.ReceiverAppUserId == currentUser.Id).OrderByDescending(a=>a.CreationDate).ToList();
+            var allNewMessages = unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsDeletedFromReceiver == false && a.ReceiverAppUserId == currentUser.Id && a.SenderAppUser.IsDeleted == false,
+                includes: new Expression<Func<UserMessageTBL, object>>[]{p => p.ReceiverAppUser}).OrderByDescending(a=>a.CreationDate).ToList();
             foreach (var item in allNewMessages)
             {
                 if (!Messages_VM.UserHistoryTBL_VM.Where(a => a.AppUserId == item.SenderAppUserId).Any())
@@ -281,7 +282,8 @@ namespace AYMDatingCore.PL.Controllers
             var Views_VM = new Views_Likes_Favorite_Block_VM();
 
             var currentUser = await GetUserByUserName(User.Identity.Name);
-            var allNewViews = unitOfWork.UserViewRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.ReceiverAppUserId == currentUser.Id).ToList();
+            var allNewViews = unitOfWork.UserViewRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.ReceiverAppUserId == currentUser.Id && a.SenderAppUser.IsDeleted == false, 
+                includes: new Expression<Func<UserViewTBL, object>>[]{p => p.ReceiverAppUser}).ToList();
             foreach (var item in allNewViews)
             {
                 Views_VM.UserHistoryTBL_VM.Add(GetUserHistoryByUserId(item.SenderAppUserId));
@@ -300,7 +302,8 @@ namespace AYMDatingCore.PL.Controllers
             var Views_VM = new Views_Likes_Favorite_Block_VM();
 
             var currentUser = await GetUserByUserName(User.Identity.Name);
-            var allNewLikes = unitOfWork.UserLikeRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.ReceiverAppUserId == currentUser.Id).ToList();
+            var allNewLikes = unitOfWork.UserLikeRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.ReceiverAppUserId == currentUser.Id,
+                includes: new Expression<Func<UserLikeTBL, object>>[] { p => p.ReceiverAppUser }).ToList();
             foreach (var item in allNewLikes)
             {
                 Views_VM.UserHistoryTBL_VM.Add(GetUserHistoryByUserId(item.SenderAppUserId));
@@ -319,7 +322,8 @@ namespace AYMDatingCore.PL.Controllers
             var Views_VM = new Views_Likes_Favorite_Block_VM();
 
             var currentUser = await GetUserByUserName(User.Identity.Name);
-            var allNewFavorites = unitOfWork.UserFavoriteRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.ReceiverAppUserId == currentUser.Id).ToList();
+            var allNewFavorites = unitOfWork.UserFavoriteRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.ReceiverAppUserId == currentUser.Id,
+                includes: new Expression<Func<UserFavoriteTBL, object>>[] { p => p.ReceiverAppUser }).ToList();
             foreach (var item in allNewFavorites)
             {
                 Views_VM.UserHistoryTBL_VM.Add(GetUserHistoryByUserId(item.SenderAppUserId));
@@ -338,7 +342,8 @@ namespace AYMDatingCore.PL.Controllers
             var Views_VM = new Views_Likes_Favorite_Block_VM();
 
             var currentUser = await GetUserByUserName(User.Identity.Name);
-            var allNewBlocks = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.ReceiverAppUserId == currentUser.Id).ToList();
+            var allNewBlocks = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.ReceiverAppUserId == currentUser.Id,
+                includes: new Expression<Func<UserBlockTBL, object>>[] { p => p.ReceiverAppUser }).ToList();
             foreach (var item in allNewBlocks)
             {
                 Views_VM.UserHistoryTBL_VM.Add(GetUserHistoryByUserId(item.SenderAppUserId));
@@ -620,11 +625,16 @@ namespace AYMDatingCore.PL.Controllers
 
         private async Task<AppUser> GetUserByUserName(string UserName)
         {
-            return await unitOfWork.UserManager.FindByNameAsync(UserName);
+             var User = await unitOfWork.UserManager.FindByNameAsync(UserName);
+            if (!User.IsDeleted)
+                return User;
+
+            return new AppUser();
+
         }
         private UserHistoryTBL_VM GetUserHistoryByUserId(string? userId)
         {
-            var currentUser = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == userId, includes: new Expression<Func<UserHistoryTBL, object>>[]
+            var currentUser = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == userId && a.AppUser.IsDeleted == false, includes: new Expression<Func<UserHistoryTBL, object>>[]
 {
                                          p => p.AppUser,
                                          p => p.Country,

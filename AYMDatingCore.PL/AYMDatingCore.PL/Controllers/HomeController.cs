@@ -157,7 +157,7 @@ namespace AYMDatingCore.PL.Controllers
 
         private List<UserHistoryTBL_VM> GetAllUsersOrFiltered(UserMainSearchDTO model)
         {
-            var users = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.AppUser.EmailConfirmed == true && a.IsMain == true, includes: new Expression<Func<UserHistoryTBL, object>>[]
+            var users = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.AppUser.EmailConfirmed == true && a.IsMain == true && a.AppUser.IsDeleted == false, includes: new Expression<Func<UserHistoryTBL, object>>[]
             {
                                          p => p.AppUser,
                                          p => p.Country,

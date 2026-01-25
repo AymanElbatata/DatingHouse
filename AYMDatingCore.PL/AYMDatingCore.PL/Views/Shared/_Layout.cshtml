@@ -7,11 +7,11 @@
         if (User.IsInRole("User"))
         {
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            currentUserCounter.CounterOfNewViews = UnitOfWork.UserViewRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == UserId).Count();
-            currentUserCounter.CounterOfNewLikes = UnitOfWork.UserLikeRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == UserId).Count();
-            currentUserCounter.CounterOfNewMessages = UnitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == UserId).Count();
-            currentUserCounter.CounterOfNewFavorites = UnitOfWork.UserFavoriteRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == UserId).Count();
-            currentUserCounter.CounterOfNewBlocks = UnitOfWork.UserBlockRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == UserId).Count();
+            currentUserCounter.CounterOfNewViews = UnitOfWork.UserViewRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == UserId && a.SenderAppUser.IsDeleted == false, includes: new Expression<Func<UserViewTBL, object>>[]{p => p.ReceiverAppUser}).Count();
+            currentUserCounter.CounterOfNewLikes = UnitOfWork.UserLikeRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == UserId && a.SenderAppUser.IsDeleted == false, includes: new Expression<Func<UserLikeTBL, object>>[]{p => p.ReceiverAppUser}).Count();
+            currentUserCounter.CounterOfNewMessages = UnitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == UserId && a.SenderAppUser.IsDeleted == false, includes: new Expression<Func<UserMessageTBL, object>>[]{p => p.ReceiverAppUser}).Count();
+            currentUserCounter.CounterOfNewFavorites = UnitOfWork.UserFavoriteRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == UserId && a.SenderAppUser.IsDeleted == false, includes: new Expression<Func<UserFavoriteTBL, object>>[]{p => p.ReceiverAppUser}).Count();
+            currentUserCounter.CounterOfNewBlocks = UnitOfWork.UserBlockRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == UserId && a.SenderAppUser.IsDeleted == false, includes: new Expression<Func<UserBlockTBL, object>>[]{p => p.ReceiverAppUser}).Count();
         }  
     }
 

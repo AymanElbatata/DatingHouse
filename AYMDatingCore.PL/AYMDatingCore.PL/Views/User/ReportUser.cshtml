@@ -184,9 +184,7 @@
 </div>
 
 @section Scripts {
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
-
+    <partial name="_ValidationScriptsPartial" />
     <script>
         document.getElementById('reportForm').addEventListener('submit', function(e) {
             const confirmed = confirm("⚠️ Are you sure you want to submit this report?");
