@@ -37,9 +37,20 @@ namespace AYMDatingCore.PL.Controllers
 
         public IActionResult Index()
         {
-            var data = GetAllUsersOrFiltered(new UserMainSearchDTO());
-            ViewBag.CounterUsers = data.Count();
-            return View(data);
+            try
+            {
+                if (configuration["AymanStore.Pl.AllowedHome"] != "1" || !unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "AllowHome")).FirstOrDefault().Activation)
+                {
+                    return RedirectToAction("ServiceIsDown", "Home");
+                }
+                var data = GetAllUsersOrFiltered(new UserMainSearchDTO());
+                ViewBag.CounterUsers = data.Count();
+                return View(data);
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("ServiceIsDown", "Home");
+            }
         }
 
         [HttpPost]
