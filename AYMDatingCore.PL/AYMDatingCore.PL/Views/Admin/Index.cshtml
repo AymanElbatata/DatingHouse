@@ -118,8 +118,15 @@
 <div class="admin-wrapper">
 
     <!-- Logout -->
-    <div class="mb-4">
+@*     <div class="mb-4">
         @Html.ActionLink("Logout All Users", "LogoutAllUsers", "Admin", null, new { @class = "btn btn-soft" })
+    </div> *@
+    <div class="mb-4">
+        <a href="@Url.Action("LogoutAllUsers", "Admin")"
+           class="btn btn-soft"
+           onclick="return confirmLogout();">
+            Logout All Users
+        </a>
     </div>
 
     <h1 class="admin-title mb-2">Admin Control Panel</h1>
@@ -243,6 +250,11 @@
     </div>
 </div>
 
+<script>
+    function confirmLogout() {
+        return confirm("⚠️ Are you sure?\nThis will log out ALL users immediately.");
+    }
+</script>
 <script>
     $(function () {
 

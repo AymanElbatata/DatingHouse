@@ -283,7 +283,7 @@ namespace AYMDatingCore.PL.Controllers
                     });
                     TempData["SuccessMessage"] = "Your Report has been sent successfully";
 
-                    return RedirectToAction(nameof(ReportUser));
+                    return RedirectToAction(nameof(ReportUser), new { RecieverUserName = model.ReceiverAppUserUsername });
                 }
             }
             return View(model);

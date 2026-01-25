@@ -155,7 +155,7 @@
                 💌 @TempData["SuccessMessage"]
             </div>
         }
-        <form id="reportForm" asp-action="ReportUser" asp-controller="User" method="post">
+        <form asp-action="ReportUser" asp-controller="User" method="post">
 
             @Html.AntiForgeryToken()
 
@@ -174,7 +174,7 @@
                       class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn-report">
+            <button id="btn_SubmitForm" type="submit" class="btn-report">
                 Submit Report
             </button>
 
@@ -190,17 +190,25 @@
     </div>
 </div>
 
+<input type="hidden" id="hasSuccess"
+       value="@(TempData["SuccessMessage"] != null)" />
+
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        document.getElementById('reportForm').addEventListener('submit', function(e) {
-            const confirmed = confirm("⚠️ Are you sure you want to submit this report?");
-            if (!confirmed) {
-                e.preventDefault(); // يمنع إرسال الفورم إذا ضغط المستخدم Cancel
-            }
+        $(document).ready(function () {
+                if (document.getElementById("hasSuccess").value === "value")
+                {
+                    const textarea = document.querySelector("textarea[name='Complaint']");
+                    textarea.disabled = true;
+                    textarea.placeholder = "Thank you so much!";
+                    document.getElementById("btn_SubmitForm").disabled = true;
+                 }
         });
     </script>
 <script>
+
     document.querySelector("form").addEventListener("submit", function (e) {
 
         const textarea = document.querySelector("textarea[name='Complaint']");
