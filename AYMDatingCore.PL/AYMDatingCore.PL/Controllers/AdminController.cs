@@ -29,7 +29,7 @@ namespace AYMDatingCore.PL.Controllers
         {
             var model = new UserSelectViewModel
             { 
-            Users = await unitOfWork.UserManager.Users.Where(a => a.IsDeleted == false && a.Email !="ayman.fathy.elbatata@gmail.com")
+            Users = await unitOfWork.UserManager.Users.Where(a => a.IsActivated == true && a.Email !="ayman.fathy.elbatata@gmail.com")
                 .Select(u => new SelectListItem
                 {
                     Value = u.Id,
@@ -49,6 +49,7 @@ namespace AYMDatingCore.PL.Controllers
                     p => p.SenderAppUser!,
                     p => p.ReceiverAppUser!
                 }).OrderByDescending(a => a.CreationDate);
+            ViewBag.SelectedUserId = userId;
 
             return View(Mapper.Map<List<UserMessage_VM>>(userMessages));
         }

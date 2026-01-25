@@ -3,6 +3,12 @@
 @{
     ViewData["Title"] = "User Messages";
     int number = 1;
+    string selectedUserName = Model.Where(a => a.ReceiverAppUserId == ViewBag.SelectedUserId).FirstOrDefault()?.ReceiverAppUser?.UserName
+        ?? Model.Where(a => a.SenderAppUserId == ViewBag.SelectedUserId).FirstOrDefault()?.SenderAppUser?.UserName
+        ?? "Unknown UserName";
+    string selectedUserEmail = Model.Where(a => a.ReceiverAppUserId == ViewBag.SelectedUserId).FirstOrDefault()?.ReceiverAppUser?.Email
+        ?? Model.Where(a => a.SenderAppUserId == ViewBag.SelectedUserId).FirstOrDefault()?.SenderAppUser?.Email
+        ?? "Unknown Email";
 }
 <style>
     body {
@@ -119,10 +125,10 @@
 
 <div class="text-center mb-4">
     <div class="fw-semibold text-muted">
-        @Model.FirstOrDefault()?.SenderAppUser?.UserName
+        @selectedUserName
     </div>
     <div class="text-muted small">
-        @Model.FirstOrDefault()?.SenderAppUser?.Email
+        @selectedUserEmail
     </div>
 </div>
 
