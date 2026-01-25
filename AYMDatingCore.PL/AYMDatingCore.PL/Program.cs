@@ -30,12 +30,14 @@ namespace AYMDatingCore.PL
                 {
                     options.HtmlHelperOptions.ClientValidationEnabled = true;
                 });
+
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromDays(365); // Session timeout
+                options.IdleTimeout = TimeSpan.FromDays(1); // Session timeout
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
             builder.Services.AddDbContext<AymanDatingCoreDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
                     sqlOptions => sqlOptions.EnableRetryOnFailure()
@@ -49,12 +51,6 @@ namespace AYMDatingCore.PL
                         .AllowCredentials()
                         .SetIsOriginAllowed(_ => true));
             });
-            builder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.ExpireTimeSpan = TimeSpan.FromDays(365);
-                options.SlidingExpiration = true; // يجدد المدة لو المستخدم نشط
-            });
-
 
             //services.AddSingleton 
             builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
@@ -102,12 +98,33 @@ namespace AYMDatingCore.PL
             .AddEntityFrameworkStores<AymanDatingCoreDbContext>()
             .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
 
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-                {
-                    options.LoginPath = new PathString("/Account/Login");
-                    options.AccessDeniedPath = new PathString("/Home/Error");
-                });
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Home/Error";
+
+                options.ExpireTimeSpan = TimeSpan.FromDays(1); // جلسة 24 ساعة
+                options.SlidingExpiration = true;
+
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => {
+            //     options.LoginPath = new PathString("/Account/Login"); 
+            //     options.AccessDeniedPath = new PathString("/Home/Error"); 
+
+            //     options.ExpireTimeSpan = TimeSpan.FromDays(365); 
+            //     options.SlidingExpiration = true; // يجدد المدة لو المستخدم نشط
+            //     options.Cookie.HttpOnly = true;
+            //     options.Cookie.IsEssential = true;
+            //});
+
+            builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                options.ValidationInterval = TimeSpan.Zero;
+            });
 
             var app = builder.Build();
 

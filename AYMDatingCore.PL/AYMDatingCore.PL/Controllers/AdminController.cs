@@ -6,6 +6,7 @@ using AYMDatingCore.DAL.Entities;
 using AYMDatingCore.Helpers;
 using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
@@ -142,6 +143,15 @@ namespace AYMDatingCore.PL.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (await unitOfWork.UserManager.FindByEmailAsync(model.Email) != null)
+                {
+                    return Json(new { success = false, error = "Email is already registered" });
+                }
+                else if (await unitOfWork.UserManager.FindByNameAsync(model.UserName) != null)
+                {
+                    return Json(new { success = false, error = "Username is already registered" });
+                }
+
                 var user = new AppUser
                 {
                     UserName = model.UserName,
@@ -151,7 +161,6 @@ namespace AYMDatingCore.PL.Controllers
                     NormalizedUserName = model.FirstName + "." + model.LastName,
                     IsBlocked = model.IsBlocked
                 };
-
                 var result = await unitOfWork.UserManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
@@ -186,7 +195,7 @@ namespace AYMDatingCore.PL.Controllers
                 IsBlocked = user.IsBlocked,
                 isDeleted = user.IsDeleted,
                 IsSwitchedOff = unitOfWork.UserHistoryRepository.GetAllCustomized(
-                            filter: a => a.IsMain == true && a.AppUserId == id).OrderBy(a => a.CreationDate).FirstOrDefault().IsSwitchedOff,
+                                filter: a => a.IsMain == true && a.AppUserId == id).OrderBy(a => a.CreationDate).FirstOrDefault().IsSwitchedOff,
 
                 SelectedRoles = (await unitOfWork.UserManager.GetRolesAsync(user)).ToList()
             };
@@ -204,6 +213,15 @@ namespace AYMDatingCore.PL.Controllers
                 if (user == null)
                 {
                     return Json(new { success = false, error = "User not found" });
+                }
+
+                if (unitOfWork.UserManager.FindByEmailAsync(model.Email)?.Result?.Id != id)
+                {
+                    return Json(new { success = false, error = "Email is already registered for another user" });
+                }
+                else if (unitOfWork.UserManager.FindByNameAsync(model.UserName)?.Result?.Id != id)
+                {
+                    return Json(new { success = false, error = "Username is already registered for another user" });
                 }
 
                 user.Email = model.Email;
@@ -249,6 +267,7 @@ namespace AYMDatingCore.PL.Controllers
                     {
                         await unitOfWork.UserManager.AddToRolesAsync(user, model.SelectedRoles);
                     }
+                     await unitOfWork.UserManager.UpdateSecurityStampAsync(user);
 
                     return Json(new { success = true });
                 }
@@ -262,7 +281,11 @@ namespace AYMDatingCore.PL.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             var user = await unitOfWork.UserManager.FindByIdAsync(id);
-            if (user != null)
+            if (user != null && user.IsDeleted)
+            {
+                return Json(new { success = false, error = "User was deleted before!" });
+            }
+            else if (user != null && !user.IsDeleted)
             {
                 var UserHistory = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == id).FirstOrDefault();
                 if (UserHistory != null)
@@ -278,7 +301,7 @@ namespace AYMDatingCore.PL.Controllers
                 }
                 return Json(new { success = false, errors = result.Errors.Select(e => e.Description) });
             }
-            return Json(new { success = false, error = "User not found" });
+            return Json(new { success = false, error = "User not found!" });
         }
 
         #endregion
