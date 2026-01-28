@@ -177,12 +177,6 @@
                                       title="@(user.AppUser.IsOnline ? "Online now" : "Offline")"></span>
                             </div>
                         </a>
-                        @if (!user.AppUser.IsOnline)
-                        {
-                            <p class="small text-muted mt-1">
-                                Last seen recently @user.AppUser.LastSeen?.ToString("dd MMM yyyy • HH:mm")
-                            </p>
-                        }
                         <div class="card-body text-center">
                             <h5 class="card-title text-pink">@user.AppUser.FirstName</h5>
                             <p class="text-muted mb-1">@user.Country.Name</p>
