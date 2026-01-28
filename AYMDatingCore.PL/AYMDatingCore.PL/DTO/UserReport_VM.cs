@@ -6,7 +6,7 @@ namespace AYMDatingCore.PL.DTO
     {
         public string? ReceiverAppUserUsername { get; set; }
 
-        [MinLength(5, ErrorMessage = "Miniimum Length 5 Charcters")]
+        [MinLength(5, ErrorMessage = "Minimum Length 5 Charcters")]
         [MaxLength(1000, ErrorMessage = "Maximum Length 1000 Charcter.")]
         [Display(Name = "Your Complaint")]
         [Required(ErrorMessage = "Complaint is required.")]
