@@ -40,7 +40,7 @@ namespace AYMDatingCore.Helpers
             if (user != null)
             {
                 user.IsOnline = true;
-                user.LastSeen = DateTime.UtcNow;
+                user.LastSeen = DateTime.Now;
                 await unitOfWork.UserManager.UpdateAsync(user);
             }
             await base.OnConnectedAsync();
@@ -52,7 +52,7 @@ namespace AYMDatingCore.Helpers
             if (user != null)
             {
                 user.IsOnline = false;
-                user.LastSeen = DateTime.UtcNow;
+                user.LastSeen = DateTime.Now;
                 await unitOfWork.UserManager.UpdateAsync(user);
             }
             await base.OnDisconnectedAsync(exception);
