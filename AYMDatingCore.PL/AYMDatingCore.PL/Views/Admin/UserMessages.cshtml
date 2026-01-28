@@ -5,10 +5,10 @@
     int number = 1;
     string selectedUserName = Model.Where(a => a.ReceiverAppUserId == ViewBag.SelectedUserId).FirstOrDefault()?.ReceiverAppUser?.UserName
         ?? Model.Where(a => a.SenderAppUserId == ViewBag.SelectedUserId).FirstOrDefault()?.SenderAppUser?.UserName
-        ?? "Unknown UserName";
+        ?? ViewBag.SelectedUserName;
     string selectedUserEmail = Model.Where(a => a.ReceiverAppUserId == ViewBag.SelectedUserId).FirstOrDefault()?.ReceiverAppUser?.Email
         ?? Model.Where(a => a.SenderAppUserId == ViewBag.SelectedUserId).FirstOrDefault()?.SenderAppUser?.Email
-        ?? "Unknown Email";
+        ?? ViewBag.SelectedUserEmail;
 }
 <style>
     body {
@@ -134,54 +134,69 @@
 
 <div class="messages-wrapper">
 
-    @foreach (var message in Model)
+    @if (!Model.Any())
     {
-        <div class="message-item">
-
-            <div class="message-header">
-                <div class="message-users">
-                    <span class="sn-badge">@(number++)</span>
-
-                    <div class="avatar">
-                        @message.SenderAppUser?.UserName?.Substring(0, 1).ToUpper()
-                    </div>
-
-                    @message.SenderAppUser?.UserName
-                    →
-                    @message.ReceiverAppUser?.UserName
-
-                    @if (message.IsSeen)
-                    {
-                        <i class="fa-solid fa-check-double text-primary"></i>
-                    }
-                                else
-                    {
-                        <i class="fa-solid fa-check text-muted"></i>
-                    }
-                </div>
-
-                <div class="message-date">
-                    @message.CreationDate?.ToString("dd MMM yyyy • HH:mm")
-                </div>
-            </div>
-
-            <div class="message-body">
-                @message.Message           
-            </div>
-
-            <div class="message-meta">
-                @if (!string.IsNullOrEmpty(message.FileDataUrl))
-                {
-                    <a href="~/FileUsers/@message.FileDataUrl" target="_blank">📎 File</a>
-                }
-
-                @if (!string.IsNullOrEmpty(message.AudioDataUrl))
-                {
-                    <a href="~/AudioUsers/@message.AudioDataUrl" target="_blank">🎧 Audio</a>
-                }
-            </div>
-
+        <div class="text-center text-muted fw-semibold py-5">
+            <i class="fa-regular fa-message fa-2x mb-3"></i>
+            <div>No messages found for this user.</div>
         </div>
     }
+    else
+    {
+        @foreach (var message in Model)
+        {
+            <div class="message-item">
 
+                <div class="message-header">
+                    <div class="message-users">
+                        <span class="sn-badge">@(number++)</span>
+
+                        <div class="avatar">
+                            @message.SenderAppUser?.UserName?.Substring(0, 1).ToUpper()
+                        </div>
+
+                        @message.SenderAppUser?.UserName
+                        →
+                        @message.ReceiverAppUser?.UserName
+
+                        @if (message.IsSeen)
+                        {
+                            <i class="fa-solid fa-check-double text-primary"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-check text-muted"></i>
+                        }
+                    </div>
+
+                    <div class="message-date">
+                        @message.CreationDate?.ToString("dd MMM yyyy • HH:mm")
+                    </div>
+                </div>
+
+                <div class="message-body">
+                    @message.Message
+                </div>
+
+                <div class="message-meta">
+                    @if (!string.IsNullOrEmpty(message.FileDataUrl))
+                    {
+                        <a href="~/FileUsers/@message.FileDataUrl" target="_blank">📎 File</a>
+                    }
+
+                    @if (!string.IsNullOrEmpty(message.AudioDataUrl))
+                    {
+                        <a href="~/AudioUsers/@message.AudioDataUrl" target="_blank">🎧 Audio</a>
+                    }
+                </div>
+
+            </div>
+        }
+    }
+
+</div>
+<div class="text-center mt-4">
+    <a asp-action="Index" asp-controller="Admin" class="btn btn-soft">
+        ⬅ Back to Admin Panel
+    </a>
 </div>

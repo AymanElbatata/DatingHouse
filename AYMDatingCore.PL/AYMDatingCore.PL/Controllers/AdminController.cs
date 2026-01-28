@@ -41,7 +41,7 @@ namespace AYMDatingCore.PL.Controllers
             return View(model);
         }
 
-        public IActionResult UserMessages(string? userId)
+        public async Task<IActionResult> UserMessages(string? userId)
         {
             var userMessages = unitOfWork.UserMessageRepository.GetAllCustomized(
                 filter: a => a.SenderAppUserId == userId || a.ReceiverAppUserId == userId,
@@ -50,8 +50,10 @@ namespace AYMDatingCore.PL.Controllers
                     p => p.SenderAppUser!,
                     p => p.ReceiverAppUser!
                 }).OrderByDescending(a => a.CreationDate);
+            var user = await unitOfWork.UserManager.FindByIdAsync(userId);
             ViewBag.SelectedUserId = userId;
-
+            ViewBag.SelectedUserName = user != null ? user.UserName : "Unknown User";
+            ViewBag.SelectedUserEmail = user != null ? user.Email : "Unknown Email";
             return View(Mapper.Map<List<UserMessage_VM>>(userMessages));
         }
 
