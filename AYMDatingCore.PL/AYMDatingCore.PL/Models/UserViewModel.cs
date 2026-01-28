@@ -10,6 +10,7 @@ namespace AYMDatingCore.PL.Models
         public string? LastName { get; set; } = null!;
         public bool IsBlocked { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
+        public bool isOnline { get; set; } = false;
         public bool IsSwitchedOff { get; set; } = false;
 
         public List<string> Roles { get; set; } = new List<string>();
@@ -41,6 +42,7 @@ namespace AYMDatingCore.PL.Models
 
         public bool IsBlocked { get; set; } = false;
         public bool isDeleted { get; set; } = false;
+        public bool isOnline { get; set; } = false;
         public bool IsSwitchedOff { get; set; } = false;
     }
 
@@ -62,6 +64,7 @@ namespace AYMDatingCore.PL.Models
 
         public bool IsBlocked { get; set; } = false;
         public bool isDeleted { get; set; } = false;
+        public bool isOnline { get; set; } = false;
         public bool IsSwitchedOff { get; set; } = false;
 
     }

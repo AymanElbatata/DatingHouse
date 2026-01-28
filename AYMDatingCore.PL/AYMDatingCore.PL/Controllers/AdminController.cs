@@ -132,7 +132,8 @@ namespace AYMDatingCore.PL.Controllers
                     u.LastName,
                     u.UserName,
                     u.IsBlocked,
-                    u.IsDeleted
+                    u.IsDeleted,
+                    u.IsOnline
                 })
                 .ToListAsync();
 
@@ -146,6 +147,7 @@ namespace AYMDatingCore.PL.Controllers
                 usermodel.UserName = user.UserName;
                 usermodel.IsBlocked = user.IsBlocked;
                 usermodel.IsDeleted = user.IsDeleted;
+                usermodel.isOnline = user.IsOnline;
                 usermodel.Id = user.Id;
                 var UserinRules = unitOfWork.UserManager.Users.FirstOrDefault(u => u.Email == user.Email);
                 usermodel.Roles = (List<string>)unitOfWork.UserManager.GetRolesAsync(UserinRules).Result ?? new List<string>();
@@ -232,6 +234,7 @@ namespace AYMDatingCore.PL.Controllers
                 UserName = user.UserName,
                 IsBlocked = user.IsBlocked,
                 isDeleted = user.IsDeleted,
+                isOnline = user.IsOnline,
                 IsSwitchedOff = unitOfWork.UserHistoryRepository.GetAllCustomized(
                                 filter: a => a.IsMain == true && a.AppUserId == id).OrderBy(a => a.CreationDate).FirstOrDefault().IsSwitchedOff,
 

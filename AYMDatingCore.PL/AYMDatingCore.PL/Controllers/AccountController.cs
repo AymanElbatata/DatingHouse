@@ -124,9 +124,9 @@ namespace AYMDatingCore.PL.Controllers
                         //
 
                         // User ONline NOW
-                        //user.IsOnline = true;
-                        //user.LastSeen = DateTime.Now;
-                        //await unitOfWork.UserManager.UpdateAsync(user);
+                        user.IsOnline = true;
+                        user.LastSeen = DateTime.Now;
+                        await unitOfWork.UserManager.UpdateAsync(user);
 
                         var isAdmin = await unitOfWork.UserManager.IsInRoleAsync(user, "Admin");
                         if (isAdmin)
@@ -154,13 +154,13 @@ namespace AYMDatingCore.PL.Controllers
         [Authorize]
         public async Task<IActionResult> Logout()
         {
-            //var user = await unitOfWork.UserManager.GetUserAsync(User);
-            //if (user != null)
-            //{
-            //    user.IsOnline = false;
-            //    user.LastSeen = DateTime.Now;
-            //    await unitOfWork.UserManager.UpdateAsync(user);
-            //}
+            var user = await unitOfWork.UserManager.GetUserAsync(User);
+            if (user != null)
+            {
+                user.IsOnline = false;
+                user.LastSeen = DateTime.Now;
+                await unitOfWork.UserManager.UpdateAsync(user);
+            }
 
             await unitOfWork.SignInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");

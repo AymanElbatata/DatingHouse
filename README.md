@@ -42,10 +42,6 @@ The purpose of Dating House is to demonstrate how modern .NET technologies can p
 
 It can be used as:
 
-A learning project for developers.
-
-A foundation for startups in the dating or social networking space.
-
 A commercial product ready for customization and deployment.
 
 🚀 Getting Started
