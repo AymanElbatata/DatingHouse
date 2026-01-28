@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Bcpg;
 using System.Linq.Expressions;
 
 namespace AYMDatingCore.PL.Controllers
@@ -52,6 +53,18 @@ namespace AYMDatingCore.PL.Controllers
             ViewBag.SelectedUserId = userId;
 
             return View(Mapper.Map<List<UserMessage_VM>>(userMessages));
+        }
+
+        public IActionResult UserIpLists(string? userId)
+        {
+            var userList = unitOfWork.UserAddressListTBLRepository.GetAllCustomized(
+                filter: a => a.AppUserId == userId,
+                includes: new Expression<Func<UserAddressListTBL, object>>[]
+                {
+                    p => p.AppUser!,
+                }).OrderByDescending(a => a.CreationDate);
+
+            return View(Mapper.Map<List<UserAddressListTBL_VM>>(userList));
         }
 
         public IActionResult UserManagement()

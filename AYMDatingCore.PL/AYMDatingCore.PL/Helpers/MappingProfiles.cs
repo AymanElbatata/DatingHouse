@@ -21,6 +21,7 @@ namespace AYMDatingCore.PL.Helpers
             CreateMap<UserMessageTBL, UserMessage_VM>().ReverseMap();
             CreateMap<UserReportTBL, UserReportTBL_VM>().ReverseMap();
             CreateMap<AdminPanelTBL, AdminPanelTBL_VM>().ReverseMap();
+            CreateMap<UserAddressListTBL, UserAddressListTBL_VM>().ReverseMap();
         }
     }
 }

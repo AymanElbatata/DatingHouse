@@ -7,6 +7,7 @@ using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Org.BouncyCastle.Utilities.Net;
 using System.Net;
 using System.Runtime.Intrinsics.X86;
 using System.Web;
@@ -114,11 +115,11 @@ namespace AYMDatingCore.PL.Controllers
                     var result = await unitOfWork.SignInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
                     if (result.Succeeded)
                     {
-                        string IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-                        if (Request.Headers.ContainsKey("X-Forwarded-For"))
-                            IpAddress = Request.Headers["X-Forwarded-For"].ToString();
-
-                        unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, Address = IpAddress });
+                        // 🧩 2️⃣ Get Browser and Device Info
+                        string userBrowser = Request.Headers["User-Agent"].ToString();
+                        var (ip, hostName) = await GetClientInfo(HttpContext);
+                        unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, OperationType ="Login", IpAddress = ip, HostName = hostName, Browser = userBrowser });
+                        //
 
                         var isAdmin = await unitOfWork.UserManager.IsInRoleAsync(user, "Admin");
                         if (isAdmin)
@@ -215,16 +216,6 @@ namespace AYMDatingCore.PL.Controllers
                     return View(model);
                 }
 
-                //
-                // 🧩 2️⃣ Get Browser and Device Info
-                string userBrowser = Request.Headers["User-Agent"].ToString();
-                //var entry = await Dns.GetHostEntryAsync(IpAddress);
-                //var hostName = entry.HostName;
-                //var addressList = entry.AddressList;
-
-                var (ip, hostName) = await GetClientInfo(HttpContext);
-                //
-
                 // Create new user
                 var user = new AppUser
                 {
@@ -238,9 +229,6 @@ namespace AYMDatingCore.PL.Controllers
                     GenderTBLId = model.GenderTBLId,
                     ActivationCode = unitOfWork.MySPECIALGUID.GetUniqueKey(12),
                     DateOfBirth = Convert.ToDateTime(model.DateOFBirth),
-                    IpAddress = ip,
-                    HostName = hostName,
-                    Browser = userBrowser
                 };
 
                 // Create the user
@@ -248,10 +236,12 @@ namespace AYMDatingCore.PL.Controllers
 
                 if (result.Succeeded)
                 {
-                    //foreach (var item in addressList)
-                    //{
-                    //    unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, Address = ip, AddressFamily = item.AddressFamily.ToString() });
-                    //}
+                    // 🧩 2️⃣ Get Browser and Device Info
+                    string userBrowser = Request.Headers["User-Agent"].ToString();
+                    var (ip, hostName) = await GetClientInfo(HttpContext);
+                    unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, OperationType = "Register", IpAddress = ip, HostName = hostName, Browser = userBrowser });
+                    //
+
                     await unitOfWork.UserManager.AddToRoleAsync(user, "User");
 
                     var userhistory = new UserHistoryTBL
@@ -392,6 +382,11 @@ namespace AYMDatingCore.PL.Controllers
                     return View(model);
                 }
 
+                // 🧩 2️⃣ Get Browser and Device Info
+                string userBrowser = Request.Headers["User-Agent"].ToString();
+                var (ip, hostName) = await GetClientInfo(HttpContext);
+                unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, OperationType = "Activation", IpAddress = ip, HostName = hostName, Browser = userBrowser });
+                //
 
                 user.EmailConfirmed = true;
                 user.IsActivated = true;
@@ -448,9 +443,15 @@ namespace AYMDatingCore.PL.Controllers
                     return View(model);
                 }
 
+
                 var user = await unitOfWork.UserManager.FindByEmailAsync(model.Email);
 
-                var result = await unitOfWork.UserManager.UpdateAsync(user);
+                // 🧩 2️⃣ Get Browser and Device Info
+                string userBrowser = Request.Headers["User-Agent"].ToString();
+                var (ip, hostName) = await GetClientInfo(HttpContext);
+                unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, OperationType = "ForgetPassword", IpAddress = ip, HostName = hostName, Browser = userBrowser });
+                //
+
 
                 var ResetCode = await unitOfWork.UserManager.GeneratePasswordResetTokenAsync(user);
 
@@ -521,6 +522,11 @@ namespace AYMDatingCore.PL.Controllers
 
                 if (result.Succeeded)
                 {
+                    // 🧩 2️⃣ Get Browser and Device Info
+                    string userBrowser = Request.Headers["User-Agent"].ToString();
+                    var (ip, hostName) = await GetClientInfo(HttpContext);
+                    unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, OperationType = "ResetPassword", IpAddress = ip, HostName = hostName, Browser = userBrowser });
+                    //
                     // Redirect to home page
                     return RedirectToAction("Login", "Account", new { Message = "Your Password has been changed successfully, You can login now!" });
                 }

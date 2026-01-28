@@ -113,6 +113,28 @@
             background: #ff4d4f;
             color: #fff;
         }
+
+    .admin-form {
+        background: rgba(255,255,255,0.15);
+        padding: 18px;
+        border-radius: 16px;
+    }
+
+    .form-select {
+        border-radius: 12px;
+        border: none;
+    }
+
+        .form-select:focus {
+            box-shadow: 0 0 0 2px rgba(255,255,255,.4);
+        }
+
+    .form-error {
+        display: block;
+        margin-top: 6px;
+        color: #fff8dc;
+        font-size: 0.85rem;
+    }
 </style>
 
 <div class="admin-wrapper">
@@ -147,19 +169,58 @@
                         <h4>User Messages</h4>
                         <p>Monitor and manage private conversations.</p>
 
-                        <form asp-action="UserMessages" asp-controller="Admin" id="GoToMessagesForm" method="get">
-                            <div class="mb-3">
+                        <form asp-action="UserMessages"
+                              asp-controller="Admin"
+                              id="GoToMessagesForm"
+                              method="get"
+                              class="admin-form">
+
+                            <div class="form-group mb-3">
                                 <select asp-for="UserId"
                                         asp-items="Model.Users"
-                                        id="userId"
+                                        id="userMessagesUserId"
                                         class="form-select">
-                                    <option value="">-- Select User --</option>
+                                    <option value="">Select User</option>
                                 </select>
-                                <small id="userIdError" class="text-warning"></small>
+                                <small id="userMessagesError" class="form-error"></small>
                             </div>
 
-                            <button type="submit" class="btn btn-soft">
+                            <button type="submit" class="btn btn-soft w-100">
                                 Open Messages
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===============================
+                 User Ip Lists
+            ================================ -->
+            <div class="col-md-4">
+                <div class="card admin-card bg-pink h-100">
+                    <div class="card-body p-4">
+                        <div class="card-icon">💬</div>
+                        <h4>User Ip List</h4>
+                        <p>Monitor Ip and info Lists.</p>
+
+                        <form asp-action="UserIpLists"
+                              asp-controller="Admin"
+                              id="GoToIpListForm"
+                              method="get"
+                              class="admin-form">
+
+                            <div class="form-group mb-3">
+                                <select asp-for="UserId"
+                                        asp-items="Model.Users"
+                                        id="userIpUserId"
+                                        class="form-select">
+                                    <option value="">Select User</option>
+                                </select>
+                                <small id="userIpError" class="form-error"></small>
+                            </div>
+
+                            <button type="submit" class="btn btn-soft w-100">
+                                Open IP Lists
                             </button>
                         </form>
                     </div>
@@ -250,27 +311,35 @@
     </div>
 </div>
 
-<script>
-    function confirmLogout() {
-        return confirm("⚠️ Are you sure?\nThis will log out ALL users immediately.");
-    }
-</script>
-<script>
-    $(function () {
 
-        // Select2
-        $('#userId').select2({
+<script>
+     $(document).ready(function () {
+
+        // Select2 init
+        $('#userMessagesUserId, #userIpUserId').select2({
             placeholder: "Select user",
             width: "100%",
             allowClear: true
         });
 
-        // Validation
+        // Messages validation
         $('#GoToMessagesForm').on('submit', function (e) {
-            if (!$('#userId').val()) {
+            if (!$('#userMessagesUserId').val()) {
                 e.preventDefault();
-                $('#userIdError').text('Please select a user first.');
+                $('#userMessagesError').text('Please select a user.');
+            }
+        });
+
+        // IP list validation
+        $('#GoToIpListForm').on('submit', function (e) {
+            if (!$('#userIpUserId').val()) {
+                e.preventDefault();
+                $('#userIpError').text('Please select a user.');
             }
         });
     });
+
+    function confirmLogout() {
+        return confirm("⚠️ Are you sure?\nThis will log out ALL users immediately.");
+    }
 </script>

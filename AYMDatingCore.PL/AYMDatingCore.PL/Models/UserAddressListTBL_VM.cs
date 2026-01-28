@@ -1,13 +1,8 @@
 ﻿using AYMDatingCore.DAL.BaseEntity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AYMDatingCore.DAL.Entities
+namespace AYMDatingCore.PL.Models
 {
-    public class UserAddressListTBL : BaseEntity<int>
+    public class UserAddressListTBL_VM : BaseEntity<int>
     {
         public string? AppUserId { get; set; }
         public string? IpAddress { get; set; } = null!;

@@ -21,6 +21,7 @@ namespace AYMDatingCore.PL.Models
         public string? UserName { get; set; } = null!;
         public string? Address { get; set; } = null!;
         public string? Phone { get; set; } = null!;
+        public DateTime? DateOfBirth { get; set; } = null!;
 
     }
 }
