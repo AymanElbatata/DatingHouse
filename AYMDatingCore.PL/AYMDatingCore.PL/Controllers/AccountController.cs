@@ -5,11 +5,13 @@ using AYMDatingCore.DAL.Entities;
 using AYMDatingCore.PL.DTO;
 using AYMDatingCore.PL.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Org.BouncyCastle.Utilities.Net;
 using System.Net;
 using System.Runtime.Intrinsics.X86;
+using System.Text.Json;
 using System.Web;
 
 namespace AYMDatingCore.PL.Controllers
@@ -121,6 +123,11 @@ namespace AYMDatingCore.PL.Controllers
                         unitOfWork.UserAddressListTBLRepository.Add(new UserAddressListTBL() { AppUserId = user.Id, OperationType ="Login", IpAddress = ip, HostName = hostName, Browser = userBrowser });
                         //
 
+                        // User ONline NOW
+                        user.IsOnline = true;
+                        user.LastSeen = DateTime.Now;
+                        await unitOfWork.UserManager.UpdateAsync(user);
+
                         var isAdmin = await unitOfWork.UserManager.IsInRoleAsync(user, "Admin");
                         if (isAdmin)
                             return RedirectToAction("Index", "Admin", new { UserName = user.UserName });
@@ -147,6 +154,14 @@ namespace AYMDatingCore.PL.Controllers
         [Authorize]
         public async Task<IActionResult> Logout()
         {
+            var user = await unitOfWork.UserManager.GetUserAsync(User);
+            if (user != null)
+            {
+                user.IsOnline = false;
+                user.LastSeen = DateTime.Now;
+                await unitOfWork.UserManager.UpdateAsync(user);
+            }
+
             await unitOfWork.SignInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
@@ -546,11 +561,11 @@ namespace AYMDatingCore.PL.Controllers
         #endregion
 
         #region Helpers
-        public static async Task<(string Ip, string HostName)> GetClientInfo(HttpContext context)
+        public async Task<(string Ip, string HostName)> GetClientInfo(HttpContext context)
         {
             string ip = context.Connection.RemoteIpAddress?.ToString();
 
-            // Handle reverse proxy (e.g., Nginx, Cloudflare, IIS)
+            // Handle proxy headers
             if (context.Request.Headers.ContainsKey("X-Forwarded-For"))
             {
                 var forwardedIp = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
@@ -559,16 +574,23 @@ namespace AYMDatingCore.PL.Controllers
             }
 
             string hostName = "Unknown";
+
             if (!string.IsNullOrEmpty(ip))
             {
                 try
                 {
+                    // Reverse DNS lookup (may fail)
                     var entry = await Dns.GetHostEntryAsync(ip);
                     hostName = entry.HostName;
+                    if (string.IsNullOrEmpty(hostName) || hostName == "Unknown")
+                    {
+                        hostName = HttpContext.Request.Headers["X-Forwarded-Host"].FirstOrDefault() ?? HttpContext.Request.Host.Host;
+                    }
                 }
                 catch
                 {
-                    hostName = "Unknown";
+                    // Fallback: no RDNS, show structured IP info
+                    hostName = $"No RDNS for {ip}";
                 }
             }
 

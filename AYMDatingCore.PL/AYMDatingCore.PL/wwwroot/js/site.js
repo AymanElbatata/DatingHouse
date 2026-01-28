@@ -2,6 +2,7 @@
     // Create connection
 const connection2 = new signalR.HubConnectionBuilder()
     .withUrl("/notificationHub")
+    .withAutomaticReconnect()
     .configureLogging(signalR.LogLevel.Information)
     .build();
 

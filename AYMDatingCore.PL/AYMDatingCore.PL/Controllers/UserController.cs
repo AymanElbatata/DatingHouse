@@ -218,26 +218,23 @@ namespace AYMDatingCore.PL.Controllers
         {
             try
             {
-
-            var CurrentUser = await GetUserByUserName(User.Identity.Name);
-            if (CurrentUser != null)
-            {
-                CurrentUser.IsDeleted = true;
-                await unitOfWork.UserManager.UpdateAsync(CurrentUser);
-                var UserHistory = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
-                if (UserHistory != null)
+                var CurrentUser = await unitOfWork.UserManager.GetUserAsync(User);
+                if (CurrentUser != null)
                 {
-                    UserHistory.IsSwitchedOff = true;
-                    UserHistory.IsDeleted = true;
-                    unitOfWork.UserHistoryRepository.Update(UserHistory);
+                    CurrentUser.IsDeleted = true;
+                    await unitOfWork.UserManager.UpdateAsync(CurrentUser);
+                    var UserHistory = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+                    if (UserHistory != null)
+                    {
+                        UserHistory.IsSwitchedOff = true;
+                        UserHistory.IsDeleted = true;
+                        unitOfWork.UserHistoryRepository.Update(UserHistory);
+                    }
                 }
-            }
-            return RedirectToAction("Logout", "Account");
-
+                return RedirectToAction("Logout", "Account");
             }
             catch (Exception e)
             {
-
                 return RedirectToAction("ServiceIsDown", "Home");
             }
         }

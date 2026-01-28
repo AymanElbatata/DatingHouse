@@ -30,7 +30,10 @@ namespace AYMDatingCore.DAL.BaseEntity
 
         public DateTime DateOfBirth { get; set; }
         public bool IsBlocked { get; set; } = false;
-        public DateTime DateofBlockExpireIn { get; set; } = DateTime.Now;
+        public DateTime? DateofBlockExpireIn { get; set; }
+
+        public bool IsOnline { get; set; } = false;
+        public DateTime? LastSeen { get; set; }
 
     }
 }

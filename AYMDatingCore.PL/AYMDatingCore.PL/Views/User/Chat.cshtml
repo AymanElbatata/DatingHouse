@@ -315,6 +315,32 @@
         margin-top: 8px;
         box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     }
+
+    /* Profile image + online status */
+    .profile-img-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .profile-status-dot {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    }
+
+        /* Online / Offline */
+        .profile-status-dot.online {
+            background-color: #2ecc71; /* أخضر */
+        }
+
+        .profile-status-dot.offline {
+            background-color: #e74c3c; /* أحمر */
+        }
 </style>
 
 
@@ -326,7 +352,16 @@
                 Model.UserHistoryTBL_VM.MainImageUrl = "blankprofile973460.png";
 
             <a asp-controller="Home" asp-action="UserProfile" asp-route-UserName="@Model.UserHistoryTBL_VM.AppUser.UserName">
-                <img src="~/ImageUsers/@Model.UserHistoryTBL_VM.MainImageUrl" alt="Profile Image" class="profile-img" />
+@*                 <img src="~/ImageUsers/@Model.UserHistoryTBL_VM.MainImageUrl" alt="Profile Image" class="profile-img" />
+ *@                <div class="profile-img-wrapper">
+                    <img src="~/ImageUsers/@Model.UserHistoryTBL_VM.MainImageUrl"
+                         alt="@Model.UserHistoryTBL_VM.AppUser.UserName"
+                         class="profile-img" />
+
+                    <span class="profile-status-dot @(Model.UserHistoryTBL_VM.AppUser.IsOnline ? "online" : "offline")"
+                          title="@(Model.UserHistoryTBL_VM.AppUser.IsOnline ? "Online now" : "Offline")">
+                    </span>
+                </div>
             </a>
 
 

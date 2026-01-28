@@ -67,11 +67,6 @@ namespace AYMDatingCore.PL.Controllers
             return View(Mapper.Map<List<UserAddressListTBL_VM>>(userList));
         }
 
-        public IActionResult UserManagement()
-        {
-            return View();
-        }
-
         public IActionResult UserEmails()
         {
             var userEmails = unitOfWork.EmailTBLRepository.GetAll().OrderByDescending(a => a.CreationDate);
@@ -117,6 +112,12 @@ namespace AYMDatingCore.PL.Controllers
         #endregion
 
         #region Manage Users
+
+        public IActionResult UserManagement()
+        {
+            return View();
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -348,6 +349,10 @@ namespace AYMDatingCore.PL.Controllers
             var Users = await unitOfWork.UserManager.Users.Where(a => a.IsActivated == true && a.IsDeleted == false && a.Email != "ayman.fathy.elbatata@gmail.com").ToListAsync();
             foreach (var user in Users)
             {
+                user.IsOnline = false;
+                user.LastSeen = DateTime.Now;
+                await unitOfWork.UserManager.UpdateAsync(user);
+
                 await unitOfWork.UserManager.UpdateSecurityStampAsync(user);
             }
             return RedirectToAction("Index");

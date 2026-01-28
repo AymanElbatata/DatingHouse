@@ -75,6 +75,16 @@
         background: #f3a6c8;
         border-radius: 10px;
     }
+
+    .email-date {
+        font-size: 0.8rem;
+        color: #999;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        justify-content: flex-end;
+    }
 </style>
 
 <h2 class="text-center fw-bold mb-3 text-pink">📧 User Emails</h2>
@@ -98,19 +108,25 @@
 
                 <div class="email-header">
                     <div class="email-icon">✉️</div>
+
                     <div class="email-from-to text-end">
                         <div><strong>From:</strong> @email.From</div>
                         <div><strong>To:</strong> @email.To</div>
+
+                        <div class="email-date">
+                            🕒 @email.CreationDate?.ToString("dd MMM yyyy • HH:mm")
+                        </div>
                     </div>
                 </div>
 
                 <div class="email-subject">
                     @email.Subject
                 </div>
-@* 
-                <div class="email-body">
-                    @email.Body
-                </div> *@
+
+                @* 
+    <div class="email-body">
+        @email.Body
+    </div> *@
 
             </div>
         }
