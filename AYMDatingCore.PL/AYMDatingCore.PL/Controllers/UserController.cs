@@ -635,31 +635,15 @@ namespace AYMDatingCore.PL.Controllers
 
             var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ImageUsers", oldImage);
 
-            if (System.IO.File.Exists(oldImagePath))
-            {
-                try
-                {
-                    //System.IO.File.Delete(oldImagePath);
-                    var CurrentUser = await GetUserByUserName(User.Identity.Name);
+            var CurrentUser = await GetUserByUserName(User.Identity.Name);
 
-                    if (number > 1)
-                    {
-                        var OldImageRow = unitOfWork.UserImageRepository.GetAllCustomized(filter: a => a.ImageUrl == oldImage && a.IsDeleted == false && a.AppUserId == CurrentUser.Id).FirstOrDefault();
-                        if (OldImageRow != null)
-                        {
-                            OldImageRow.IsDeleted = true;
-                            unitOfWork.UserImageRepository.Update(OldImageRow);
-                        }
-                    }
-                    //else if (number == 1) {
-                    //    var currentUserProfile = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsMain == true && a.AppUserId == CurrentUser.Id).FirstOrDefault();
-                    //    currentUserProfile.MainImageUrl = null;
-                    //    unitOfWork.UserHistoryRepository.Update(currentUserProfile);
-                    //}
-                }
-                catch (Exception ex)
+            if (number > 1)
+            {
+                var OldImageRow = unitOfWork.UserImageRepository.GetAllCustomized(filter: a => a.ImageUrl == oldImage && a.IsDeleted == false && a.AppUserId == CurrentUser.Id).FirstOrDefault();
+                if (OldImageRow != null)
                 {
-                    Console.WriteLine("⚠️ Error deleting old image: " + ex.Message);
+                    OldImageRow.IsDeleted = true;
+                    unitOfWork.UserImageRepository.Update(OldImageRow);
                 }
             }
         }
@@ -720,14 +704,6 @@ namespace AYMDatingCore.PL.Controllers
             }
             return new UserHistoryTBL_VM();
         }
-        #endregion
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
 
         private async Task<string> GetActivationTemplateAsync(string FirstName, string Subject, string SenderUserName, string NewMessage, string WebLink, string MainLink)
         {
@@ -745,6 +721,13 @@ namespace AYMDatingCore.PL.Controllers
             html = html.Replace("{{Year}}", DateTime.Now.Year.ToString());
 
             return html;
+        }
+        #endregion
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
