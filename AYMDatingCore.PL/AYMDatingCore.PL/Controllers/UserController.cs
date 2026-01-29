@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Security.Claims;
@@ -524,6 +525,30 @@ namespace AYMDatingCore.PL.Controllers
             {
                 unitOfWork.UserMessageRepository.Add(new DAL.Entities.UserMessageTBL() { SenderAppUserId = SenderUser.Id, ReceiverAppUserId = RecieverUser.Id, Message = message });
                 await _hubContext.Clients.User(RecieverUser.Id).SendAsync("ReceiveMessageNotification", unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == RecieverUser.Id).Count());
+                // Send Email Notification if user is offline
+                try
+                {
+                    if (RecieverUser.LastSeen != null && RecieverUser.IsOnline == false)
+                    {
+                        if (RecieverUser.LastSeen.Value.AddHours(1) < DateTime.Now)
+                        {
+                            var Email = new EmailTBL_VM();
+                            Email.To = RecieverUser.Email;
+                            Email.Subject = configuration["AymanStore.Pl.Name"] + " - New Message";
+                            Email.Body = await GetActivationTemplateAsync(RecieverUser.FirstName, Email.Subject, SenderUser.UserName, message, configuration["AymanStore.Pl.Url"]+ "Account/Login", configuration["AymanStore.Pl.Url"]);
+                            var newEmail = Mapper.Map<EmailTBL>(Email);
+                            // Send email
+                            await unitOfWork.EmailTBLRepository.SendEmailAsync(newEmail);
+                            // Save email
+                            unitOfWork.EmailTBLRepository.Add(newEmail);
+                       }
+                    }
+                }
+                catch (Exception e)
+                {
+
+                }
+
                 return Json(new { success = true });
             }
 
@@ -701,6 +726,25 @@ namespace AYMDatingCore.PL.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+
+        private async Task<string> GetActivationTemplateAsync(string FirstName, string Subject, string SenderUserName, string NewMessage, string WebLink, string MainLink)
+        {
+            string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "template2", "User-New-Message.html");
+            string html = await System.IO.File.ReadAllTextAsync(templatePath);
+
+            // Replace placeholders
+            html = html.Replace("{{FirstName}}", FirstName);
+            html = html.Replace("{{Subject}}", Subject);
+            html = html.Replace("{{SenderUserName}}", SenderUserName);
+            html = html.Replace("{{NewMessage}}", NewMessage);
+            html = html.Replace("{{DateofMaking}}", DateTime.Now.ToString());
+            html = html.Replace("{{WebLink}}", WebLink);
+            html = html.Replace("{{MainLink}}", MainLink);
+            html = html.Replace("{{Year}}", DateTime.Now.Year.ToString());
+
+            return html;
         }
     }
 }
