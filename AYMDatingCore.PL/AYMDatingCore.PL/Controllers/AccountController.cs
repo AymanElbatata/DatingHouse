@@ -132,13 +132,13 @@ namespace AYMDatingCore.PL.Controllers
                         if (isAdmin)
                             return RedirectToAction("Index", "Admin", new { UserName = user.UserName });
 
+                        if (Url.IsLocalUrl(returnUrl))
+                            return Redirect(returnUrl); // redirect to the original page
+
                         var isFreelancer = await unitOfWork.UserManager.IsInRoleAsync(user, "User");
                         if (isFreelancer)
                             return RedirectToAction("Index", "User", new { UserName = user.UserName });
-                    }
-                    if (Url.IsLocalUrl(returnUrl))
-                        return Redirect(returnUrl); // redirect to the original page
-                    else
+                    }                    
                         return RedirectToAction("Index", "Home"); // default page
                 }
                 else

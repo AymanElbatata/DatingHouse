@@ -520,36 +520,39 @@ namespace AYMDatingCore.PL.Controllers
         {
             var SenderUser = await GetUserByUserName(User.Identity.Name);
             var RecieverUser = await GetUserByUserName(receiverUserName);
-            bool IsThereBlocking = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == RecieverUser.Id) || (a.IsDeleted == false && a.SenderAppUserId == RecieverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).Any();
-            if (!IsThereBlocking)
-            {
-                unitOfWork.UserMessageRepository.Add(new DAL.Entities.UserMessageTBL() { SenderAppUserId = SenderUser.Id, ReceiverAppUserId = RecieverUser.Id, Message = message });
-                await _hubContext.Clients.User(RecieverUser.Id).SendAsync("ReceiveMessageNotification", unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == RecieverUser.Id).Count());
-                // Send Email Notification if user is offline
-                try
+            if (SenderUser != null && RecieverUser != null)
+            {        
+                 bool IsThereBlocking = unitOfWork.UserBlockRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.SenderAppUserId == SenderUser.Id && a.ReceiverAppUserId == RecieverUser.Id) || (a.IsDeleted == false && a.SenderAppUserId == RecieverUser.Id && a.ReceiverAppUserId == SenderUser.Id)).Any();
+                if (!IsThereBlocking)
                 {
-                    if (RecieverUser.LastSeen != null && RecieverUser.IsOnline == false)
+                    unitOfWork.UserMessageRepository.Add(new DAL.Entities.UserMessageTBL() { SenderAppUserId = SenderUser.Id, ReceiverAppUserId = RecieverUser.Id, Message = message });
+                    await _hubContext.Clients.User(RecieverUser.Id).SendAsync("ReceiveMessageNotification", unitOfWork.UserMessageRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.IsSeen == false && a.ReceiverAppUserId == RecieverUser.Id).Count());
+                    // Send Email Notification if user is offline
+                    try
                     {
-                        if (RecieverUser.LastSeen.Value.AddHours(1) < DateTime.Now)
+                        if (RecieverUser.LastSeen != null && RecieverUser.IsOnline == false)
                         {
-                            var Email = new EmailTBL_VM();
-                            Email.To = RecieverUser.Email;
-                            Email.Subject = configuration["AymanStore.Pl.Name"] + " - New Message";
-                            Email.Body = await GetActivationTemplateAsync(RecieverUser.FirstName, Email.Subject, SenderUser.UserName, message, configuration["AymanStore.Pl.Url"]+ "Account/Login", configuration["AymanStore.Pl.Url"]);
-                            var newEmail = Mapper.Map<EmailTBL>(Email);
-                            // Send email
-                            await unitOfWork.EmailTBLRepository.SendEmailAsync(newEmail);
-                            // Save email
-                            unitOfWork.EmailTBLRepository.Add(newEmail);
-                       }
+                            if (RecieverUser.LastSeen.Value.AddHours(1) < DateTime.Now)
+                            {
+                                var Email = new EmailTBL_VM();
+                                Email.To = RecieverUser.Email;
+                                Email.Subject = configuration["AymanStore.Pl.Name"] + " - New Message";
+                                Email.Body = await GetActivationTemplateAsync(RecieverUser.FirstName, Email.Subject, SenderUser.UserName, message, configuration["AymanStore.Pl.Url"] + "User/UserMessages", configuration["AymanStore.Pl.Url"]);
+                                var newEmail = Mapper.Map<EmailTBL>(Email);
+                                // Send email
+                                await unitOfWork.EmailTBLRepository.SendEmailAsync(newEmail);
+                                // Save email
+                                unitOfWork.EmailTBLRepository.Add(newEmail);
+                           }
+                        }
                     }
-                }
-                catch (Exception e)
-                {
+                    catch (Exception e)
+                    {
 
-                }
+                    }
 
-                return Json(new { success = true });
+                    return Json(new { success = true });
+                }
             }
 
             return Json(new { success = false });
