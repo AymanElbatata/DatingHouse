@@ -187,24 +187,46 @@ namespace AYMDatingCore.PL.Controllers
                 {
                     return Json(new { success = false, error = "Email is already registered" });
                 }
-                else if (await unitOfWork.UserManager.FindByNameAsync(model.UserName) != null)
-                {
-                    return Json(new { success = false, error = "Username is already registered" });
-                }
-
                 var user = new AppUser
                 {
-                    UserName = model.UserName,
+                    UserName = model.FirstName + "." + model.LastName + "-" + unitOfWork.MySPECIALGUID.GetUniqueKey(6),
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    NormalizedUserName = model.FirstName + "." + model.LastName,
-                    IsBlocked = model.IsBlocked
+                    Address = "Default Address",
+                    Phone = "0123456789",
+                    CountryTBLId = 1,
+                    GenderTBLId = 1,
+                    ActivationCode = unitOfWork.MySPECIALGUID.GetUniqueKey(12),
+                    IsActivated = true,
+                    DateOfBirth = new DateTime(1980, 1, 1),
                 };
                 var result = await unitOfWork.UserManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
+                    var userhistory = new UserHistoryTBL
+                    {
+                        AppUserId = user.Id,
+                        SearchAgeFrom = 18,
+                        SearchAgeTo = 99,
+                        CountryId = 1,
+                        EducationId = 1,
+                        FinancialModeId = 1,
+                        GenderId = 1,
+                        ProfessionId = 1,
+                        ProfileHeading = "Your Heading.....",
+                        AboutPartner = "AboutPartner...",
+                        AboutYou = "AboutYou...",
+                        City = "City...",
+                        IsMain = true,
+                        LanguageId = 1,
+                        MaritalStatusId = 1,
+                        PurposeId = 1,
+                        IsSwitchedOff = false,
+                    };
+                    unitOfWork.UserHistoryRepository.Add(userhistory);
+
                     if (model.SelectedRoles != null && model.SelectedRoles.Any())
                     {
                         await unitOfWork.UserManager.AddToRolesAsync(user, model.SelectedRoles);
