@@ -532,7 +532,7 @@ namespace AYMDatingCore.PL.Controllers
                     {
                         if (RecieverUser.LastSeen != null && RecieverUser.IsOnline == false)
                         {
-                            if (RecieverUser.LastSeen.Value.AddHours(1) < DateTime.Now && !unitOfWork.EmailTBLRepository.GetAllCustomized(filter: a => a.To == RecieverUser.Email && a.CreationDate.Value.AddMinutes(15) <= DateTime.Now).Any())
+                            if (RecieverUser.LastSeen.Value.AddHours(1) < DateTime.Now && !unitOfWork.EmailTBLRepository.GetAllCustomized(filter: a => a.To == RecieverUser.Email && a.CreationDate.Value.AddMinutes(15) >= DateTime.Now).Any())
                             {
                                 var Email = new EmailTBL_VM();
                                 Email.To = RecieverUser.Email;
