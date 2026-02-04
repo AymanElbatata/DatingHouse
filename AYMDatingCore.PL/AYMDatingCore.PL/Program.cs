@@ -109,8 +109,16 @@ namespace AYMDatingCore.PL
 
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
+            builder.Services.AddAntiforgery(options =>
+            {
+                options.Cookie.Name = ".DatingHouse.AntiForgery";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+            });
             //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             //.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => {
             //     options.LoginPath = new PathString("/Account/Login"); 
