@@ -1,6 +1,7 @@
 ﻿
 @{
     var appName = "MarryMe";
+    var TotalUserViewsCounter = UnitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "HomeVisitorCounter")).FirstOrDefault()?.UserViewsCounter ?? 0;
     var currentUserCounter = new CurrentUserCounterDTO();
     if (UnitOfWork.SignInManager.IsSignedIn(User))
     {
@@ -134,6 +135,7 @@
         Back to top
     </div>
     <footer class="text-center py-3 mt-5 romantic-footer">
+        <p>@TotalUserViewsCounter View/s to this App.</p>
         <p>💖 &copy; @DateTime.Now.Year - @appName | Find your true love 💕</p>
     </footer>
 

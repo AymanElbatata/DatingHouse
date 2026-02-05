@@ -133,7 +133,8 @@ namespace AYMDatingCore.PL.Controllers
                     u.UserName,
                     u.IsBlocked,
                     u.IsDeleted,
-                    u.IsOnline
+                    u.IsOnline,
+                    u.IsActivated
                 })
                 .ToListAsync();
 
@@ -148,6 +149,7 @@ namespace AYMDatingCore.PL.Controllers
                 usermodel.IsBlocked = user.IsBlocked;
                 usermodel.IsDeleted = user.IsDeleted;
                 usermodel.isOnline = user.IsOnline;
+                usermodel.isActivated = user.IsActivated;
                 usermodel.Id = user.Id;
                 var UserinRules = unitOfWork.UserManager.Users.FirstOrDefault(u => u.Email == user.Email);
                 usermodel.Roles = (List<string>)unitOfWork.UserManager.GetRolesAsync(UserinRules).Result ?? new List<string>();
@@ -257,6 +259,7 @@ namespace AYMDatingCore.PL.Controllers
                 IsBlocked = user.IsBlocked,
                 isDeleted = user.IsDeleted,
                 isOnline = user.IsOnline,
+                isActivated = user.IsActivated,
                 IsSwitchedOff = unitOfWork.UserHistoryRepository.GetAllCustomized(
                                 filter: a => a.IsMain == true && a.AppUserId == id).OrderBy(a => a.CreationDate).FirstOrDefault().IsSwitchedOff,
 
@@ -292,6 +295,7 @@ namespace AYMDatingCore.PL.Controllers
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
                 user.IsBlocked = model.IsBlocked;
+                user.IsActivated = model.isActivated;
                 if (!model.isDeleted && unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == true && a.IsMain == true  && a.AppUserId == user.Id).Any())
                 {
                     user.IsDeleted = false;

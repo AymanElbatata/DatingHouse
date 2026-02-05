@@ -68,7 +68,7 @@
         text-shadow: 0 1px 2px rgba(255, 192, 203, 0.7);
     }
 
-    .form-control, .form-select {
+    .form-control2, .form-select2 {
         border: 2px solid #ffc2d1;
         border-radius: 10px;
         padding: 10px 15px;
@@ -76,7 +76,7 @@
         background: rgba(255, 255, 255, 0.9);
     }
 
-        .form-control:focus, .form-select:focus {
+        .form-control2:focus, .form-select2:focus {
             border-color: #ff69b4;
             box-shadow: 0 0 8px rgba(255, 105, 180, 0.3);
             background: #fff;
@@ -223,81 +223,81 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label>Age From</label>
-                    <input asp-for="SearchAgeFrom" type="number" class="form-control" min="18" max="99" required />
+                    <input asp-for="SearchAgeFrom" type="number" class="form-control form-control2" min="18" max="99" required />
                 </div>
                 <div class="col-md-6 mb-3">
                     <label>Age To</label>
-                    <input asp-for="SearchAgeTo" type="number" class="form-control" min="18" max="99" required />
+                    <input asp-for="SearchAgeTo" type="number" class="form-control form-control2" min="18" max="99" required />
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label asp-for="MaritalStatusId" class="form-label">Marital Status</label>
-                    <select asp-for="MaritalStatusId" id="maritalStatusId" asp-items="Model.MaritalStatusOptions" class="form-select select2" required>
+                    <select asp-for="MaritalStatusId" id="maritalStatusId" asp-items="Model.MaritalStatusOptions" class="form-select form-select2 select2" required>
                         <option value="">Select Status</option>
                     </select>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label asp-for="EducationId" class="form-label">Education</label>
-                    <select asp-for="EducationId" id="educationId" asp-items="Model.EducationOptions" class="form-select select2" required>
+                    <select asp-for="EducationId" id="educationId" asp-items="Model.EducationOptions" class="form-select form-select2 select2" required>
                         <option value="">Select Education</option>
                     </select>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label asp-for="ProfessionId" class="form-label">Profession</label>
-                    <select asp-for="ProfessionId" id="professionId" asp-items="Model.ProfessionOptions" class="form-select select2" required>
+                    <select asp-for="ProfessionId" id="professionId" asp-items="Model.ProfessionOptions" class="form-select form-select2 select2" required>
                         <option value="">Select Profession</option>
                     </select>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label asp-for="LanguageId" class="form-label">Language</label>
-                    <select asp-for="LanguageId" id="languageId" asp-items="Model.LanguageOptions" class="form-select select2" required>
+                    <select asp-for="LanguageId" id="languageId" asp-items="Model.LanguageOptions" class="form-select form-select2 select2" required>
                         <option value="">Select Language</option>
                     </select>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label asp-for="PurposeId" class="form-label">Purpose</label>
-                    <select asp-for="PurposeId" id="purposeId" asp-items="Model.PurposeOptions" class="form-select select2" required>
+                    <select asp-for="PurposeId" id="purposeId" asp-items="Model.PurposeOptions" class="form-select form-select2 select2" required>
                         <option value="">Select Purpose</option>
                     </select>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label asp-for="FinancialModeId" class="form-label">Financial Mode</label>
-                    <select asp-for="FinancialModeId" id="financialModeId" asp-items="Model.FinancialModeOptions" class="form-select select2" required>
+                    <select asp-for="FinancialModeId" id="financialModeId" asp-items="Model.FinancialModeOptions" class="form-select form-select2 select2" required>
                         <option value="">Select Mode</option>
                     </select>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label asp-for="CountryId" class="form-label">Country</label>
-                    <select asp-for="CountryId" id="countryId" asp-items="Model.CountryOptions" class="form-select select2" required>
+                    <select asp-for="CountryId" id="countryId" asp-items="Model.CountryOptions" class="form-select form-select2 select2" required>
                         <option value="">Select Country</option>
                     </select>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label>City</label>
-                    <input id="city" asp-for="City" class="form-control" maxlength="50" required />
+                    <input id="city" asp-for="City" class="form-control form-control2" maxlength="50" required />
                     <span asp-validation-for="City" class="text-danger"></span>
                     <span id="cityError" class="text-danger"></span>
                 </div>
                 <div class="col-md-12 mb-3">
                     <label>Profile Heading</label>
-                    <input id="profileHeading" asp-for="ProfileHeading" class="form-control" maxlength="50" required />
+                    <input id="profileHeading" asp-for="ProfileHeading" class="form-control form-control2" maxlength="50" required />
                     <span asp-validation-for="ProfileHeading" class="text-danger"></span>
                     <span id="profileHeadingError" class="text-danger"></span>
                 </div>
                 <div class="col-md-12 mb-3">
                     <label>💖 About Me</label>
-                    <textarea id="aboutMe" asp-for="AboutYou" class="form-control" rows="3" maxlength="1000" required></textarea>
+                    <textarea id="aboutMe" asp-for="AboutYou" class="form-control form-control2" rows="3" maxlength="1000" required></textarea>
                     <span asp-validation-for="AboutYou" class="text-danger"></span>
                     <small id="aboutMeCount" class="text-muted">0/1000</small>
                     <span id="aboutMeError" class="text-danger"></span>
                 </div>
                 <div class="col-md-12 mb-3">
                     <label>🌹 My Partner Should Be</label>
-                    <textarea id="aboutPartner" asp-for="AboutPartner" class="form-control" rows="3" maxlength="1000" required></textarea>
+                    <textarea id="aboutPartner" asp-for="AboutPartner" class="form-control form-control2" rows="3" maxlength="1000" required></textarea>
                     <span asp-validation-for="AboutPartner" class="text-danger"></span>
                     <small id="aboutPartnerCount" class="text-muted">0/1000</small>
                     <span id="aboutPartnerError" class="text-danger"></span>

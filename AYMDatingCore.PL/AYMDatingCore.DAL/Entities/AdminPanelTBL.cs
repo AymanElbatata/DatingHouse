@@ -11,5 +11,6 @@ namespace AYMDatingCore.DAL.Entities
     {
         public string PanelName { get; set; } = string.Empty;
         public bool Activation { get; set; } = false;
+        public int? UserViewsCounter { get; set; } = 0;
     }
 }

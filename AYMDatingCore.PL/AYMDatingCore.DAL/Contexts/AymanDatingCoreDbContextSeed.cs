@@ -29,6 +29,7 @@ namespace AYMDatingCore.DAL.Contexts
                     context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "AllowContactUs" });
                     context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "AllowUserReport" });
                     context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "AllowUserEditProfile" });
+                    context.AdminPanelTBLs.Add(new AdminPanelTBL() { Activation = true, PanelName = "HomeVisitorCounter" });
                     await context.SaveChangesAsync();
                 }
                 if (!context.CountryTBLs.Any())
@@ -150,7 +151,7 @@ namespace AYMDatingCore.DAL.Contexts
                         IsActivated = true,
                         EmailConfirmed = true,
                         LockoutEnabled = false,
-                        PhoneNumber = "201284878483",
+                        PhoneNumber = "201554820255",
                         DateOfBirth = new DateTime(1982, 02, 01),
                         CountryTBLId = 50,
                         GenderTBLId = 1
@@ -166,69 +167,69 @@ namespace AYMDatingCore.DAL.Contexts
                         DateOfBirth = new DateTime(1979, 07, 01),
                         EmailConfirmed = true,
                         LockoutEnabled = false,
-                        PhoneNumber = "201202025251",
+                        PhoneNumber = "201284878483",
                         CountryTBLId = 50,
                         GenderTBLId = 1
                     };
 
                     var user3 = new AppUser
                     {
-                        NormalizedUserName = "NoraAli".ToUpper(),
-                        Email = "NoraAli@yahoo.com",
-                        UserName = "Nora.Ali",
-                        FirstName = "Nora",
-                        LastName = "Ali",
+                        NormalizedUserName = "Test1".ToUpper(),
+                        Email = "Test1@yahoo.com",
+                        UserName = "Test.Tested",
+                        FirstName = "Test",
+                        LastName = "Tested",
                         IsActivated = true,
                         DateOfBirth = new DateTime(1983, 03, 01),
                         EmailConfirmed = true,
                         LockoutEnabled = false,
-                        PhoneNumber = "201284878421",
+                        PhoneNumber = "01210000000",
                         CountryTBLId = 50,
                         GenderTBLId = 2
                     };
-                    var user4 = new AppUser
-                    {
-                        NormalizedUserName = "SamiaAdel".ToUpper(),
-                        Email = "SamiaAdel@yahoo.com",
-                        UserName = "Samia.Adel",
-                        FirstName = "Samia",
-                        LastName = "Adel",
-                        IsActivated = true,
-                        DateOfBirth = new DateTime(1985, 05, 01),
-                        EmailConfirmed = true,
-                        LockoutEnabled = false,
-                        PhoneNumber = "201284878422",
-                        CountryTBLId = 51,
-                        GenderTBLId = 2
-                    };
+                    //var user4 = new AppUser
+                    //{
+                    //    NormalizedUserName = "SamiaAdel".ToUpper(),
+                    //    Email = "SamiaAdel@yahoo.com",
+                    //    UserName = "Samia.Adel",
+                    //    FirstName = "Samia",
+                    //    LastName = "Adel",
+                    //    IsActivated = true,
+                    //    DateOfBirth = new DateTime(1985, 05, 01),
+                    //    EmailConfirmed = true,
+                    //    LockoutEnabled = false,
+                    //    PhoneNumber = "201284878422",
+                    //    CountryTBLId = 51,
+                    //    GenderTBLId = 2
+                    //};
 
-                    var user5 = new AppUser
-                    {
-                        NormalizedUserName = "SamahAnwar".ToUpper(),
-                        Email = "SamahAnwar@yahoo.com",
-                        UserName = "Samah.Anwar",
-                        FirstName = "Samah",
-                        LastName = "Anwar",
-                        IsActivated = true,
-                        DateOfBirth = new DateTime(1988, 06, 01),
-                        EmailConfirmed = true,
-                        LockoutEnabled = false,
-                        PhoneNumber = "201284878423",
-                        CountryTBLId = 52,
-                        GenderTBLId = 2
-                    };
+                    //var user5 = new AppUser
+                    //{
+                    //    NormalizedUserName = "SamahAnwar".ToUpper(),
+                    //    Email = "SamahAnwar@yahoo.com",
+                    //    UserName = "Samah.Anwar",
+                    //    FirstName = "Samah",
+                    //    LastName = "Anwar",
+                    //    IsActivated = true,
+                    //    DateOfBirth = new DateTime(1988, 06, 01),
+                    //    EmailConfirmed = true,
+                    //    LockoutEnabled = false,
+                    //    PhoneNumber = "201284878423",
+                    //    CountryTBLId = 52,
+                    //    GenderTBLId = 2
+                    //};
 
-                    await userManager.CreateAsync(user1, "Aym@1111");
-                    await userManager.CreateAsync(user2, "Aym@1111");
-                    await userManager.CreateAsync(user3, "Aym@1111");
-                    await userManager.CreateAsync(user4, "Aym@1111");
-                    await userManager.CreateAsync(user5, "Aym@1111");
+                    await userManager.CreateAsync(user1, "Test@1234");
+                    await userManager.CreateAsync(user2, "Test@1234");
+                    await userManager.CreateAsync(user3, "Test@1234");
+                    //await userManager.CreateAsync(user4, "Aym@8513");
+                    //await userManager.CreateAsync(user5, "Aym@8513");
 
                     await userManager.AddToRoleAsync(user1, "Admin");
                     await userManager.AddToRoleAsync(user2, "User");
                     await userManager.AddToRoleAsync(user3, "User");
-                    await userManager.AddToRoleAsync(user4, "User");
-                    await userManager.AddToRoleAsync(user5, "User");
+                    //await userManager.AddToRoleAsync(user4, "User");
+                    //await userManager.AddToRoleAsync(user5, "User");
                     await context.SaveChangesAsync();
 
                     var userhistory1 = new UserHistoryTBL
@@ -293,56 +294,56 @@ namespace AYMDatingCore.DAL.Contexts
                         MaritalStatusId = 2,
                         PurposeId = 2,
                         IsSwitchedOff = false,
-                        MainImageUrl = "Nora01.jpg"
+                        MainImageUrl = "NewFemale.jpg"
                     };
 
-                    var userhistory4 = new UserHistoryTBL
-                    {
-                        AppUserId = user4.Id,
-                        SearchAgeFrom = 23,
-                        SearchAgeTo = 56,
-                        CountryId = 3,
-                        EducationId = 3,
-                        FinancialModeId = 3,
-                        GenderId = 2,
-                        ProfessionId = 3,
-                        ProfileHeading = "ProfileHeading0123456789",
-                        AboutPartner = "AboutPartnerTest0123456789",
-                        AboutYou = "AboutYouTest0123456789",
-                        City = "CityTest0123456789",
-                        IsMain = true,
-                        LanguageId = 3,
-                        MaritalStatusId = 3,
-                        PurposeId = 3,
-                        IsSwitchedOff = false,
-                        MainImageUrl = "Samia01.jpg"
-                    };
-                    var userhistory5 = new UserHistoryTBL
-                    {
-                        AppUserId = user5.Id,
-                        SearchAgeFrom = 19,
-                        SearchAgeTo = 66,
-                        CountryId = 4,
-                        EducationId = 4,
-                        FinancialModeId = 4,
-                        GenderId = 2,
-                        ProfessionId = 4,
-                        ProfileHeading = "ProfileHeading0123456789",
-                        AboutPartner = "AboutPartnerTest0123456789",
-                        AboutYou = "AboutYouTest0123456789",
-                        City = "CityTest0123456789",
-                        IsMain = true,
-                        LanguageId = 4,
-                        MaritalStatusId = 4,
-                        PurposeId = 1,
-                        IsSwitchedOff = false,
-                        MainImageUrl = "Samah01.jpg"
-                    };
+                    //var userhistory4 = new UserHistoryTBL
+                    //{
+                    //    AppUserId = user4.Id,
+                    //    SearchAgeFrom = 23,
+                    //    SearchAgeTo = 56,
+                    //    CountryId = 3,
+                    //    EducationId = 3,
+                    //    FinancialModeId = 3,
+                    //    GenderId = 2,
+                    //    ProfessionId = 3,
+                    //    ProfileHeading = "ProfileHeading0123456789",
+                    //    AboutPartner = "AboutPartnerTest0123456789",
+                    //    AboutYou = "AboutYouTest0123456789",
+                    //    City = "CityTest0123456789",
+                    //    IsMain = true,
+                    //    LanguageId = 3,
+                    //    MaritalStatusId = 3,
+                    //    PurposeId = 3,
+                    //    IsSwitchedOff = false,
+                    //    MainImageUrl = "Samia01.jpg"
+                    //};
+                    //var userhistory5 = new UserHistoryTBL
+                    //{
+                    //    AppUserId = user5.Id,
+                    //    SearchAgeFrom = 19,
+                    //    SearchAgeTo = 66,
+                    //    CountryId = 4,
+                    //    EducationId = 4,
+                    //    FinancialModeId = 4,
+                    //    GenderId = 2,
+                    //    ProfessionId = 4,
+                    //    ProfileHeading = "ProfileHeading0123456789",
+                    //    AboutPartner = "AboutPartnerTest0123456789",
+                    //    AboutYou = "AboutYouTest0123456789",
+                    //    City = "CityTest0123456789",
+                    //    IsMain = true,
+                    //    LanguageId = 4,
+                    //    MaritalStatusId = 4,
+                    //    PurposeId = 1,
+                    //    IsSwitchedOff = false,
+                    //    MainImageUrl = "Samah01.jpg"
+                    //};
                     context.UserHistoryTBLs.Add(userhistory1);
                     context.UserHistoryTBLs.Add(userhistory2);
                     context.UserHistoryTBLs.Add(userhistory3);
-                    context.UserHistoryTBLs.Add(userhistory4);
-                    context.UserHistoryTBLs.Add(userhistory5);
+                    //context.UserHistoryTBLs.Add(userhistory4);
+                    //context.UserHistoryTBLs.Add(userhistory5);
                     await context.SaveChangesAsync();
 
                     // Add More Users

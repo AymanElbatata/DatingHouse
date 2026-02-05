@@ -215,29 +215,20 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Account Status</label>
-
+                        <div class="form-check form-switch">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="isActivated">
+                            <label class="form-check-label" for="isActivated">
+                                Activation
+                            </label>
+                        </div>
                         <div class="form-check form-switch">
                             <input class="form-check-input"
                                    type="checkbox"
                                    id="isBlocked">
                             <label class="form-check-label" for="isBlocked">
-                                Block this user
-                            </label>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   id="isSwitchedOff">
-                            <label class="form-check-label" for="isSwitchedOff">
-                                SwitchedOff by User
-                            </label>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   id="isOnline">
-                            <label class="form-check-label" for="isOnline">
-                                Online Status
+                                Blocking
                             </label>
                         </div>
                         <div class="form-check form-switch">
@@ -245,7 +236,23 @@
                                    type="checkbox"
                                    id="isDeleted">
                             <label class="form-check-label" for="isDeleted">
-                                Deletion Status
+                                Deletion
+                            </label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="isSwitchedOff" disabled>
+                            <label class="form-check-label" for="isSwitchedOff">
+                                 SwitchedOff by User?
+                            </label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="isOnline" disabled>
+                            <label class="form-check-label" for="isOnline">
+                                Is Online Now?
                             </label>
                         </div>
                     </div>
@@ -405,7 +412,7 @@
                 $('#userId').val('');
                 $('#passwordField').show();
                 $('#password').prop('required', true);
-                $('#password').val('Aym@8513');
+                $('#password').val('Test@19777');
                 renderRoles();
                 userModal.show();
             });
@@ -428,6 +435,7 @@
                         $('#isBlocked').prop('checked', user.isBlocked);
                         $('#isDeleted').prop('checked', user.isDeleted);
                         $('#isOnline').prop('checked', user.isOnline);
+                        $('#isActivated').prop('checked', user.isActivated);
                         $('#isSwitchedOff').prop('checked', user.isSwitchedOff);
                         renderRoles(user.selectedRoles);
                         userModal.show();
@@ -485,6 +493,7 @@
                     isBlocked: $('#isBlocked').is(':checked'), // ✅ added
                     isDeleted: $('#isDeleted').is(':checked'), // ✅ added
                     isOnline: $('#isOnline').is(':checked'), // ✅ added
+                    isActivated: $('#isActivated').is(':checked'), // ✅ added
                     isSwitchedOff: $('#isSwitchedOff').is(':checked'), // ✅ added
                     selectedRoles: $('input[name="selectedRoles"]:checked').map(function() {
                         return this.value;

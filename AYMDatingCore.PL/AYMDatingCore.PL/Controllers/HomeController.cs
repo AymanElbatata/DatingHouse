@@ -43,6 +43,10 @@ namespace AYMDatingCore.PL.Controllers
                 {
                     return RedirectToAction("ServiceIsDown", "Home");
                 }
+                var HomeCounter = unitOfWork.AdminPanelTBLRepository.GetAllCustomized(filter: a => (a.IsDeleted == false && a.PanelName == "HomeVisitorCounter")).FirstOrDefault();
+                HomeCounter.UserViewsCounter = HomeCounter.UserViewsCounter == null? 1 : HomeCounter.UserViewsCounter.Value + 1;
+                unitOfWork.AdminPanelTBLRepository.Update(HomeCounter);
+
                 var data = GetAllUsersOrFiltered(new UserMainSearchDTO());
                 ViewBag.CounterUsers = data.Count();
                 return View(data);
