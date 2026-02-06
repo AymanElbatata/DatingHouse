@@ -55,6 +55,20 @@ body.romantic-bg {
     font-size: 0.9rem;
     border-top: 1px solid #ffd6e0;
 }
+    .romantic-footer a {
+        color: #b3004b;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease, text-decoration 0.3s ease;
+    }
+        .romantic-footer a:hover {
+            color: #ff4d88;
+            text-decoration: underline;
+        }
+
+        .romantic-footer a:visited {
+            color: #8a0038;
+        }
 
 
 .romantic-search {
