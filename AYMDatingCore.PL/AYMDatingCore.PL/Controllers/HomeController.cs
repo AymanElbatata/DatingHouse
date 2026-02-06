@@ -73,16 +73,12 @@ namespace AYMDatingCore.PL.Controllers
         public async Task<IActionResult> UserProfile(string? UserName)
         {
             if (string.IsNullOrEmpty(UserName))
-            {
                 return RedirectToAction("NotFound", "Home");
-            }
 
             var user = await GetUserByUserName(UserName);
 
-            if (user == null)
-            {
+            if (user == null || user.IsDeleted || !user.IsActivated || !user.EmailConfirmed)
                 return RedirectToAction("NotFound", "Home");
-            }
 
 
             if (!string.IsNullOrEmpty(User.Identity.Name) && User.Identity.Name != UserName) {
@@ -211,7 +207,7 @@ namespace AYMDatingCore.PL.Controllers
 
         private List<UserHistoryTBL_VM> GetAllUsersOrFiltered(UserMainSearchDTO model)
         {
-            var users = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.AppUser.EmailConfirmed == true && a.IsMain == true && a.AppUser.IsDeleted == false, includes: new Expression<Func<UserHistoryTBL, object>>[]
+            var users = unitOfWork.UserHistoryRepository.GetAllCustomized(filter: a => a.IsDeleted == false && a.AppUser.IsActivated && a.AppUser.EmailConfirmed == true && a.IsMain == true && a.AppUser.IsDeleted == false, includes: new Expression<Func<UserHistoryTBL, object>>[]
             {
                                          p => p.AppUser,
                                          p => p.Country,

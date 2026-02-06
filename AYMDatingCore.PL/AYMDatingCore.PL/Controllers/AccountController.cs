@@ -86,6 +86,11 @@ namespace AYMDatingCore.PL.Controllers
                     ModelState.AddModelError("", "Account is Deleted");
                     return View(model);
                 }
+                else if (!user.IsActivated)
+                {
+                    ModelState.AddModelError("", "Account isn't Activated");
+                    return View(model);
+                }
                 else if (!user.EmailConfirmed)
                 {
                     //ModelState.AddModelError("", "Email is not Confirmed, Check your email address now!");
@@ -137,9 +142,10 @@ namespace AYMDatingCore.PL.Controllers
 
                         var isFreelancer = await unitOfWork.UserManager.IsInRoleAsync(user, "User");
                         if (isFreelancer)
-                            return RedirectToAction("Index", "User", new { UserName = user.UserName });
-                    }                    
-                        return RedirectToAction("Index", "Home"); // default page
+                            //return RedirectToAction("Index", "User", new { UserName = user.UserName });
+                            return RedirectToAction("UserMessages", "User");
+                    }
+                    return RedirectToAction("Index", "Home"); // default page
                 }
                 else
                 {
