@@ -226,12 +226,12 @@
             <div class="name-fields">
                 <div class="form-group">
                     <label class="form-label">First Name</label>
-                    <input type="text" asp-for="FirstName" value="Kamel" class="form-input" placeholder="First name" required maxlength="20" />
+                    <input type="text" asp-for="FirstName" class="form-input" placeholder="First name" required maxlength="20" />
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Last Name</label>
-                    <input type="text" asp-for="LastName" value="Aly" class="form-input" placeholder="Last name" required maxlength="20" />
+                    <input type="text" asp-for="LastName" class="form-input" placeholder="Last name" required maxlength="20" />
                 </div>
             </div>
             <div class="form-group">
@@ -242,34 +242,46 @@
                 <span id="dobError" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="GenderTBLId" class="form-label">Gender</label>
-                <select asp-for="GenderTBLId" asp-items="Model.GenderOptions" class="form-select select2" required>
+                <label asp-for="GenderTBLId" class="form-label"></label>
+                <select asp-for="GenderTBLId"
+                        asp-items="Model.GenderOptions"
+                        class="form-select select2"
+                        id="genderTBLId">
                     <option value="">Select Gender</option>
                 </select>
+                <span asp-validation-for="GenderTBLId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="ProfessionTBLId" class="form-label">Profession</label>
-                <select asp-for="ProfessionTBLId" id="professionTBLId" asp-items="Model.ProfessionOptions" class="form-select select2" required>
+                <label asp-for="ProfessionTBLId" class="form-label"></label>
+                <select asp-for="ProfessionTBLId"
+                        asp-items="Model.ProfessionOptions"
+                        class="form-select select2"
+                        id="professionTBLId">
                     <option value="">Select Profession</option>
                 </select>
+                <span asp-validation-for="ProfessionTBLId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="CountryTBLId" class="form-label">Country</label>
-                <select asp-for="CountryTBLId" id="countryTBLId" asp-items="Model.CountryOptions" class="form-select select2" required>
+                <label asp-for="CountryTBLId" class="form-label"></label>
+                <select asp-for="CountryTBLId"
+                        asp-items="Model.CountryOptions"
+                        class="form-select select2"
+                        id="countryTBLId">
                     <option value="">Select Country</option>
                 </select>
+                <span asp-validation-for="CountryTBLId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Address</label>
-                <input type="text" asp-for="Address" value="Tanta3" class="form-input" placeholder="Your address includes your city" required maxlength="100" />
+                <input type="text" asp-for="Address" class="form-input" placeholder="Your address includes your city" required maxlength="100" />
             </div>
 
             <div class="form-group">
                 <label class="form-label">Phone</label>
-                <input type="text" asp-for="Phone" value="0125498798" class="form-input" placeholder="Your phone number" required maxlength="20" />
+                <input type="text" asp-for="Phone" class="form-input" placeholder="Your phone number" required maxlength="20" />
             </div>
 
             <button type="submit" class="registration-btn">💌 Create My Account</button>
@@ -293,205 +305,17 @@
     <partial name="_ValidationScriptsPartial" />
 
  <script>
-        $(document).ready(function() {
-            // Form validation
-            $('#registrationForm').on('submit', function(e) {
-                let isValid = true;
-                
-                // Reset error messages
-                $('.text-danger').text('');
-                
-                // Validate email
-                const email = $('#email').val().trim();
-                if (!email) {
-                    $('#emailError').text('Please enter your email address');
-                    isValid = false;
-                } else if (!isValidEmail(email)) {
-                    $('#emailError').text('Please enter a valid email address');
-                    isValid = false;
-                }
-                
-                // Validate password
-                const password = $('#password').val();
-                if (!password) {
-                    $('#passwordError').text('Please enter your password');
-                    isValid = false;
-                } else if (password.length < 6) {
-                    $('#passwordError').text('Password must be at least 6 characters long');
-                    isValid = false;
-                }
-                
-                // Validate confirm password
-                const confirmPassword = $('#confirmPassword').val();
-                if (!confirmPassword) {
-                    $('#confirmPasswordError').text('Please confirm your password');
-                    isValid = false;
-                } else if (password !== confirmPassword) {
-                    $('#confirmPasswordError').text('Passwords do not match');
-                    isValid = false;
-                }
-                
-                // Validate first name
-                const firstName = $('#firstName').val().trim();
-                if (!firstName) {
-                    $('#firstNameError').text('Please enter your first name');
-                    isValid = false;
-                }
-                
-                // Validate last name
-                const lastName = $('#lastName').val().trim();
-                if (!lastName) {
-                    $('#lastNameError').text('Please enter your last name');
-                    isValid = false;
-                }
-                
-                // Validate address
-                const address = $('#address').val().trim();
-                if (!address) {
-                    $('#addressError').text('Please enter your address');
-                    isValid = false;
-                }
+        $(document).ready(function () {
 
-                // Validate phone
-                const phone = $('#phone').val().trim();
-                if (!phone) {
-                $('#phoneError').text('Please enter your phone');
-                        isValid = false;
-                }
-                
-                // Validate country
-                const country = $('#countryTBLId').val();
-                if (!country) {
-                    $('#countryError').text('Please select your country');
-                    isValid = false;
-                }
-
-                // Validate profession
-                const profession = $('#professionTBLId').val();
-                if (!profession) {
-                $('#professionError').text('Please select your Type');
-                    isValid = false;
-                }
-                // Validate gender
-                const gender = $('#genderTBLId').val();
-                if (!gender) {
-                    $('#genderError').text('Please select your gender');
-                    isValid = false;
-                }
-                
-                // Prevent form submission if validation fails
-                if (!isValid) {
-                    e.preventDefault();
-                }
+            $('.select2').select2({
+                placeholder: "Select",
+                allowClear: true,
+                width: '100%'
+            }).on('change', function () {
+                $(this).valid(); // 🔥 THIS is the fix
             });
 
-        // Email validation function
-            function isValidEmail(email) {
-                const re = /^(([^<>()\[\]\\.,;:\s@@"]+(\.[^<>()\[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}))$/;
-                return re.test(String(email).toLowerCase());
-            }
-            
-            // Real-time validation
-            $('#email').on('blur', function() {
-                const email = $(this).val().trim();
-                if (!email) {
-                    $('#emailError').text('Please enter your email address');
-                } else if (!isValidEmail(email)) {
-                    $('#emailError').text('Please enter a valid email address');
-                } else {
-                    $('#emailError').text('');
-                }
-            });
-            
-            $('#password').on('blur', function() {
-                const password = $(this).val();
-                if (!password) {
-                    $('#passwordError').text('Please enter your password');
-                } else if (password.length < 6) {
-                    $('#passwordError').text('Password must be at least 6 characters long');
-                } else {
-                    $('#passwordError').text('');
-                }
-            });
-            
-            $('#confirmPassword').on('blur', function() {
-                const confirmPassword = $(this).val();
-                const password = $('#password').val();
-                if (!confirmPassword) {
-                    $('#confirmPasswordError').text('Please confirm your password');
-                } else if (password !== confirmPassword) {
-                    $('#confirmPasswordError').text('Passwords do not match');
-                } else {
-                    $('#confirmPasswordError').text('');
-                }
-            });
-            
-            $('#firstName').on('blur', function() {
-                const firstName = $(this).val().trim();
-                if (!firstName) {
-                    $('#firstNameError').text('Please enter your first name');
-                } else {
-                    $('#firstNameError').text('');
-                }
-            });
-            
-            $('#lastName').on('blur', function() {
-                const lastName = $(this).val().trim();
-                if (!lastName) {
-                    $('#lastNameError').text('Please enter your last name');
-                } else {
-                    $('#lastNameError').text('');
-                }
-            });
-            
-            $('#address').on('blur', function() {
-                const address = $(this).val().trim();
-                if (!address) {
-                    $('#addressError').text('Please enter your address');
-                } else {
-                    $('#addressError').text('');
-                }
-            });
-
-           $('#phone').on('blur', function() {
-               const phone = $(this).val().trim();
-               if (!phone) {
-                 $('#phoneError').text('Please enter your phone');
-               } else {
-                  $('#phoneError').text('');
-            }
-           });
-            
-            $('#countryTBLId').on('change', function() {
-                const country = $(this).val();
-                if (!country) {
-                    $('#countryError').text('Please select your country');
-                } else {
-                    $('#countryError').text('');
-                }
-            });
-            
-            $('#genderTBLId').on('change', function() {
-                const gender = $(this).val();
-                if (!gender) {
-                    $('#genderError').text('Please select your gender');
-                } else {
-                    $('#genderError').text('');
-                }
-            });
         });
     </script>
 
-<script>
-    $(document).ready(function () {
-        $('#countryTBLId').select2({
-            placeholder: "Select Country",
-            allowClear: true
-        });
-        $('#professionTBLId').select2({
-            placeholder: "Select Profession",
-            allowClear: true
-        });
-    });
-</script>
 }

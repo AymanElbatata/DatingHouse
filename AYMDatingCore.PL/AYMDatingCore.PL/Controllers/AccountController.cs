@@ -215,36 +215,23 @@ namespace AYMDatingCore.PL.Controllers
                 if (await unitOfWork.UserManager.FindByEmailAsync(model.Email) != null)
                 {
                     ModelState.AddModelError("Email", "Email is already registered");
-
-                    model.CountryOptions = unitOfWork.CountryTBLRepository.GetAllCustomized(
-                                    filter: a => a.IsDeleted == false)
-                            .Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name, Selected = (c.ID == model.CountryTBLId) })
-                            .ToList();
-                    model.GenderOptions = unitOfWork.GenderTBLRepository.GetAllCustomized(
-                                filter: a => a.IsDeleted == false)
-                        .Select(g => new SelectListItem { Value = g.ID.ToString(), Text = g.Name, Selected = (g.ID == model.GenderTBLId) })
-                        .ToList();
-                    model.ProfessionOptions = unitOfWork.ProfessionRepository.GetAllCustomized(
-                                    filter: a => a.IsDeleted == false)
-                        .Select(g => new SelectListItem { Value = g.ID.ToString(), Text = g.Name })
-                        .ToList();
-                    return View(model);
                 }
+                else { 
 
-                // Create new user
+                 // Create new user
                 var user = new AppUser
-                {
-                    UserName = model.FirstName + "." + model.LastName + "-" + unitOfWork.MySPECIALGUID.GetUniqueKey(6),
-                    Email = model.Email,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Address = model.Address,
-                    Phone = model.Phone,
-                    CountryTBLId = model.CountryTBLId,
-                    GenderTBLId = model.GenderTBLId,
-                    ActivationCode = unitOfWork.MySPECIALGUID.GetUniqueKey(12),
-                    DateOfBirth = Convert.ToDateTime(model.DateOFBirth),
-                };
+                    {
+                        UserName = model.FirstName + "." + model.LastName + "-" + unitOfWork.MySPECIALGUID.GetUniqueKey(6),
+                        Email = model.Email,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Address = model.Address,
+                        Phone = model.Phone,
+                        CountryTBLId = model.CountryTBLId,
+                        GenderTBLId = model.GenderTBLId,
+                        ActivationCode = unitOfWork.MySPECIALGUID.GetUniqueKey(12),
+                        DateOfBirth = Convert.ToDateTime(model.DateOFBirth),
+                    };
 
                 // Create the user
                 var result = await unitOfWork.UserManager.CreateAsync(user, model.Password);
@@ -304,6 +291,7 @@ namespace AYMDatingCore.PL.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+                }
             }
 
             // If we got this far, something failed, redisplay form
@@ -317,7 +305,7 @@ namespace AYMDatingCore.PL.Controllers
                 .ToList();
             model.ProfessionOptions = unitOfWork.ProfessionRepository.GetAllCustomized(
                                 filter: a => a.IsDeleted == false)
-                        .Select(g => new SelectListItem { Value = g.ID.ToString(), Text = g.Name, Selected = (g.ID == model.GenderTBLId) })
+                        .Select(g => new SelectListItem { Value = g.ID.ToString(), Text = g.Name, Selected = (g.ID == model.ProfessionTBLId) })
                         .ToList();
 
             if (!ModelState.IsValid)
