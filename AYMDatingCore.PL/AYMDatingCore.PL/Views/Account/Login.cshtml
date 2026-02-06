@@ -193,17 +193,15 @@
             <input type="hidden" asp-for="ReturnUrl" value="@ViewData["ReturnUrl"]" />
 
             <div class="form-group">
-                <label class="form-label" for="email">Email</label>
-                <input type="text" id="email" name="email" class="form-input" asp-for="Email" placeholder="Enter your email" required />
+                <label class="form-label">Email</label>
+                <input type="text" asp-for="Email" class="form-input" placeholder="Enter your email" required />
                 <span asp-validation-for="Email" class="text-danger"></span>
-                <span id="emailError" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-input" asp-for="Password" placeholder="Enter your password" required />
+                <label class="form-label">Password</label>
+                <input type="password" asp-for="Password" class="form-input" placeholder="Enter your password" required />
                 <span asp-validation-for="Password" class="text-danger"></span>
-                <span id="passwordError" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -237,38 +235,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-<script>
-    $(document).ready(function () {
-        $('#myloginform').on('submit', function (e) {
-            let isValid = true;
-            $('.text-danger').text('');
-
-            const email = $('#email').val().trim();
-            const password = $('#password').val();
-
-            if (!email) {
-                $('#emailError').text('Please enter your email');
-                isValid = false;
-            } else if (!isValidEmail(email)) {
-                $('#emailError').text('Invalid email format');
-                isValid = false;
-            }
-
-            if (!password) {
-                $('#passwordError').text('Please enter your password');
-                isValid = false;
-            } else if (password.length < 6) {
-                $('#passwordError').text('Password must be at least 6 characters');
-                isValid = false;
-            }
-
-            if (!isValid) e.preventDefault();
-        });
-
-        function isValidEmail(email) {
-            const re = /^(([^<>()\[\]\\.,;:\s@@"]+(\.[^<>()\[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(email.toLowerCase());
-        }
-    });
-</script>
 }

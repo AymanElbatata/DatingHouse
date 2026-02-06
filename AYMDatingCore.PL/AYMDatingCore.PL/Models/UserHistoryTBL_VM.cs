@@ -26,7 +26,7 @@ namespace AYMDatingCore.PL.Models
 
         [Required(ErrorMessage = "Heading is required")]
         [Display(Name = "Heading")]
-        [MaxLength(50, ErrorMessage = "Profile Heading must be at max 50 character")]
+        [MaxLength(100, ErrorMessage = "Profile Heading must be at max 100 character")]
         public string ProfileHeading { get; set; } = null!;
 
         [Required(ErrorMessage = "About You is required")]

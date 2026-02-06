@@ -48,11 +48,11 @@ namespace AYMDatingCore.PL.DTO
         [Display(Name = "Gender")]
         public int? GenderTBLId { get; set; }
 
-        [Required(ErrorMessage = "Type is required")]
+        [Required(ErrorMessage = "Profession is required")]
         [Display(Name = "Profession")]
         public int? ProfessionTBLId { get; set; }
 
-        [Required(ErrorMessage = "Type is required")]
+        [Required(ErrorMessage = "DOB is required")]
         [Display(Name = "Date of Birth")]
         public DateTime? DateOFBirth { get; set; }
 

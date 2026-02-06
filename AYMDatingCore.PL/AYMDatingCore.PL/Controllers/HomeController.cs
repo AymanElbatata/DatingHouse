@@ -63,6 +63,8 @@ namespace AYMDatingCore.PL.Controllers
         [HttpPost]
         public IActionResult Index(UserMainSearchDTO model)
         {
+            ViewBag.SearchAgeMin = model.AgeFrom;
+            ViewBag.SearchAgeMax = model.AgeTo;
             var data = GetAllUsersOrFiltered(model);
             ViewBag.MatchedUsers = data.Count();
             return View(data);
